@@ -68,7 +68,7 @@ export const Input = <
 
   React.useEffect(
     () => {
-      controller.subscribeVaidator(name, () => {
+      controller.subscribeVaidator(name, (silent) => {
         if (!validate || controller.getField(name)?.isDisabled) {
           return true;
         }
@@ -77,6 +77,10 @@ export const Input = <
           controller.getFieldValue(name) as string,
           rest
         );
+
+        if (silent) {
+          return !errorMessage;
+        }
 
         if (errorMessage) {
           setState((prevState) => ({ ...prevState, error: errorMessage }));
@@ -163,7 +167,9 @@ export const Input = <
           {children}
         </ErrorComponent>
       ) : (
-        <span {...props}>{children}</span>
+        <span className="input-field-error" {...props}>
+          {children}
+        </span>
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [ErrorComponent]

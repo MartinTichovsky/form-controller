@@ -12,7 +12,7 @@ type Fields<T> = {
 
 export type OnChangeAction = (isValid: boolean) => void;
 export type OnSubmit<T> = (fields: Fields<T>) => void;
-export type ValidatorAction = () => boolean;
+export type ValidatorAction = (silent?: boolean) => boolean;
 
 export class Controller<T> {
   static uniqueIndex: number = 0;
@@ -134,7 +134,8 @@ export class Controller<T> {
       new Controller<T>({
         initialValues: this._initialValues,
         onSubmit: this._onSubmit,
-        setController: this._setController
+        setController: this._setController,
+        validateOnChange: this._validateOnChange
       })
     );
   }
@@ -154,6 +155,9 @@ export class Controller<T> {
         ...this._fields[key],
         isValid: this.validatorListeners.get(key)?.()
       };
+    } else if (!this._fields[key].isDisabled) {
+      this._fields[key].isValid =
+        this.validatorListeners.get(key)?.(true) === true;
     }
 
     this.fireOnChange();

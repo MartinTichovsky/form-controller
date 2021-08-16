@@ -7,8 +7,7 @@ export type FormControllerProps<T> = React.PropsWithChildren<{
   children: (controller: Controller<T>) => React.ReactNode;
   onSubmit?: OnSubmit<T>;
   validateOnChange?: boolean;
-}> &
-  Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit">;
+}>;
 
 export const FormController = <T extends FormFields<T>>({
   children,
@@ -16,7 +15,8 @@ export const FormController = <T extends FormFields<T>>({
   onSubmit,
   validateOnChange = false,
   ...rest
-}: FormControllerProps<T>) => {
+}: FormControllerProps<T> &
+  Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit">) => {
   const [controller, setController] = React.useState<Controller<T>>();
 
   React.useEffect(
