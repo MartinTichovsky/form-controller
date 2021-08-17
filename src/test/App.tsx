@@ -94,6 +94,7 @@ const MockedButton1 = ({}: {}) => {
 };
 
 const MockedInput1: React.ComponentType<{
+  defaultValue: string;
   disabled: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -103,6 +104,7 @@ const MockedInput1: React.ComponentType<{
 
 class MockedInput2 extends React.Component<{
   abcd: string;
+  defaultValue: string;
   disabled: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;

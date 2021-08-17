@@ -3,7 +3,7 @@ import { Controller, FormController, Input, Submit } from "form-controller";
 import { FormRow } from "../common-components";
 
 type MyForm = {
-  age: string;
+  disabled: string;
   givenName: string;
   surname: string;
   optional: string;
@@ -93,7 +93,7 @@ export const DisableOnSubmit = () => {
                 <Input
                   controller={controller}
                   disableIf={(fields) => !!(fields.givenName && fields.surname)}
-                  name="age"
+                  name="disabled"
                   placeholder="Disabled"
                 />
               </FormRow>

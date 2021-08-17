@@ -3,7 +3,6 @@ import { Condition, FormController, Input, Submit } from "form-controller";
 import { FormRow } from "../common-components";
 
 type MyForm = {
-  age: string;
   givenName: string;
   surname: string;
 };
@@ -34,6 +33,7 @@ const FunctionalInputComponent = ({
 };
 
 class ClassInputComponent extends React.Component<{
+  defaultValue: string;
   disabled: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;

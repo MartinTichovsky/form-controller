@@ -2,6 +2,7 @@ import React, { InputHTMLAttributes } from "react";
 import { Controller, FormFields } from "./controller";
 
 interface InputPrivateProps {
+  defaultValue: string;
   disabled: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -19,6 +20,7 @@ export type InputProps = React.ComponentProps<typeof InputComponent>;
 type RestProps<T> = Omit<
   T,
   | "controller"
+  | "defaultValue"
   | "disabled"
   | "ErrorComponent"
   | "InputComponent"
@@ -79,8 +81,9 @@ const InputComponent: InputComponentType = ({
     error: false | string | undefined | null;
     isDisabled: boolean;
   }>({ error: undefined, isDisabled: false });
-  const key = React.useRef(0);
+  const defaultValue = React.useRef(controller.getFieldValue(name) || "");
   const isMounted = React.useRef(true);
+  const key = React.useRef(0);
 
   React.useEffect(() => {
     return () => {
@@ -213,6 +216,7 @@ const InputComponent: InputComponentType = ({
       <InputElement
         {...rest}
         disabled={state.isDisabled}
+        defaultValue={defaultValue.current as string}
         key={key.current}
         name={name as string}
         onChange={(event) =>

@@ -89,7 +89,11 @@ export class Controller<T extends FormFields<T>> {
 
   private setInitialValues(initialValues: T) {
     for (let key in initialValues) {
-      this._fields[key].value = initialValues[key];
+      this._fields[key] = {
+        isDisabled: false,
+        isValid: true,
+        value: initialValues[key]
+      };
     }
   }
 
@@ -170,7 +174,9 @@ export class Controller<T extends FormFields<T>> {
       };
     } else if (!this._fields[key].isDisabled) {
       this._fields[key].isValid =
-        this.validatorListeners.get(key)?.(true) === true;
+        this.validatorListeners.get(key) === undefined
+          ? true
+          : this.validatorListeners.get(key)?.(true) === true;
     }
 
     this.onChange();

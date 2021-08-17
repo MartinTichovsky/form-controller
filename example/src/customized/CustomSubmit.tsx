@@ -3,7 +3,6 @@ import { Controller, FormController, Input } from "form-controller";
 import { FormRow } from "../common-components";
 
 type MyForm = {
-  age: string;
   givenName: string;
   surname: string;
 };

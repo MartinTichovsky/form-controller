@@ -1,4 +1,5 @@
 import { SimpleForm } from "./basic/SimpleForm";
+import { SimpleFormWithDefaultValues } from "./basic/SimpleFormDefaultValues";
 import { SimpleFormValidateOnChange } from "./basic/SimpleFormValidateOnChange";
 import { SimpleFormWithDisabledSubmit } from "./basic/SimpleFormWithDisabledSubmit";
 import { SimpleFormWithLabel } from "./basic/SimpleFormWithLabel";
@@ -26,6 +27,11 @@ export const menuItems: MenuItems = {
       label: "Simple Form",
       key: "simple-form",
       render: () => <SimpleForm />
+    },
+    {
+      label: "Simple Form with Default Values",
+      key: "simple-form-with-default-values",
+      render: () => <SimpleFormWithDefaultValues />
     },
     {
       label: "Simple Form with Label",

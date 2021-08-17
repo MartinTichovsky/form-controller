@@ -7,7 +7,12 @@ type MyForm = {
   surname: string;
 };
 
-export const SimpleForm = () => {
+const initialValues: MyForm = {
+  givenName: "James",
+  surname: "Bond"
+};
+
+export const SimpleFormWithDefaultValues = () => {
   const [counter, setCounter] = React.useState(0);
 
   return (
@@ -18,6 +23,7 @@ export const SimpleForm = () => {
         </button>
       </div>
       <FormController<MyForm>
+        initialValues={initialValues}
         onSubmit={(fields) => console.log(fields)}
         style={{ marginTop: 15 }}
       >
