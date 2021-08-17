@@ -170,13 +170,16 @@ export class Controller<T extends FormFields<T>> {
     ) {
       this._fields[key] = {
         ...this._fields[key],
-        isValid: this.validatorListeners.get(key)?.()
+        isValid:
+          this.validatorListeners.get(key) === undefined
+            ? true
+            : this.validatorListeners.get(key)!() === true
       };
     } else if (!this._fields[key].isDisabled) {
       this._fields[key].isValid =
         this.validatorListeners.get(key) === undefined
           ? true
-          : this.validatorListeners.get(key)?.(true) === true;
+          : this.validatorListeners.get(key)!(true) === true;
     }
 
     this.onChange();
@@ -186,11 +189,16 @@ export class Controller<T extends FormFields<T>> {
     this._fields[key] = {
       ...this._fields[key],
       isDisabled,
-      value: isDisabled ? undefined : this._fields[key]?.value
+      value:
+        isDisabled || this._fields[key] === undefined
+          ? undefined
+          : this._fields[key].value
     };
     this._fields[key].isValid = isDisabled
-      ? this.validatorListeners.get(key)?.(true) === true
-      : this._fields[key]?.isValid === true;
+      ? this.validatorListeners.get(key) === undefined
+        ? true
+        : this.validatorListeners.get(key)!(true) === true
+      : this._fields[key] !== undefined && this._fields[key].isValid;
   }
 
   public subscribeOnChange(action: OnChangeAction) {

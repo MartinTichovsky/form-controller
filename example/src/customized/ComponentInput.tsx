@@ -8,10 +8,12 @@ type MyForm = {
 };
 
 const FunctionalInputComponent = ({
+  defaultValue,
   disabled,
   onChange,
   onKeyDown
 }: {
+  defaultValue: string;
   disabled: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -22,6 +24,7 @@ const FunctionalInputComponent = ({
         Functional Component
       </label>
       <input
+        defaultValue={defaultValue}
         disabled={disabled}
         id="f-input"
         onChange={onChange}
@@ -45,6 +48,7 @@ class ClassInputComponent extends React.Component<{
           Class Component
         </label>
         <input
+          defaultValue={this.props.defaultValue}
           disabled={this.props.disabled}
           id="c-input"
           onChange={this.props.onChange}
