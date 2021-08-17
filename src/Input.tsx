@@ -56,6 +56,10 @@ export const Input = <
         InputComponent: undefined;
       } & RestProps<InputHTMLAttributes<HTMLInputElement>>)
     | ({
+        ErrorComponent: EComponent;
+        InputComponent: undefined;
+      } & RestProps<InputHTMLAttributes<HTMLInputElement>>)
+    | ({
         ErrorComponent?: EComponent;
         InputComponent?: IComponent;
       } & RestProps<React.ComponentPropsWithoutRef<IComponent>>)

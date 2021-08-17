@@ -1,6 +1,9 @@
-import { SimpleForm } from "./basics/SimpleForm";
-import { SimpleFormValidateOnChange } from "./basics/SimpleFormValidateOnChange";
-import { SimpleFormWithDisabledSubmit } from "./basics/SimpleFormWithDisabledSubmit";
+import { SimpleForm } from "./basic/SimpleForm";
+import { SimpleFormValidateOnChange } from "./basic/SimpleFormValidateOnChange";
+import { SimpleFormWithDisabledSubmit } from "./basic/SimpleFormWithDisabledSubmit";
+import { SimpleFormWithLabel } from "./basic/SimpleFormWithLabel";
+import { ComponentError } from "./customized/ComponentError";
+import { ComponentInput } from "./customized/ComponentInput";
 import { ConditionForm } from "./customized/ConditionForm";
 import { DisabledInput } from "./customized/DisabledInput";
 
@@ -22,6 +25,11 @@ export const menuItems: MenuItems = {
       render: () => <SimpleForm />
     },
     {
+      label: "Simple Form With Label",
+      key: "simple-form-with-label",
+      render: () => <SimpleFormWithLabel />
+    },
+    {
       label: "Simple Form With Disabled Submit",
       key: "simple-form-with-disabled-submit",
       render: () => <SimpleFormWithDisabledSubmit />
@@ -39,9 +47,19 @@ export const menuItems: MenuItems = {
       render: () => <ConditionForm />
     },
     {
-      label: "Disabled input",
+      label: "Disabled Input",
       key: "disabled-input",
       render: () => <DisabledInput />
+    },
+    {
+      label: "Component Input",
+      key: "component-input",
+      render: () => <ComponentInput />
+    },
+    {
+      label: "Component Error",
+      key: "component-error",
+      render: () => <ComponentError />
     }
   ]
 };

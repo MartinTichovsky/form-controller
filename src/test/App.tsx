@@ -127,3 +127,16 @@ class MockedButton2 extends React.Component<{
     return <button>ab</button>;
   }
 }
+
+function FunctionA<T extends (name: string) => boolean>(call: T) {
+  call("");
+}
+
+function functionB() {
+  return true;
+}
+
+function functionC() {
+  FunctionA(functionB);
+  //functionB("");
+}
