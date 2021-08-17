@@ -14,7 +14,7 @@ interface InputPublicProps<T extends FormFields<T>, K extends keyof T> {
   name: K;
 }
 
-export type InputProps = React.ComponentProps<typeof Input>;
+export type InputProps = React.ComponentProps<typeof InputComponent>;
 
 type RestProps<T> = Omit<
   T,
@@ -28,7 +28,7 @@ type RestProps<T> = Omit<
   | "validate"
 >;
 
-export const Input = <
+type InputComponentType = <
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
@@ -63,7 +63,18 @@ export const Input = <
         ErrorComponent?: EComponent;
         InputComponent?: IComponent;
       } & RestProps<React.ComponentPropsWithoutRef<IComponent>>)
-  )) => {
+  )) => JSX.Element;
+
+const InputComponent: InputComponentType = ({
+  controller,
+  disableIf,
+  ErrorComponent,
+  InputComponent,
+  name,
+  onFormChange,
+  validate,
+  ...rest
+}) => {
   const [state, setState] = React.useState<{
     error: false | string | undefined | null;
     isDisabled: boolean;
@@ -124,8 +135,8 @@ export const Input = <
         }
 
         if (disableIf(controller.fields) && !state.isDisabled) {
-          controller.setIsDisabled(name, true);
           key.current = key.current + 1;
+          controller.setIsDisabled(name, true);
           setState({ error: undefined, isDisabled: true });
         } else {
           controller.setIsDisabled(name, false);
@@ -205,7 +216,7 @@ export const Input = <
         key={key.current}
         name={name as string}
         onChange={(event) =>
-          controller.setFieldValue(name, event.currentTarget.value as T[K])
+          controller.setFieldValue(name, event.currentTarget.value)
         }
         onKeyDown={(event) => {
           if (event.key === "Enter") {
@@ -216,4 +227,28 @@ export const Input = <
       {state.error && <ErrorElement>{state.error}</ErrorElement>}
     </>
   );
+};
+
+export const Input: InputComponentType = (props) => {
+  if (!(props.controller instanceof Controller)) {
+    throw new Error("Controller is not provided");
+  }
+
+  if (props.disableIf && typeof props.disableIf !== "function") {
+    throw new Error("DisableIf is not a function");
+  }
+
+  if (!props.name || typeof props.name !== "string") {
+    throw new Error("Name must be a string");
+  }
+
+  if (props.onFormChange && typeof props.onFormChange !== "function") {
+    throw new Error("OnFormChange is not a function");
+  }
+
+  if (props.validate && typeof props.validate !== "function") {
+    throw new Error("Validate is not a function");
+  }
+
+  return <InputComponent {...props} />;
 };

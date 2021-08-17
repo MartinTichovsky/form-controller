@@ -1,24 +1,25 @@
 import React from "react";
 
-export type FormFields<T> = { [K in keyof T]: string | boolean };
+type Value = string | boolean | undefined;
+export type FormFields<T> = { [K in keyof T]: Value };
 
 type Fields<T> = {
   [K in keyof T]: {
     isDisabled: boolean;
     isValid: boolean;
-    value: T[K] | undefined;
+    value: Value;
   };
 };
 
 export type OnDisableAction = (disable: boolean) => void;
 export type OnChangeAction = (isValid: boolean) => void;
-export type OnSubmit<T> = (
+export type OnSubmit<T extends FormFields<T>> = (
   fields: Partial<T>,
   controller: Controller<T>
 ) => void;
 export type ValidatorAction = (silent?: boolean) => boolean;
 
-export class Controller<T> {
+export class Controller<T extends FormFields<T>> {
   static uniqueIndex: number = 0;
 
   private _fields: Fields<T> = {} as Fields<T>;
@@ -66,7 +67,7 @@ export class Controller<T> {
     const result: Partial<T> = {};
 
     for (let key in this._fields) {
-      result[key] = this._fields[key].value;
+      (result[key] as Value) = this._fields[key].value;
     }
 
     return result;
@@ -131,7 +132,7 @@ export class Controller<T> {
     return key in this._fields ? this._fields[key] : undefined;
   }
 
-  public getFieldValue<K extends keyof T>(key: K): T[K] | undefined {
+  public getFieldValue<K extends keyof T>(key: K): Value {
     return key in this._fields ? this._fields[key].value : undefined;
   }
 
@@ -152,7 +153,7 @@ export class Controller<T> {
     );
   }
 
-  public setFieldValue<K extends keyof T>(key: K, value: T[K]) {
+  public setFieldValue<K extends keyof T>(key: K, value: Value) {
     if (key in this._fields) {
       this._fields[key].value = value;
     } else {

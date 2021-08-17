@@ -111,8 +111,10 @@ export const DisableOnSubmit = () => {
                 <Submit
                   controller={controller}
                   onSubmit={(fields, controller) => {
-                    console.log(fields);
-                    controller.disableFields(true);
+                    if (controller.isValid) {
+                      console.log(fields);
+                      controller.disableFields(true);
+                    }
                   }}
                 >
                   Default Submit

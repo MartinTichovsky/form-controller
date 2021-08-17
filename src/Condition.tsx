@@ -1,18 +1,25 @@
 import React from "react";
 import { Controller, FormFields } from "./controller";
 
-export type ConditionProps<T> = React.PropsWithChildren<{
+export type ConditionProps<T extends FormFields<T>> = React.PropsWithChildren<{
   controller: Controller<T>;
   customCondition?: () => boolean;
   ifFormValid?: boolean;
 }>;
 
-export const Condition = <T extends FormFields<T>>({
+type ConditionComponentType = <T extends FormFields<T>>({
   children,
   controller,
   customCondition,
   ifFormValid
-}: ConditionProps<T>) => {
+}: ConditionProps<T>) => JSX.Element;
+
+const ConditionComponent: ConditionComponentType = ({
+  children,
+  controller,
+  customCondition,
+  ifFormValid
+}) => {
   const [isVisible, setIsVisible] = React.useState(false);
 
   React.useEffect(() => {
@@ -39,4 +46,16 @@ export const Condition = <T extends FormFields<T>>({
   }, [controller, customCondition, ifFormValid, isVisible]);
 
   return <>{isVisible && children}</>;
+};
+
+export const Condition: ConditionComponentType = (props) => {
+  if (!(props.controller instanceof Controller)) {
+    throw new Error("Controller is not provided");
+  }
+
+  if (props.customCondition && typeof props.customCondition !== "function") {
+    throw new Error("CustomCondition is not a function");
+  }
+
+  return <ConditionComponent {...props} />;
 };

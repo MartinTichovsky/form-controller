@@ -2,7 +2,7 @@ import React from "react";
 import { ButtonHTMLAttributes } from "react";
 import { Controller, FormFields, OnSubmit } from "./controller";
 
-interface SubmitPrivateProps<T> {
+interface SubmitPrivateProps<T extends FormFields<T>> {
   disabled: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => Controller<T>;
 }
@@ -28,7 +28,7 @@ type RestProps<T> = Omit<
   | "type"
 >;
 
-export const Submit = <
+type SubmitComponentType = <
   T extends FormFields<T>,
   BComponent extends React.ComponentType<
     React.ComponentProps<BComponent> & SubmitPrivateProps<T>
@@ -37,8 +37,8 @@ export const Submit = <
   ButtonComponent,
   children,
   controller,
-  disabledByDefault = false,
-  disableIfNotValid = false,
+  disabledByDefault,
+  disableIfNotValid,
   onSubmit,
   ...rest
 }: SubmitProps<T> &
@@ -49,7 +49,17 @@ export const Submit = <
     | ({
         ButtonComponent?: BComponent;
       } & RestProps<React.ComponentProps<BComponent>>)
-  )) => {
+  )) => JSX.Element;
+
+const SubmitComponent: SubmitComponentType = ({
+  ButtonComponent,
+  children,
+  controller,
+  disabledByDefault = false,
+  disableIfNotValid = false,
+  onSubmit,
+  ...rest
+}) => {
   const [disabled, setDisable] = React.useState(
     disabledByDefault && disableIfNotValid
   );
@@ -74,10 +84,13 @@ export const Submit = <
   );
 
   const handleClick = () => {
-    const result = controller.submit();
+    controller.submit();
+
     if (onSubmit) {
-      onSubmit(result.fields, result);
+      onSubmit(controller.fields, controller);
     }
+
+    return controller;
   };
 
   React.useEffect(() => {
@@ -121,4 +134,16 @@ export const Submit = <
       {children}
     </ButtonElement>
   );
+};
+
+export const Submit: SubmitComponentType = (props) => {
+  if (!(props.controller instanceof Controller)) {
+    throw new Error("Controller is not provided");
+  }
+
+  if (props.onSubmit && typeof props.onSubmit !== "function") {
+    throw new Error("OnSubmit is not a function");
+  }
+
+  return <SubmitComponent {...props} />;
 };

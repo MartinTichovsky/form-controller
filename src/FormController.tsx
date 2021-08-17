@@ -2,21 +2,25 @@ import React from "react";
 import { FormHTMLAttributes } from "react";
 import { Controller, FormFields, OnSubmit } from "./controller";
 
-export type FormControllerProps<T> = React.PropsWithChildren<{
-  initialValues?: T;
-  children: (controller: Controller<T>) => React.ReactNode;
-  onSubmit?: OnSubmit<T>;
-  validateOnChange?: boolean;
-}>;
+export type FormControllerProps<T extends FormFields<T>> =
+  React.PropsWithChildren<{
+    initialValues?: T;
+    children: (controller: Controller<T>) => React.ReactNode;
+    onSubmit?: OnSubmit<T>;
+    validateOnChange?: boolean;
+  }>;
 
-export const FormController = <T extends FormFields<T>>({
+type FormControllerComponentProps<T extends FormFields<T>> =
+  FormControllerProps<T> &
+    Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit">;
+
+const FormControllerComponent = <T extends FormFields<T>>({
   children,
   initialValues,
   onSubmit,
   validateOnChange = false,
   ...rest
-}: FormControllerProps<T> &
-  Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit">) => {
+}: FormControllerComponentProps<T>) => {
   const [controller, setController] = React.useState<Controller<T>>();
 
   React.useEffect(
@@ -52,4 +56,21 @@ export const FormController = <T extends FormFields<T>>({
       {children(controller)}
     </form>
   );
+};
+
+export const FormController = <T extends FormFields<T>>(
+  props: FormControllerComponentProps<T>
+) => {
+  if (
+    (props.initialValues && typeof props.initialValues !== "object") ||
+    props.initialValues === null
+  ) {
+    throw new Error("InitialValues values must be an object");
+  }
+
+  if (props.onSubmit && typeof props.onSubmit !== "function") {
+    throw new Error("OnSubmit is not a function");
+  }
+
+  return <FormControllerComponent {...props} />;
 };
