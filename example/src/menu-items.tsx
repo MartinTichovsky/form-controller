@@ -4,6 +4,7 @@ import { SimpleFormWithDisabledSubmit } from "./basic/SimpleFormWithDisabledSubm
 import { SimpleFormWithLabel } from "./basic/SimpleFormWithLabel";
 import { ComponentError } from "./customized/ComponentError";
 import { ComponentInput } from "./customized/ComponentInput";
+import { ComponentSubmit } from "./customized/ComponentSubmit";
 import { ConditionForm } from "./customized/ConditionForm";
 import { DisabledInput } from "./customized/DisabledInput";
 
@@ -60,6 +61,11 @@ export const menuItems: MenuItems = {
       label: "Component Error",
       key: "component-error",
       render: () => <ComponentError />
+    },
+    {
+      label: "Component Submit",
+      key: "component-submit",
+      render: () => <ComponentSubmit />
     }
   ]
 };

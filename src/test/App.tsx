@@ -1,5 +1,5 @@
 import React from "react";
-import { Condition, FormController, Input, Submit } from "../";
+import { Condition, Controller, FormController, Input, Submit } from "../";
 
 type MyForm = {
   name: string;
@@ -121,7 +121,7 @@ class MockedInput2 extends React.Component<{
 class MockedButton2 extends React.Component<{
   abcd: string;
   disabled: boolean;
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => Controller<MyForm>;
 }> {
   render() {
     return <button>ab</button>;

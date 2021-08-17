@@ -2,9 +2,9 @@ import React from "react";
 import { ButtonHTMLAttributes } from "react";
 import { Controller, FormFields } from "./controller";
 
-interface SubmitPrivateProps {
+interface SubmitPrivateProps<T> {
   disabled: boolean;
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => Controller<T>;
 }
 
 export type SubmitProps<T extends FormFields<T>> = React.PropsWithChildren<
@@ -29,7 +29,7 @@ type RestProps<T> = Omit<
 export const Submit = <
   T extends FormFields<T>,
   BComponent extends React.ComponentType<
-    React.ComponentProps<BComponent> & SubmitPrivateProps
+    React.ComponentProps<BComponent> & SubmitPrivateProps<T>
   >
 >({
   ButtonComponent,
@@ -70,7 +70,7 @@ export const Submit = <
   );
 
   const handleClick = () => {
-    controller.onSubmit();
+    return controller.onSubmit();
   };
 
   React.useEffect(() => {

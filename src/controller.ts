@@ -11,7 +11,7 @@ type Fields<T> = {
 };
 
 export type OnChangeAction = (isValid: boolean) => void;
-export type OnSubmit<T> = (fields: Fields<T>) => void;
+export type OnSubmit<T> = (fields: Partial<T>) => void;
 export type ValidatorAction = (silent?: boolean) => boolean;
 
 export class Controller<T> {
@@ -125,8 +125,10 @@ export class Controller<T> {
     this.isSubmitted = true;
 
     if (this._onSubmit && this.isValid) {
-      this._onSubmit(this._fields);
+      this._onSubmit(this.fields);
     }
+
+    return this;
   }
 
   public resetForm() {
