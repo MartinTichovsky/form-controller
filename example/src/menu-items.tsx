@@ -8,6 +8,7 @@ import { ComponentSubmit } from "./customized/ComponentSubmit";
 import { ConditionForm } from "./customized/ConditionForm";
 import { CustomSubmit } from "./customized/CustomSubmit";
 import { DisabledInput } from "./customized/DisabledInput";
+import { DisableOnSubmit } from "./customized/DisableOnSubmit";
 
 interface MenuIitem {
   label: string;
@@ -27,24 +28,24 @@ export const menuItems: MenuItems = {
       render: () => <SimpleForm />
     },
     {
-      label: "Simple Form With Label",
+      label: "Simple Form with Label",
       key: "simple-form-with-label",
       render: () => <SimpleFormWithLabel />
     },
     {
-      label: "Simple Form With Disabled Submit",
+      label: "Simple Form with Disabled Submit",
       key: "simple-form-with-disabled-submit",
       render: () => <SimpleFormWithDisabledSubmit />
     },
     {
-      label: "Simple Form With Validate On Change",
+      label: "Simple Form with Validate on Change",
       key: "simple-form-with-validate-on-change",
       render: () => <SimpleFormValidateOnChange />
     }
   ],
   Customized: [
     {
-      label: "Condition In Form",
+      label: "Condition in Form",
       key: "condition-in-form",
       render: () => <ConditionForm />
     },
@@ -72,6 +73,11 @@ export const menuItems: MenuItems = {
       label: "Custom Submit",
       key: "custom-submit",
       render: () => <CustomSubmit />
+    },
+    {
+      label: "Disable on Submit",
+      key: "disable-on-submit",
+      render: () => <DisableOnSubmit />
     }
   ]
 };

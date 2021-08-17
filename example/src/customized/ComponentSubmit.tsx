@@ -17,13 +17,24 @@ const FunctionalSubmitComponent = ({
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => Controller<MyForm>;
 }>) => {
   const [pending, setPending] = React.useState(false);
+  const isMounted = React.useRef(true);
+
+  React.useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const controller = onClick(event);
     if (controller.isValid) {
       console.log(controller.fields);
       setPending(true);
-      setTimeout(() => setPending(false), 2000);
+      setTimeout(() => {
+        if (isMounted.current) {
+          setPending(false);
+        }
+      }, 2000);
     }
   };
 
@@ -34,18 +45,34 @@ const FunctionalSubmitComponent = ({
   );
 };
 
-class ClassSubmitComponent extends React.Component<{
+interface ClassSubmitComponentProps {
   disabled: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => Controller<MyForm>;
-}> {
+}
+
+class ClassSubmitComponent extends React.Component<ClassSubmitComponentProps> {
   state: { pending: false } = { pending: false };
+  private componentIsMounted;
+
+  constructor(props: ClassSubmitComponentProps) {
+    super(props);
+    this.componentIsMounted = true;
+  }
+
+  componentWillUnmount() {
+    this.componentIsMounted = false;
+  }
 
   handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const controller = this.props.onClick(event);
     if (controller.isValid) {
       console.log(controller.fields);
       this.setState({ pending: true });
-      setTimeout(() => this.setState({ pending: false }), 2000);
+      setTimeout(() => {
+        if (this.componentIsMounted) {
+          this.setState({ pending: false });
+        }
+      }, 2000);
     }
   };
 

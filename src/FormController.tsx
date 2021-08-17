@@ -35,7 +35,7 @@ export const FormController = <T extends FormFields<T>>({
 
   React.useEffect(() => {
     if (controller) {
-      controller.fireOnChange();
+      controller.onChange();
     }
   }, [controller]);
 

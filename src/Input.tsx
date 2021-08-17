@@ -68,12 +68,19 @@ export const Input = <
     error: false | string | undefined | null;
     isDisabled: boolean;
   }>({ error: undefined, isDisabled: false });
-  const key = React.useRef<number>(0);
+  const key = React.useRef(0);
+  const isMounted = React.useRef(true);
+
+  React.useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   React.useEffect(
     () => {
-      controller.subscribeVaidator(name, (silent) => {
-        if (!validate || controller.getField(name)?.isDisabled) {
+      controller.subscribeValidator(name, (silent) => {
+        if (!validate || !isMounted.current) {
           return true;
         }
 
@@ -95,8 +102,15 @@ export const Input = <
         }
       });
 
+      controller.subscribeOnDisable(name, (disable) => {
+        if (isMounted.current) {
+          setState((prevState) => ({ ...prevState, isDisabled: disable }));
+        }
+      });
+
       return () => {
-        controller.unsubscribeVaidator(name);
+        controller.unsubscribeOnDisable(name);
+        controller.unsubscribeValidator(name);
       };
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
     [controller, name, setState, validate]
@@ -105,6 +119,10 @@ export const Input = <
   React.useEffect(() => {
     if (disableIf) {
       const action = () => {
+        if (!isMounted.current) {
+          return;
+        }
+
         if (disableIf(controller.fields) && !state.isDisabled) {
           controller.setIsDisabled(name, true);
           key.current = key.current + 1;

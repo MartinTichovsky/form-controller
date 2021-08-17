@@ -1,6 +1,6 @@
 import React from "react";
 import { ButtonHTMLAttributes } from "react";
-import { Controller, FormFields } from "./controller";
+import { Controller, FormFields, OnSubmit } from "./controller";
 
 interface SubmitPrivateProps<T> {
   disabled: boolean;
@@ -12,7 +12,8 @@ export type SubmitProps<T extends FormFields<T>> = React.PropsWithChildren<
     controller: Controller<T>;
     disabledByDefault?: boolean;
     disableIfNotValid?: boolean;
-  } & ButtonHTMLAttributes<HTMLButtonElement>
+    onSubmit?: OnSubmit<T>;
+  } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onSubmit">
 >;
 
 type RestProps<T> = Omit<
@@ -23,6 +24,7 @@ type RestProps<T> = Omit<
   | "disabledByDefault"
   | "disableIfNotValid"
   | "onClick"
+  | "onSubmit"
   | "type"
 >;
 
@@ -37,6 +39,7 @@ export const Submit = <
   controller,
   disabledByDefault = false,
   disableIfNotValid = false,
+  onSubmit,
   ...rest
 }: SubmitProps<T> &
   (
@@ -50,6 +53,7 @@ export const Submit = <
   const [disabled, setDisable] = React.useState(
     disabledByDefault && disableIfNotValid
   );
+  const isMounted = React.useRef(true);
 
   const ButtonElement = React.useCallback(
     (props: React.PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) =>
@@ -70,22 +74,47 @@ export const Submit = <
   );
 
   const handleClick = () => {
-    return controller.submit();
+    const result = controller.submit();
+    if (onSubmit) {
+      onSubmit(result.fields, result);
+    }
   };
 
   React.useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  React.useEffect(() => {
     if (disableIfNotValid) {
-      const action = (isValid: boolean) => {
-        setDisable(isValid === false);
+      const onChangeAction = (isValid: boolean) => {
+        if (isMounted.current) {
+          setDisable(isValid === false);
+        }
       };
 
-      controller.subscribeOnChange(action);
+      controller.subscribeOnChange(onChangeAction);
 
       return () => {
-        controller.unsubscribeOnChange(action);
+        controller.unsubscribeOnChange(onChangeAction);
       };
     }
   }, [controller, disableIfNotValid, setDisable]);
+
+  React.useEffect(() => {
+    const onDisableAction = (disable: boolean) => {
+      if (isMounted.current) {
+        setDisable(disable);
+      }
+    };
+
+    controller.subscribeOnDisableButton(onDisableAction);
+
+    return () => {
+      controller.unsubscribeOnDisableButton(onDisableAction);
+    };
+  }, [controller, setDisable]);
 
   return (
     <ButtonElement {...rest} disabled={disabled} onClick={handleClick}>

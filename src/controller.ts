@@ -10,8 +10,12 @@ type Fields<T> = {
   };
 };
 
+export type OnDisableAction = (disable: boolean) => void;
 export type OnChangeAction = (isValid: boolean) => void;
-export type OnSubmit<T> = (fields: Partial<T>) => void;
+export type OnSubmit<T> = (
+  fields: Partial<T>,
+  controller: Controller<T>
+) => void;
 export type ValidatorAction = (silent?: boolean) => boolean;
 
 export class Controller<T> {
@@ -26,6 +30,8 @@ export class Controller<T> {
   private _validateOnChange;
 
   private onChangeListeners = new Set<OnChangeAction>();
+  private onDisableListeners = new Map<keyof T, OnDisableAction>();
+  private onDisableButtonListeners = new Set<OnDisableAction>();
   private validatorListeners = new Map<keyof T, ValidatorAction>();
   private keyIndex: number;
 
@@ -106,9 +112,18 @@ export class Controller<T> {
 
   // private isObject = (subject: unknown) => typeof subject === "object" && !Array.isArray(subject) && subject !== null;
 
-  public fireOnChange() {
-    this.onChangeListeners.forEach((listener) => {
-      listener(this.isValid);
+  public disableFields(disable: boolean) {
+    this.onDisableListeners.forEach((listener, key) => {
+      if (
+        (key in this._fields && !this._fields[key].isDisabled) ||
+        !(key in this._fields)
+      ) {
+        listener(disable);
+      }
+    });
+
+    this.onDisableButtonListeners.forEach((listener) => {
+      listener(disable);
     });
   }
 
@@ -118,6 +133,12 @@ export class Controller<T> {
 
   public getFieldValue<K extends keyof T>(key: K): T[K] | undefined {
     return key in this._fields ? this._fields[key].value : undefined;
+  }
+
+  public onChange() {
+    this.onChangeListeners.forEach((listener) => {
+      listener(this.isValid);
+    });
   }
 
   public resetForm() {
@@ -151,18 +172,39 @@ export class Controller<T> {
         this.validatorListeners.get(key)?.(true) === true;
     }
 
-    this.fireOnChange();
+    this.onChange();
   }
 
   public setIsDisabled<K extends keyof T>(key: K, isDisabled: boolean) {
     this._fields[key] = {
+      ...this._fields[key],
       isDisabled,
-      isValid: isDisabled ? false : this._fields[key]?.isValid === true,
       value: isDisabled ? undefined : this._fields[key]?.value
     };
+    this._fields[key].isValid = isDisabled
+      ? this.validatorListeners.get(key)?.(true) === true
+      : this._fields[key]?.isValid === true;
   }
 
-  public subscribeVaidator<K extends keyof T>(key: K, action: ValidatorAction) {
+  public subscribeOnChange(action: OnChangeAction) {
+    this.onChangeListeners.add(action);
+  }
+
+  public subscribeOnDisable<K extends keyof T>(
+    key: K,
+    action: OnDisableAction
+  ) {
+    this.onDisableListeners.set(key, action);
+  }
+
+  public subscribeOnDisableButton(action: OnDisableAction) {
+    this.onDisableButtonListeners.add(action);
+  }
+
+  public subscribeValidator<K extends keyof T>(
+    key: K,
+    action: ValidatorAction
+  ) {
     this.validatorListeners.set(key, action);
     if (!(key in this._fields)) {
       this._fields[key] = {
@@ -173,27 +215,31 @@ export class Controller<T> {
     }
   }
 
-  public subscribeOnChange(action: OnChangeAction) {
-    this.onChangeListeners.add(action);
-  }
-
   public submit() {
     this.validate();
     this.isSubmitted = true;
 
     if (this._onSubmit && this.isValid) {
-      this._onSubmit(this.fields);
+      this._onSubmit(this.fields, this);
     }
 
     return this;
   }
 
-  public unsubscribeVaidator<K extends keyof T>(key: K) {
-    this.validatorListeners.delete(key);
-  }
-
   public unsubscribeOnChange(action: OnChangeAction) {
     this.onChangeListeners.delete(action);
+  }
+
+  public unsubscribeOnDisable<K extends keyof T>(key: K) {
+    this.onDisableListeners.delete(key);
+  }
+
+  public unsubscribeOnDisableButton(action: OnDisableAction) {
+    this.onDisableButtonListeners.delete(action);
+  }
+
+  public unsubscribeValidator<K extends keyof T>(key: K) {
+    this.validatorListeners.delete(key);
   }
 
   public validate() {
@@ -204,6 +250,6 @@ export class Controller<T> {
       };
     });
 
-    this.fireOnChange();
+    this.onChange();
   }
 }
