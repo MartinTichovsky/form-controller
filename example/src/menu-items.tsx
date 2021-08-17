@@ -6,6 +6,7 @@ import { ComponentError } from "./customized/ComponentError";
 import { ComponentInput } from "./customized/ComponentInput";
 import { ComponentSubmit } from "./customized/ComponentSubmit";
 import { ConditionForm } from "./customized/ConditionForm";
+import { CustomSubmit } from "./customized/CustomSubmit";
 import { DisabledInput } from "./customized/DisabledInput";
 
 interface MenuIitem {
@@ -66,6 +67,11 @@ export const menuItems: MenuItems = {
       label: "Component Submit",
       key: "component-submit",
       render: () => <ComponentSubmit />
+    },
+    {
+      label: "Custom Submit",
+      key: "custom-submit",
+      render: () => <CustomSubmit />
     }
   ]
 };

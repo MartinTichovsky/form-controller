@@ -120,17 +120,6 @@ export class Controller<T> {
     return key in this._fields ? this._fields[key].value : undefined;
   }
 
-  public onSubmit() {
-    this.validate();
-    this.isSubmitted = true;
-
-    if (this._onSubmit && this.isValid) {
-      this._onSubmit(this.fields);
-    }
-
-    return this;
-  }
-
   public resetForm() {
     this._setController(
       new Controller<T>({
@@ -186,6 +175,17 @@ export class Controller<T> {
 
   public subscribeOnChange(action: OnChangeAction) {
     this.onChangeListeners.add(action);
+  }
+
+  public submit() {
+    this.validate();
+    this.isSubmitted = true;
+
+    if (this._onSubmit && this.isValid) {
+      this._onSubmit(this.fields);
+    }
+
+    return this;
   }
 
   public unsubscribeVaidator<K extends keyof T>(key: K) {

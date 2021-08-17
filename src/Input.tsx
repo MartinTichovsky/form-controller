@@ -190,8 +190,8 @@ export const Input = <
           controller.setFieldValue(name, event.currentTarget.value as T[K])
         }
         onKeyDown={(event) => {
-          if (event.key === "Enter" && controller.onSubmit) {
-            controller.onSubmit();
+          if (event.key === "Enter") {
+            controller.submit();
           }
         }}
       />

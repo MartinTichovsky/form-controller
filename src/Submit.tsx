@@ -70,7 +70,7 @@ export const Submit = <
   );
 
   const handleClick = () => {
-    return controller.onSubmit();
+    return controller.submit();
   };
 
   React.useEffect(() => {
