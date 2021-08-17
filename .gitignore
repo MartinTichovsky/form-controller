@@ -22,4 +22,6 @@ yarn-error.log*
 .tsbuildinfo
 .eslintcache
 
-tsconfig.build.tsbuildinfo
+tsconfig*.tsbuildinfo
+
+coverage
