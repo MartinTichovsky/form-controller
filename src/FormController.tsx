@@ -14,6 +14,9 @@ type FormControllerComponentProps<T extends FormFields<T>> =
   FormControllerProps<T> &
     Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit">;
 
+/* @internal */
+export { FormControllerComponent };
+
 const FormControllerComponent = <T extends FormFields<T>>({
   children,
   initialValues,

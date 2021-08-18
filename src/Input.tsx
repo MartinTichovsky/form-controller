@@ -67,6 +67,9 @@ type InputComponentType = <
       } & RestProps<React.ComponentPropsWithoutRef<IComponent>>)
   )) => JSX.Element;
 
+/* @internal */
+export { InputComponent };
+
 const InputComponent: InputComponentType = ({
   controller,
   disableIf,

@@ -51,6 +51,9 @@ type SubmitComponentType = <
       } & RestProps<React.ComponentProps<BComponent>>)
   )) => JSX.Element;
 
+/* @internal */
+export { SubmitComponent };
+
 const SubmitComponent: SubmitComponentType = ({
   ButtonComponent,
   children,
