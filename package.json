@@ -6,6 +6,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "yarn clean && yarn build:tsc",
+    "build:babel": "node build tsconfig.json",
     "build:tsc": "tsc -b",
     "build:watch": "yarn build:tsc --watch",
     "clean": "rimraf tsconfig*.tsbuildinfo lib",
@@ -20,7 +21,13 @@
     "lib"
   ],
   "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "^7.15.0",
     "@testing-library/dom": "8.1.0",
+    "@testing-library/jest-dom": "5.14.1",
     "@testing-library/react": "12.0.0",
     "@types/jest": "26.0.24",
     "@types/react": "17.0.15",
@@ -45,7 +52,6 @@
       }
     },
     "testMatch": [
-      "**/__tests__/**/*.ts?(x)",
       "**/?(*.)+(spec|test).ts?(x)"
     ],
     "preset": "ts-jest",

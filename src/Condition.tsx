@@ -14,6 +14,9 @@ type ConditionComponentType = <T extends FormFields<T>>({
   ifFormValid
 }: ConditionProps<T>) => JSX.Element;
 
+/* @internal */
+export { ConditionComponent };
+
 const ConditionComponent: ConditionComponentType = ({
   children,
   controller,
@@ -43,7 +46,7 @@ const ConditionComponent: ConditionComponentType = ({
     return () => {
       controller.unsubscribeOnChange(action);
     };
-  }, [controller, customCondition, ifFormValid, isVisible]);
+  }, [controller, customCondition, ifFormValid]);
 
   return <>{isVisible && children}</>;
 };
@@ -53,7 +56,10 @@ export const Condition: ConditionComponentType = (props) => {
     throw new Error("Controller is not provided");
   }
 
-  if (props.customCondition && typeof props.customCondition !== "function") {
+  if (
+    props.customCondition !== undefined &&
+    typeof props.customCondition !== "function"
+  ) {
     throw new Error("CustomCondition is not a function");
   }
 

@@ -16,9 +16,16 @@
     "allowSyntheticDefaultImports": true,
     "outDir": "lib",
     "skipLibCheck": true,
+    "stripInternal": true,
     "sourceMap": true,
     "rootDir": "src"
   },
   "include": ["src"],
-  "exclude": ["node_modules", "example"]
+  "exclude": [
+    "node_modules",
+    "example",
+    "**/__tests__",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }
