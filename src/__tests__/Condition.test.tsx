@@ -82,15 +82,18 @@ describe("Condition", () => {
 
   const testComponentValidForm = (unmount: () => void) => {
     const renderHooks = hooks.getHook("ConditionComponent", "useEffect");
+    const allHooks = hooks.getAllHooks("ConditionComponent");
 
     expect(renderHooks?.length).toBe(1);
-    expect(renderHooks?.[0].action).toBeCalledTimes(1);
-    expect(renderHooks?.[0].unmountAction).not.toBeCalled();
+    expect(allHooks?.length).toBe(1);
+    expect(renderHooks?.[0]?.[0].action).toBeCalledTimes(1);
+    expect(renderHooks?.[0]?.[0].unmountAction).not.toBeCalled();
 
     controller.onChange();
-    expect(renderHooks?.length).toBe(2);
-    expect(renderHooks?.[0].action).toBeCalledTimes(1);
-    expect(renderHooks?.[0].unmountAction).not.toBeCalled();
+    expect(renderHooks?.length).toBe(1);
+    expect(allHooks?.length).toBe(2);
+    expect(renderHooks?.[0]?.[0].action).toBeCalledTimes(1);
+    expect(renderHooks?.[0]?.[0].unmountAction).not.toBeCalled();
 
     expect(screen.getByTestId(testid)).toBeTruthy();
 
@@ -101,22 +104,28 @@ describe("Condition", () => {
     };
 
     controller.onChange();
-    expect(renderHooks?.length).toBe(3);
-    expect(renderHooks?.[0].action).toBeCalledTimes(1);
-    expect(renderHooks?.[0].unmountAction).not.toBeCalled();
+    expect(renderHooks?.length).toBe(1);
+    expect(allHooks?.length).toBe(3);
+    expect(renderHooks?.[0]?.[0].action).toBeCalledTimes(1);
+    expect(renderHooks?.[0]?.[0].unmountAction).not.toBeCalled();
     expect(() => screen.getByTestId(testid)).toThrowError();
 
-    renderHooks?.slice(1).forEach((hook) => {
-      expect(hook.action).not.toBeCalled();
+    renderHooks?.slice(1).forEach((renderHook) => {
+      if (renderHook) {
+        for (let hook of renderHook) {
+          expect(hook.action).not.toBeCalled();
+        }
+      }
     });
 
     unmount();
 
-    expect(renderHooks?.[0].unmountAction).toBeCalledTimes(1);
-    hooks.reset();
+    expect(renderHooks?.[0]?.[0].unmountAction).toBeCalledTimes(1);
   };
 
   it("Default - ifFormValid is true and customCondition is undefined", () => {
+    hooks.reset();
+
     const { unmount } = render(
       <ConditionComponent controller={controller} ifFormValid>
         <div data-testid={testid}></div>
@@ -127,6 +136,8 @@ describe("Condition", () => {
   });
 
   it("Default - ifFormValid is undefined and customCondition is set", () => {
+    hooks.reset();
+
     const customCondition = jest.fn(() => {
       return controller.isValid;
     });
@@ -143,9 +154,12 @@ describe("Condition", () => {
   });
 
   it("Default - ifFormValid is true and customCondition is set - default", () => {
+    hooks.reset();
+
     const customCondition = jest.fn(() => {
       return controller.isValid;
     });
+
     const { unmount } = render(
       <ConditionComponent
         controller={controller}
@@ -160,6 +174,8 @@ describe("Condition", () => {
   });
 
   it("Default - ifFormValid is true and customCondition is set - custom", () => {
+    hooks.reset();
+
     const customCondition = jest.fn(() => {
       return false;
     });
@@ -178,13 +194,13 @@ describe("Condition", () => {
     const renderHooks = hooks.getHook("ConditionComponent", "useEffect");
 
     expect(renderHooks?.length).toBe(1);
-    expect(renderHooks?.[0].action).toBeCalledTimes(1);
-    expect(renderHooks?.[0].unmountAction).not.toBeCalled();
+    expect(renderHooks?.[0]?.[0].action).toBeCalledTimes(1);
+    expect(renderHooks?.[0]?.[0].unmountAction).not.toBeCalled();
 
     controller.onChange();
     expect(renderHooks?.length).toBe(1);
-    expect(renderHooks?.[0].action).toBeCalledTimes(1);
-    expect(renderHooks?.[0].unmountAction).not.toBeCalled();
+    expect(renderHooks?.[0]?.[0].action).toBeCalledTimes(1);
+    expect(renderHooks?.[0]?.[0].unmountAction).not.toBeCalled();
 
     expect(() => screen.getByTestId(testid)).toThrowError();
   });

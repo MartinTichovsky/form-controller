@@ -53,6 +53,7 @@ const FormControllerComponent = <T extends FormFields<T>>({
   return (
     <form
       {...rest}
+      aria-label="form"
       onSubmit={(event) => event.preventDefault()}
       key={controller.key}
     >
@@ -65,13 +66,15 @@ export const FormController = <T extends FormFields<T>>(
   props: FormControllerComponentProps<T>
 ) => {
   if (
-    (props.initialValues && typeof props.initialValues !== "object") ||
-    props.initialValues === null
+    props.initialValues !== undefined &&
+    (typeof props.initialValues !== "object" ||
+      props.initialValues === null ||
+      Array.isArray(props.initialValues))
   ) {
     throw new Error("InitialValues values must be an object");
   }
 
-  if (props.onSubmit && typeof props.onSubmit !== "function") {
+  if (props.onSubmit !== undefined && typeof props.onSubmit !== "function") {
     throw new Error("OnSubmit is not a function");
   }
 
