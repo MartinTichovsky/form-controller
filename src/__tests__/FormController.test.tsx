@@ -46,7 +46,15 @@ afterAll(() => {
 });
 
 describe("FormController Element", () => {
-  test("Providing no properties should throw an error", () => {
+  test("Default functionality", () => {
+    render(
+      <FormController>{() => <div data-testid={testid}></div>}</FormController>
+    );
+
+    expect(screen.getByTestId(testid)).toBeTruthy();
+  });
+
+  test("Default functionality with validate on change", () => {
     render(
       <FormController validateOnChange>
         {() => <div data-testid={testid}></div>}
@@ -130,7 +138,7 @@ describe("FormControllerComponent Element", () => {
     expect(form).toBeTruthy();
     expect(fireEvent.submit(form)).toBeFalsy();
 
-    // for each all hooks except for the first two
+    // all other hooks mustn't be called
     const registeredHooks = hooksCollector.getRegisteredComponentHooks(
       FormControllerComponent.name
     );

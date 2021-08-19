@@ -99,6 +99,81 @@ describe("Hooks Collector", () => {
       ).toBeUndefined();
     });
 
+    test("getRegisteredComponentHook", () => {
+      const registeredStack = {
+        [registeredComponent]: [
+          { useEffect: [{ deps: [5, 9] }, { deps: [3, 2] }] },
+          { useEffect: [{ deps: [9, 5] }] },
+          { useCallback: [{ deps: [7] }] }
+        ]
+      };
+      hooksCollector.registeredComponents = registeredStack;
+
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          ?.getRender(1)
+      ).toEqual(registeredStack[registeredComponent][0].useEffect);
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          ?.getRender(2)
+      ).toEqual(registeredStack[registeredComponent][1].useEffect);
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          ?.getRender(3)
+      ).toBeUndefined();
+
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          ?.getRender(1)
+      ).toBeUndefined();
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          ?.getRender(3)
+      ).toEqual(registeredStack[registeredComponent][2].useCallback);
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          ?.getRender(2)
+      ).toEqual(registeredStack[registeredComponent][1].useCallback);
+
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          ?.getRenderHooks(1, 1)
+      ).toEqual(registeredStack[registeredComponent][0].useEffect?.[0]);
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          ?.getRenderHooks(1, 2)
+      ).toEqual(registeredStack[registeredComponent][0].useEffect?.[1]);
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          ?.getRenderHooks(1, 3)
+      ).toBeUndefined();
+
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          ?.getRenderHooks(2, 1)
+      ).toEqual(registeredStack[registeredComponent][1].useCallback?.[0]);
+
+      expect(
+        hooksCollector
+          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          ?.getRenderHooks(2, 2)
+      ).toBeUndefined();
+
+      expect(
+        hooksCollector.getRegisteredComponentHooks(registeredComponent)
+      ).toEqual(registeredStack[registeredComponent]);
+    });
+
     test("reset", () => {
       hooksCollector.reset();
 

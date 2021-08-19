@@ -159,6 +159,18 @@ describe("Condition Element", () => {
 });
 
 describe("ConditionComponent Element", () => {
+  test("Default functionality", () => {
+    hooksCollector.reset();
+
+    render(
+      <ConditionComponent controller={controller}>
+        <div data-testid={testid}></div>
+      </ConditionComponent>
+    );
+
+    expect(() => screen.getByTestId(testid)).toThrowError();
+  });
+
   test("IfFormValid is true and customCondition is undefined", () => {
     hooksCollector.reset();
 

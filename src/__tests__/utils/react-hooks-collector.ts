@@ -86,14 +86,15 @@ export class ReactHooksCollector {
         return !this.registeredComponents[componentName].length ||
           renderNumber > this.registeredComponents[componentName].length
           ? undefined
-          : !this.registeredComponents[componentName][renderNumber - 1][type]!
+          : !this.registeredComponents[componentName][renderNumber - 1][type] ||
+            !this.registeredComponents[componentName][renderNumber - 1][type]!
               .length ||
             hookNumber >
               this.registeredComponents[componentName][renderNumber - 1][type]!
                 .length
           ? undefined
           : this.registeredComponents[componentName][renderNumber - 1][type]![
-              renderNumber - 1
+              hookNumber - 1
             ];
       }
     };
@@ -229,7 +230,46 @@ export const mockReactHooks = (
   hooksCollector: ReactHooksCollector
 ) => ({
   ...origin,
-  useEffect: function (action: () => () => void, ...deps: any[]) {
+  useCallback: function useCallback(
+    action: (...props: any[]) => void,
+    ...deps: any[]
+  ) {
+    let componentName: string;
+
+    // get caller function name from error stack since Funcion.caller is deprecated
+    try {
+      throw new Error();
+    } catch (ex) {
+      const functionsMatches = ex.stack.match(
+        /(\w+)@|at (Function\.)?(\w+) \(/g
+      );
+      const parentFunctionMatches = functionsMatches[0].match(
+        /(\w+)@|at (Function\.)?(\w+) \(/
+      );
+      componentName = parentFunctionMatches[1] || parentFunctionMatches[3];
+    }
+
+    const { index, renderIndex } = hooksCollector.registerHook(
+      componentName,
+      "useCallback"
+    );
+
+    const mockedAction = jest.fn((...props) => action(...props));
+
+    hooksCollector.setHook({
+      componentName,
+      index,
+      props: {
+        action: mockedAction,
+        deps
+      },
+      renderIndex,
+      type: "useCallback"
+    });
+
+    return origin.useCallback(mockedAction, ...deps);
+  },
+  useEffect: function useEffect(action: () => () => void, ...deps: any[]) {
     let componentName: string;
 
     // get caller function name from error stack since Funcion.caller is deprecated

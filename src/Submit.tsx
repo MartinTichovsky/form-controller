@@ -66,7 +66,6 @@ const SubmitComponent: SubmitComponentType = ({
   const [disabled, setDisable] = React.useState(
     disabledByDefault && disableIfNotValid
   );
-  const isMounted = React.useRef(true);
 
   const ButtonElement = React.useCallback(
     (props: React.PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) =>
@@ -97,17 +96,9 @@ const SubmitComponent: SubmitComponentType = ({
   };
 
   React.useEffect(() => {
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-  React.useEffect(() => {
     if (disableIfNotValid) {
       const onChangeAction = (isValid: boolean) => {
-        if (isMounted.current) {
-          setDisable(isValid === false);
-        }
+        setDisable(isValid === false);
       };
 
       controller.subscribeOnChange(onChangeAction);
@@ -120,9 +111,7 @@ const SubmitComponent: SubmitComponentType = ({
 
   React.useEffect(() => {
     const onDisableAction = (disable: boolean) => {
-      if (isMounted.current) {
-        setDisable(disable);
-      }
+      setDisable(disable);
     };
 
     controller.subscribeOnDisableButton(onDisableAction);
@@ -144,7 +133,7 @@ export const Submit: SubmitComponentType = (props) => {
     throw new Error("Controller is not provided");
   }
 
-  if (props.onSubmit && typeof props.onSubmit !== "function") {
+  if (props.onSubmit !== undefined && typeof props.onSubmit !== "function") {
     throw new Error("OnSubmit is not a function");
   }
 
