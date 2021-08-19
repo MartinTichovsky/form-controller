@@ -97,26 +97,6 @@ export class Controller<T extends FormFields<T>> {
     }
   }
 
-  // private deepClone = <T extends Object>(subject: T): T => {
-  //   if (typeof subject !== "object" || subject === null) {
-  //     return subject;
-  //   }
-
-  //   const result: T = (
-  //     Array.isArray(subject) ? [...subject] : { ...subject }
-  //   ) as T;
-
-  //   for (let key in result) {
-  //     if (typeof result[key] === "object") {
-  //       result[key] = this.deepClone(result[key]);
-  //     }
-  //   }
-
-  //   return result;
-  // };
-
-  // private isObject = (subject: unknown) => typeof subject === "object" && !Array.isArray(subject) && subject !== null;
-
   public disableFields(disable: boolean) {
     this.onDisableListeners.forEach((listener, key) => {
       if (

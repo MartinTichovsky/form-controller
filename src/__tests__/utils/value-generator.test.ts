@@ -3,7 +3,7 @@ import { getGeneratedValues, TestClass } from "./value-generator";
 const totalCount = 61;
 
 describe("Value Generator", () => {
-  it("all", () => {
+  test("all", () => {
     let result;
     result = getGeneratedValues();
     expect(result.length).toBe(totalCount);
@@ -11,7 +11,7 @@ describe("Value Generator", () => {
     expect(result.length).toBe(totalCount);
   });
 
-  it("Include all", () => {
+  test("Include all", () => {
     const result = getGeneratedValues(
       true,
       "array",
@@ -31,7 +31,7 @@ describe("Value Generator", () => {
     expect(result.length).toBe(totalCount);
   });
 
-  it("Exclude all", () => {
+  test("Exclude all", () => {
     const result = getGeneratedValues(
       false,
       "array",
@@ -51,7 +51,7 @@ describe("Value Generator", () => {
     expect(result.length).toBe(0);
   });
 
-  it("array", () => {
+  test("array", () => {
     let result;
     result = getGeneratedValues(true, "array");
     expect(result.every((item: []) => Array.isArray(item))).toBeTruthy();
@@ -60,7 +60,7 @@ describe("Value Generator", () => {
     expect(result.every((item: []) => !Array.isArray(item))).toBeTruthy();
   });
 
-  it("bigint", () => {
+  test("bigint", () => {
     let result;
     result = getGeneratedValues(true, "bigint");
     expect(
@@ -73,7 +73,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("boolean", () => {
+  test("boolean", () => {
     let result;
     result = getGeneratedValues(true, "boolean");
     expect(
@@ -86,7 +86,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("class", () => {
+  test("class", () => {
     let result;
     result = getGeneratedValues(true, "class");
     expect(
@@ -99,7 +99,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("float", () => {
+  test("float", () => {
     let result;
     result = getGeneratedValues(true, "float");
     expect(
@@ -118,7 +118,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("function", () => {
+  test("function", () => {
     let result;
     result = getGeneratedValues(true, "function");
     expect(
@@ -131,7 +131,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("integer", () => {
+  test("integer", () => {
     let result;
     result = getGeneratedValues(true, "integer");
     expect(
@@ -148,7 +148,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("null", () => {
+  test("null", () => {
     let result;
     result = getGeneratedValues(true, "null");
     expect(result.every((item: null) => item === null)).toBeTruthy();
@@ -157,7 +157,7 @@ describe("Value Generator", () => {
     expect(result.every((item: null) => item !== null)).toBeTruthy();
   });
 
-  it("number", () => {
+  test("number", () => {
     let result;
     result = getGeneratedValues(true, "number");
     expect(
@@ -170,7 +170,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("object", () => {
+  test("object", () => {
     let result;
     result = getGeneratedValues(true, "object");
     expect(
@@ -193,7 +193,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("string", () => {
+  test("string", () => {
     let result;
     result = getGeneratedValues(true, "string");
     expect(
@@ -206,7 +206,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("symbol", () => {
+  test("symbol", () => {
     let result;
     result = getGeneratedValues(true, "symbol");
     expect(
@@ -219,7 +219,7 @@ describe("Value Generator", () => {
     ).toBeTruthy();
   });
 
-  it("undefined", () => {
+  test("undefined", () => {
     let result;
     result = getGeneratedValues(true, "undefined");
     expect(result.every((item: undefined) => item === undefined)).toBeTruthy();
@@ -228,7 +228,7 @@ describe("Value Generator", () => {
     expect(result.every((item: undefined) => item !== undefined)).toBeTruthy();
   });
 
-  it("Multiple", () => {
+  test("Multiple", () => {
     let result;
     result = getGeneratedValues(true, "string", "array");
     expect(

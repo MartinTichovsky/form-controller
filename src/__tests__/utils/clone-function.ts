@@ -1,27 +1,31 @@
-import { Hooks } from "./hook-mock";
+import { ReactHooksCollector } from "./react-hooks-collector";
 
 /* istanbul ignore next */
 if (!("clone" in Function.prototype)) {
-  Function.prototype["clone"] = function (hooks: Hooks) {
+  Function.prototype["clone"] = function (hooksCollector: ReactHooksCollector) {
     const _this = this;
-    const _overload = function overload() {
-      if (!arguments.length) {
-        return undefined;
+    const _overload = {
+      [_this.name]: function () {
+        if (!arguments.length) {
+          return undefined;
+        }
+
+        hooksCollector.componentRender(_this.name);
+
+        return _this.apply(_this, arguments);
       }
-
-      hooks.setCurrent(_this.name);
-
-      return _this.apply(_this, arguments);
     };
 
-    return _overload;
+    Object.defineProperty(_overload[_this.name], "name", {
+      value: _this.name
+    });
+
+    return _overload[_this.name];
   };
 }
 
-export const mockComponent =
-  (origin: any, componentName: string, hooks: Hooks) =>
-  (...props: any[]) => {
-    const result = origin[componentName].clone(hooks)(...props);
-    hooks.setCurrent(undefined);
-    return result;
-  };
+export const mockComponent = (
+  origin: any,
+  componentName: string,
+  hooks: ReactHooksCollector
+) => origin[componentName].clone(hooks);

@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import { Controller } from "../controller";
 import { FormController, FormControllerComponent } from "../FormController";
-import { Hooks } from "./utils/hook-mock";
+import { ReactHooksCollector } from "./utils/react-hooks-collector";
 import { getGeneratedValues } from "./utils/value-generator";
 
 type Form = {
@@ -10,16 +10,21 @@ type Form = {
 };
 
 const testid = "test-id";
-let hooks: Hooks;
+let hooksCollector: ReactHooksCollector;
 
+// mocking react to get statistics from calling hooks
 jest.mock("react", () => {
   const origin = jest.requireActual("react");
-  const { Hooks, mockReactHooks } = require("./utils/hook-mock");
-  hooks = new Hooks();
+  const {
+    mockReactHooks,
+    ReactHooksCollector
+  } = require("./utils/react-hooks-collector");
+  hooksCollector = new ReactHooksCollector();
 
-  return mockReactHooks(origin, hooks);
+  return mockReactHooks(origin, hooksCollector);
 });
 
+// mocking the component to get statistics of render count
 jest.mock("../FormController", () => {
   const origin = jest.requireActual("../FormController");
   const { mockComponent } = require("./utils/clone-function");
@@ -28,18 +33,20 @@ jest.mock("../FormController", () => {
     ...origin,
     FormControllerComponent: mockComponent(
       origin,
-      "FormControllerComponent",
-      hooks
+      origin.FormControllerComponent.name,
+      hooksCollector
     )
   };
 });
+
+console.error = jest.fn();
 
 afterAll(() => {
   jest.restoreAllMocks();
 });
 
-describe("FormController", () => {
-  it("Providing no properties", () => {
+describe("FormController Element", () => {
+  test("Providing no properties should throw an error", () => {
     render(
       <FormController validateOnChange>
         {() => <div data-testid={testid}></div>}
@@ -49,8 +56,9 @@ describe("FormController", () => {
     expect(screen.getByTestId(testid)).toBeTruthy();
   });
 
-  it("Providing wrong initialValues should throw an error", () => {
+  test("Providing wrong initialValues should throw an error", () => {
     const values = getGeneratedValues(false, "object", "class", "undefined");
+
     values.forEach((value) => {
       expect(() => {
         render(
@@ -64,8 +72,9 @@ describe("FormController", () => {
     });
   });
 
-  it("Providing wrong onSubmit should throw an error", () => {
+  test("Providing wrong onSubmit should throw an error", () => {
     const values = getGeneratedValues(false, "function", "undefined");
+
     values.forEach((value) => {
       expect(() => {
         render(
@@ -78,9 +87,11 @@ describe("FormController", () => {
       }).toThrowError();
     });
   });
+});
 
-  it("Default functionality", () => {
-    hooks.reset();
+describe("FormControllerComponent Element", () => {
+  test("Default functionality", () => {
+    hooksCollector.reset();
 
     let controller: Controller<Form> | undefined;
     let renderCount = 0;
@@ -95,25 +106,51 @@ describe("FormController", () => {
       </FormControllerComponent>
     );
 
+    const useEffectHooks = hooksCollector.getRegisteredComponentHook(
+      FormControllerComponent.name,
+      "useEffect"
+    );
+
+    // must be rendered once and passed controller must not be undefined
+    expect(
+      hooksCollector.getComponentRenderCount(FormControllerComponent.name)
+    ).toBe(2);
     expect(renderCount).toBe(1);
     expect(controller).not.toBeUndefined();
 
-    const renderHooks = hooks.getHook("FormControllerComponent", "useEffect");
-    expect(renderHooks?.length).toBe(2);
-    expect(renderHooks?.[0]?.[0].action).toBeCalledTimes(1);
-    expect(renderHooks?.[0]?.[1].action).toBeCalledTimes(1);
+    // first render should call the actions
+    expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
 
+    // the test component must exist
     expect(screen.getByTestId(testid)).toBeTruthy();
 
+    // a form must exist and submiting the form must return false
     const form = screen.getByRole("form");
-    expect(form).toBeTruthy();
 
+    expect(form).toBeTruthy();
     expect(fireEvent.submit(form)).toBeFalsy();
 
+    // for each all hooks except for the first two
+    const registeredHooks = hooksCollector.getRegisteredComponentHooks(
+      FormControllerComponent.name
+    );
+
+    registeredHooks
+      ?.map((hook) => hook.useEffect)
+      .flat()
+      ?.slice(1)
+      .forEach((renderHook) => {
+        if (renderHook) {
+          expect(renderHook.action).not.toBeCalled();
+        }
+      });
+
+    // reset the form
     act(() => controller?.resetForm());
     expect(renderCount).toBe(2);
-    expect(renderHooks?.length).toBe(2);
-    expect(renderHooks?.[0]?.[0].action).toBeCalledTimes(1);
-    expect(renderHooks?.[0]?.[1].action).toBeCalledTimes(1);
+    expect(
+      hooksCollector.getComponentRenderCount(FormControllerComponent.name)
+    ).toBe(3);
+    expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
   });
 });

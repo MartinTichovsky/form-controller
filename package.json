@@ -6,8 +6,8 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "yarn clean && yarn build:tsc",
-    "build:babel": "node build tsconfig.json",
-    "build:tsc": "tsc -b",
+    "build:babel": "node build tsconfig.build.json",
+    "build:tsc": "tsc --project tsconfig.build.json",
     "build:watch": "yarn build:tsc --watch",
     "clean": "rimraf tsconfig*.tsbuildinfo lib",
     "test": "jest --no-cache --silent --collect-coverage",

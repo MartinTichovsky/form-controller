@@ -28,23 +28,17 @@ const FormControllerComponent = <T extends FormFields<T>>({
 
   React.useEffect(
     () => {
-      setController(
-        new Controller<T>({
-          initialValues,
-          onSubmit,
-          setController,
-          validateOnChange
-        })
-      );
+      const controller = new Controller<T>({
+        initialValues,
+        onSubmit,
+        setController,
+        validateOnChange
+      });
+      setController(controller);
+      controller.onChange();
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
     [setController, validateOnChange]
   );
-
-  React.useEffect(() => {
-    if (controller) {
-      controller.onChange();
-    }
-  }, [controller]);
 
   if (controller === undefined) {
     return null;
