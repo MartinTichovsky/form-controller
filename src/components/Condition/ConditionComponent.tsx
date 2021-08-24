@@ -1,23 +1,7 @@
 import React from "react";
-import { Controller, FormFields } from "./controller";
+import { ConditionComponentType } from "./types";
 
-export type ConditionProps<T extends FormFields<T>> = React.PropsWithChildren<{
-  controller: Controller<T>;
-  customCondition?: () => boolean;
-  ifFormValid?: boolean;
-}>;
-
-type ConditionComponentType = <T extends FormFields<T>>({
-  children,
-  controller,
-  customCondition,
-  ifFormValid
-}: ConditionProps<T>) => JSX.Element;
-
-/* @internal */
-export { ConditionComponent };
-
-const ConditionComponent: ConditionComponentType = ({
+export const ConditionComponent: ConditionComponentType = ({
   children,
   controller,
   customCondition,
@@ -49,19 +33,4 @@ const ConditionComponent: ConditionComponentType = ({
   }, [controller, customCondition, ifFormValid]);
 
   return <>{isVisible && children}</>;
-};
-
-export const Condition: ConditionComponentType = (props) => {
-  if (!(props.controller instanceof Controller)) {
-    throw new Error("Controller is not provided");
-  }
-
-  if (
-    props.customCondition !== undefined &&
-    typeof props.customCondition !== "function"
-  ) {
-    throw new Error("CustomCondition is not a function");
-  }
-
-  return <ConditionComponent {...props} />;
 };

@@ -20,6 +20,7 @@ export const DisabledInput = () => {
       <FormController<MyForm>
         onSubmit={(fields) => console.log(fields)}
         style={{ marginTop: 15 }}
+        validateOnChange
       >
         {(controller) => {
           return (

@@ -1,10 +1,11 @@
-import React from "react";
-import { Submit, SubmitComponent } from "../Submit";
-import { Controller } from "../controller";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { getGeneratedValues } from "./utils/value-generator";
-import { ReactHooksCollector } from "./utils/react-hooks-collector";
 import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
+import React from "react";
+import { Submit } from "../components/Submit/Submit";
+import { SubmitComponent } from "../components/Submit/SubmitComponent";
+import { Controller } from "../controller";
+import { ReactHooksCollector } from "./utils/react-hooks-collector";
+import { getGeneratedValues } from "./utils/value-generator";
 
 type Form = {
   input: string;
@@ -27,8 +28,8 @@ jest.mock("react", () => {
 });
 
 // mocking the component to get statistics of render count
-jest.mock("../Submit", () => {
-  const origin = jest.requireActual("../Submit");
+jest.mock("../components/Submit/SubmitComponent", () => {
+  const origin = jest.requireActual("../components/Submit/SubmitComponent");
   const { mockComponent } = require("./utils/clone-function");
 
   return {
@@ -41,16 +42,24 @@ jest.mock("../Submit", () => {
   };
 });
 
-const defaultFunctionalityTest = (unmount: () => void) => {
+const defaultFunctionalityTest = (
+  unmount: () => void,
+  disabledByDefault?: boolean
+) => {
   // button should contain the text and shouldn't be disabled
   const button = screen.getByText(buttonText);
-  expect(button).not.toBeDisabled();
 
-  const useCallbackHooks = hooksCollector.getRegisteredComponentHook(
+  if (disabledByDefault) {
+    expect(button).toBeDisabled();
+  } else {
+    expect(button).not.toBeDisabled();
+  }
+
+  const useCallbackHooks = hooksCollector.getRegisteredComponentHooks(
     SubmitComponent.name,
     "useCallback"
   );
-  const useEffectHooks = hooksCollector.getRegisteredComponentHook(
+  const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
     SubmitComponent.name,
     "useEffect"
   );
@@ -145,7 +154,7 @@ describe("SubmitComponent Element", () => {
       </SubmitComponent>
     );
 
-    defaultFunctionalityTest(unmount);
+    defaultFunctionalityTest(unmount, true);
   });
 
   test("DisabledByDefault is true and disableIfNotValid is true", () => {
@@ -165,7 +174,7 @@ describe("SubmitComponent Element", () => {
     const button = screen.getByText(buttonText);
     expect(button).toBeDisabled();
 
-    const useEffectHooks = hooksCollector.getRegisteredComponentHook(
+    const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
       SubmitComponent.name,
       "useEffect"
     );
@@ -200,7 +209,7 @@ describe("SubmitComponent Element", () => {
     ).not.toBeCalled();
 
     // all other hooks mustn't be called
-    const registeredHooks = hooksCollector.getRegisteredComponentHooks(
+    const registeredHooks = hooksCollector.getRegisteredComponentRenders(
       SubmitComponent.name
     );
 

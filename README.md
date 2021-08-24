@@ -5,6 +5,7 @@ This repository is under development. Solution should provide more efficient for
 To run examples:
 
 ```sh
+yarn && yarn build
 cd example
 yarn && yarn start
 ```

@@ -1,7 +1,26 @@
 import styled from "@emotion/styled";
 
 export const Content = styled("div")({
-  gridArea: "content"
+  gridArea: "content",
+
+  ".form-controller": {
+    marginTop: 15,
+
+    ".field-row": {
+      marginTop: 15,
+
+      ".input-field-error": {
+        paddingLeft: 10
+      }
+    },
+
+    ".info": {
+      fontFamily: "Arial",
+      fontSize: ".8em",
+      fontWeight: "bolder",
+      marginTop: 20
+    }
+  }
 });
 
 export const Menu = styled("ul")({

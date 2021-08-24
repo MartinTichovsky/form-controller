@@ -1,12 +1,21 @@
 import React from "react";
-import { Controller, FormController, Input, Submit } from "form-controller";
+import {
+  Controller,
+  ErrorFor,
+  FormController,
+  Input,
+  Submit,
+  Validation
+} from "form-controller";
 import { FormRow } from "../common-components";
 
 type MyForm = {
   disabled: string;
   givenName: string;
+  hidden: string;
   surname: string;
   optional: string;
+  radio: string;
 };
 
 const CustomSubmitComponent = ({
@@ -65,7 +74,13 @@ export const DisableOnSubmit = () => {
           Re-Render Form: {counter}
         </button>
       </div>
-      <FormController<MyForm> style={{ marginTop: 15 }} validateOnChange>
+      <FormController<MyForm>
+        initialValues={{
+          radio: "Option 1"
+        }}
+        style={{ marginTop: 15 }}
+        validateOnChange
+      >
         {(controller) => {
           return (
             <>
@@ -105,11 +120,48 @@ export const DisableOnSubmit = () => {
                 />
               </FormRow>
               <FormRow>
+                <Input
+                  controller={controller}
+                  hideIf={(fields) => !fields.givenName}
+                  name="hidden"
+                  placeholder="Hidden"
+                />
+              </FormRow>
+              <Validation
+                validate={(value) =>
+                  !value?.trim() && "Provide a valid given name"
+                }
+              >
+                <ErrorFor controller={controller} name="radio">
+                  Error
+                </ErrorFor>
+                <FormRow>
+                  <Input
+                    controller={controller}
+                    disableIf={(fields) => !fields.givenName?.trim()}
+                    label="Label 1"
+                    name="radio"
+                    type="radio"
+                    value="Option 1"
+                  />
+                </FormRow>
+                <FormRow>
+                  <Input
+                    controller={controller}
+                    label="Label 2"
+                    name="radio"
+                    type="radio"
+                    value="Option 2"
+                  />
+                </FormRow>
+              </Validation>
+              <FormRow>
                 <CustomSubmitComponent controller={controller} />
               </FormRow>
               <FormRow>
                 <Submit
                   controller={controller}
+                  disableIfNotValid
                   onSubmit={(fields, controller) => {
                     if (controller.isValid) {
                       console.log(fields);

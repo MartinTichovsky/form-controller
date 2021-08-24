@@ -19,12 +19,14 @@ type ComponentHooks = {
 
 export class ReactHooksCollector {
   registeredComponents: {
-    [key: string]: ComponentHooks[];
+    [key: string]: { dataTestId?: string; hooks: ComponentHooks }[];
   } = {};
 
   unregisteredComponents: {
     [key: string]: ComponentHooks;
   } = {};
+
+  private activeDataTestId?: string;
 
   private createUregisteredComponent(componentName: string, type: HookType) {
     if (!(componentName in this.unregisteredComponents)) {
@@ -43,64 +45,83 @@ export class ReactHooksCollector {
     };
   }
 
-  componentRender(componentName?: string) {
+  componentRender(componentName?: string, dataTestId?: string) {
     if (componentName === undefined) {
       return;
     }
+
+    this.activeDataTestId = dataTestId;
 
     if (!(componentName in this.registeredComponents)) {
       this.registeredComponents[componentName] = [];
     }
 
-    this.registeredComponents[componentName].push({});
+    this.registeredComponents[componentName].push({ dataTestId, hooks: {} });
   }
 
-  getComponentRenderCount(componentName: string) {
-    return this.registeredComponents[componentName]?.length || 0;
+  componentUnmount() {
+    this.activeDataTestId = undefined;
   }
 
-  getRegisteredComponentHooks(componentName: string) {
+  getComponentRenderCount(componentName: string, dataTestId?: string) {
+    return (
+      this.registeredComponents[componentName]?.filter(
+        (render) => render.dataTestId === dataTestId
+      )?.length || 0
+    );
+  }
+
+  getRegisteredComponentRenders(componentName: string, dataTestId?: string) {
     if (!(componentName in this.registeredComponents)) {
       return undefined;
     }
 
-    return this.registeredComponents[componentName];
+    return this.registeredComponents[componentName]
+      .filter((render) => render.dataTestId === dataTestId)
+      ?.map((render) => render.hooks);
   }
 
-  getRegisteredComponentHook(componentName: string, type: HookType) {
+  getRegisteredComponentHooks(
+    componentName: string,
+    type: HookType,
+    dataTestId?: string
+  ) {
     if (
       !(componentName in this.registeredComponents) ||
-      !this.registeredComponents[componentName].length
+      !this.registeredComponents[componentName].filter(
+        (render) => render.dataTestId === dataTestId
+      ).length
     ) {
       return undefined;
     }
 
     return {
       getRender: (renderNumber: number) => {
-        return !this.registeredComponents[componentName].length ||
-          renderNumber > this.registeredComponents[componentName].length
+        const renders = this.registeredComponents[componentName].filter(
+          (render) => render.dataTestId === dataTestId
+        );
+
+        return !renders.length || renderNumber > renders.length
           ? undefined
-          : this.registeredComponents[componentName][renderNumber - 1][type];
+          : renders[renderNumber - 1].hooks[type];
       },
       getRenderHooks: (renderNumber: number, hookNumber: number) => {
-        return !this.registeredComponents[componentName].length ||
-          renderNumber > this.registeredComponents[componentName].length
+        const renders = this.registeredComponents[componentName].filter(
+          (render) => render.dataTestId === dataTestId
+        );
+
+        return !renders.length || renderNumber > renders.length
           ? undefined
-          : !this.registeredComponents[componentName][renderNumber - 1][type] ||
-            !this.registeredComponents[componentName][renderNumber - 1][type]!
-              .length ||
-            hookNumber >
-              this.registeredComponents[componentName][renderNumber - 1][type]!
-                .length
+          : !renders[renderNumber - 1].hooks[type] ||
+            !renders[renderNumber - 1].hooks[type]!.length ||
+            hookNumber > renders[renderNumber - 1].hooks[type]!.length
           ? undefined
-          : this.registeredComponents[componentName][renderNumber - 1][type]![
-              hookNumber - 1
-            ];
+          : renders[renderNumber - 1].hooks[type]![hookNumber - 1];
       }
     };
   }
 
-  getUnregisteredComponentHooks(componentName: string) {
+  getUnregisteredComponentRenders(componentName: string) {
     if (!(componentName in this.unregisteredComponents)) {
       return undefined;
     }
@@ -108,7 +129,7 @@ export class ReactHooksCollector {
     return this.unregisteredComponents[componentName];
   }
 
-  getUnregisteredComponentHook(componentName: string, type: HookType) {
+  getUnregisteredComponentHooks(componentName: string, type: HookType) {
     if (
       !(componentName in this.unregisteredComponents) ||
       !(type in this.unregisteredComponents[componentName])
@@ -137,29 +158,19 @@ export class ReactHooksCollector {
       return this.createUregisteredComponent(componentName, type);
     }
 
-    if (
-      !(
-        type in
-        this.registeredComponents[componentName][
-          this.registeredComponents[componentName].length - 1
-        ]
-      )
-    ) {
-      this.registeredComponents[componentName][
-        this.registeredComponents[componentName].length - 1
-      ][type] = [];
+    const renders = this.registeredComponents[componentName].filter(
+      (render) => render.dataTestId === this.activeDataTestId
+    );
+
+    if (!(type in renders[renders.length - 1].hooks)) {
+      renders[renders.length - 1].hooks[type] = [];
     }
 
-    this.registeredComponents[componentName][
-      this.registeredComponents[componentName].length - 1
-    ][type]!.push({});
+    renders[renders.length - 1].hooks[type]!.push({});
 
     return {
-      index:
-        this.registeredComponents[componentName][
-          this.registeredComponents[componentName].length - 1
-        ][type]!.length - 1,
-      renderIndex: this.registeredComponents[componentName].length - 1
+      index: renders[renders.length - 1].hooks[type]!.length - 1,
+      renderIndex: renders.length - 1
     };
   }
 
@@ -205,21 +216,25 @@ export class ReactHooksCollector {
       return;
     }
 
+    const renders = this.registeredComponents[componentName]?.filter(
+      (render) => render.dataTestId === this.activeDataTestId
+    );
+
     // check registered integrity
     if (
       !(componentName in this.registeredComponents) ||
-      !this.registeredComponents[componentName].length ||
-      this.registeredComponents[componentName].length <= renderIndex ||
-      !(type in this.registeredComponents[componentName][renderIndex]) ||
-      !this.registeredComponents[componentName][renderIndex][type]!.length ||
-      this.registeredComponents[componentName][renderIndex][type]!.length <=
-        index
+      !renders ||
+      !renders.length ||
+      renders.length <= renderIndex ||
+      !(type in renders[renderIndex].hooks) ||
+      !renders[renderIndex].hooks[type]!.length ||
+      renders[renderIndex].hooks[type]!.length <= index
     ) {
       return;
     }
 
-    this.registeredComponents[componentName][renderIndex][type]![index] = {
-      ...this.registeredComponents[componentName][renderIndex][type]![index],
+    renders[renderIndex].hooks[type]![index] = {
+      ...renders[renderIndex].hooks[type]![index],
       ...props
     };
   }

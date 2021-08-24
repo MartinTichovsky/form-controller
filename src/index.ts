@@ -1,5 +1,7 @@
-export { Condition, ConditionProps } from "./Condition";
+export { Condition } from "./components/Condition/Condition";
+export { ErrorFor } from "./components/ErrorFor";
+export { FormController } from "./components/FormController/FormController";
+export { Input } from "./components/Input/Input";
+export { Submit } from "./components/Submit/Submit";
+export { Validation } from "./components/Validation";
 export * from "./controller";
-export { FormController, FormControllerProps } from "./FormController";
-export { Input, InputProps } from "./Input";
-export { Submit, SubmitProps } from "./Submit";

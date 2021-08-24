@@ -1,5 +1,5 @@
 import React from "react";
-import { Condition, Controller, FormController, Input, Submit } from "../";
+import { Condition, Controller, FormController, Input, Submit } from "..";
 
 type MyForm = {
   name: string;
@@ -79,12 +79,6 @@ export function App() {
           );
         }}
       </FormController>
-      {/* <Ne Component={<MockedInput abcd="el1" />} />
-      <Ne Component={MockedInput} />
-      <Ne Component="a" />
-      <Ne Component={a} />
-      <Ne Component={<MockedInput2 abc="el3" />} />
-      <Ne Component={MockedInput2} /> */}
     </>
   );
 }
@@ -130,15 +124,77 @@ class MockedButton2 extends React.Component<{
   }
 }
 
-function FunctionA<T extends (name: string) => boolean>(call: T) {
-  call("");
-}
+// ////////
 
-function functionB() {
-  return true;
-}
+// type FnStrongTypedOrNever<
+//   T extends (arg: any) => any,
+//   TConstraint extends any[]
+// > = [...Parameters<T>, ReturnType<T>] extends TConstraint ? T : never;
 
-function functionC() {
-  FunctionA(functionB);
-  //functionB("");
-}
+// function functionA<T extends (arg: any) => any>(
+//   call: FnStrongTypedOrNever<T, [string, boolean]>
+// ) {
+//   call("");
+// }
+
+// function functionB() {
+//   return true;
+// }
+
+// function functionD(name: string) {
+//   return true;
+// }
+
+// function functionC() {
+//   functionA(functionD); // this doesn't throw a syntax error
+//   functionA(functionB); // this throws a syntax error
+//   functionB(""); // this throws a syntax error
+// }
+
+// //////
+
+// type ConstrainedFunction<
+//   TFun extends (...args: any[]) => any,
+//   TConstraint extends (...args: any[]) => any
+// > = Parameters<TFun>["length"] extends Parameters<TConstraint>["length"]
+//   ? TFun
+//   : TConstraint & "";
+
+// function test<T extends (name: string) => boolean>(
+//   call: ConstrainedFunction<T, (name: string) => boolean>
+// ): void {
+//   call("");
+// }
+
+// function functionArgumentOverflow(first: string, second: string) {
+//   return true;
+// }
+
+// function functionTypeMismatch(numeric: number) {
+//   return true;
+// }
+
+// function functionEmpty() {
+//   return true;
+// }
+
+// function functionOk(name: string) {
+//   return true;
+// }
+
+// test(functionOk);
+// // this doesn't throw a syntax error
+
+// test(functionArgumentOverflow);
+// // Type 'StrongTypedFunction<(first: string, second: string) => boolean>'
+// // is not assignable to type '(name: string) => boolean'.
+
+// test(functionTypeMismatch);
+// // Type 'string' is not assignable to type 'number'.
+
+// test(functionEmpty);
+// // Argument of type '() => boolean'
+// // is not assignable to parameter of type '((name: string) => boolean) & ""'
+
+// functionEmpty("");
+// // this throws a syntax error

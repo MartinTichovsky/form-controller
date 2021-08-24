@@ -1,7 +1,8 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
+import { FormController } from "../components/FormController/FormController";
+import { FormControllerComponent } from "../components/FormController/FormControllerComponent";
 import { Controller } from "../controller";
-import { FormController, FormControllerComponent } from "../FormController";
 import { ReactHooksCollector } from "./utils/react-hooks-collector";
 import { getGeneratedValues } from "./utils/value-generator";
 
@@ -25,8 +26,10 @@ jest.mock("react", () => {
 });
 
 // mocking the component to get statistics of render count
-jest.mock("../FormController", () => {
-  const origin = jest.requireActual("../FormController");
+jest.mock("../components/FormController/FormControllerComponent", () => {
+  const origin = jest.requireActual(
+    "../components/FormController/FormControllerComponent"
+  );
   const { mockComponent } = require("./utils/clone-function");
 
   return {
@@ -114,7 +117,7 @@ describe("FormControllerComponent Element", () => {
       </FormControllerComponent>
     );
 
-    const useEffectHooks = hooksCollector.getRegisteredComponentHook(
+    const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
       FormControllerComponent.name,
       "useEffect"
     );
@@ -139,19 +142,12 @@ describe("FormControllerComponent Element", () => {
     expect(fireEvent.submit(form)).toBeFalsy();
 
     // all other hooks mustn't be called
-    const registeredHooks = hooksCollector.getRegisteredComponentHooks(
-      FormControllerComponent.name
-    );
-
-    registeredHooks
+    const registeredHooks = hooksCollector
+      .getRegisteredComponentRenders(FormControllerComponent.name)
       ?.map((hook) => hook.useEffect)
-      .flat()
-      ?.slice(1)
-      .forEach((renderHook) => {
-        if (renderHook) {
-          expect(renderHook.action).not.toBeCalled();
-        }
-      });
+      .flat();
+
+    expect(registeredHooks?.[2]?.action).not.toBeCalled();
 
     // reset the form
     act(() => controller?.resetForm());
