@@ -1,9 +1,9 @@
-import React from "react";
-import { Condition, ConditionComponent } from "../Condition";
-import { Controller } from "../controller";
 import { render, screen } from "@testing-library/react";
+import React from "react";
+import { Condition } from "../components/Condition/Condition";
+import { ConditionComponent } from "../components/Condition/ConditionComponent";
+import { Controller } from "../controller";
 import { getGeneratedValues } from "./utils/value-generator";
-import { ReactHooksCollector } from "./utils/react-hooks-collector";
 
 type Form = {
   input: string;
@@ -11,41 +11,13 @@ type Form = {
 
 const testid = "test-id";
 let controller: Controller<Form>;
-let hooksCollector: ReactHooksCollector;
-
-// mocking react to get statistics from calling hooks
-jest.mock("react", () => {
-  const origin = jest.requireActual("react");
-  const {
-    mockReactHooks,
-    ReactHooksCollector
-  } = require("./utils/react-hooks-collector");
-  hooksCollector = new ReactHooksCollector();
-
-  return mockReactHooks(origin, hooksCollector);
-});
-
-// mocking the component to get statistics of render count
-jest.mock("../Condition", () => {
-  const origin = jest.requireActual("../Condition");
-  const { mockComponent } = require("./utils/clone-function");
-
-  return {
-    ...origin,
-    ConditionComponent: mockComponent(
-      origin,
-      origin.ConditionComponent.name,
-      hooksCollector
-    )
-  };
-});
 
 const testValidForm = (unmount: () => void) => {
-  const useEffectHooks = hooksCollector.getRegisteredComponentHook(
+  const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
     ConditionComponent.name,
     "useEffect"
   );
-  const registeredHooks = hooksCollector.getRegisteredComponentHooks(
+  const registeredHooks = hooksCollector.getRegisteredComponentRenders(
     ConditionComponent.name
   );
 
@@ -241,7 +213,7 @@ describe("ConditionComponent Element", () => {
 
     expect(() => screen.getByTestId(testid)).toThrowError();
 
-    const useEffectHooks = hooksCollector.getRegisteredComponentHook(
+    const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
       ConditionComponent.name,
       "useEffect"
     );

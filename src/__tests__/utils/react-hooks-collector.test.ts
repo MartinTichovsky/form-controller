@@ -1,21 +1,24 @@
-import { ReactHooksCollector, mockReactHooks } from "./react-hooks-collector";
+import { mockReactHooks, ReactHooksCollector } from "./react-hooks-collector";
 
 const props = { deps: [1, 2.3] };
 const registeredComponent = "RegisteredComponent";
 const unregisteredComponent = "UnregisteredComponent";
 
-const registeredStack = [{ useEffect: [props] }];
+const registeredStack = [{ hooks: { useEffect: [props] } }];
 const registeredStackDefault = {
-  [registeredComponent]: [{ useEffect: [{}] }]
+  [registeredComponent]: [{ hooks: { useEffect: [{}] } }]
 };
 const registeredStackWithProps = {
   [registeredComponent]: registeredStack
 };
 const registeredStackWithTwoRecords = {
-  [registeredComponent]: [{ useEffect: [{}, {}] }]
+  [registeredComponent]: [{ hooks: { useEffect: [{}, {}] } }]
 };
 const registeredStackWithTwoRecordsTwoRenders = {
-  [registeredComponent]: [{ useEffect: [{}, {}] }, { useEffect: [{}] }]
+  [registeredComponent]: [
+    { hooks: { useEffect: [{}, {}] } },
+    { hooks: { useEffect: [{}] } }
+  ]
 };
 
 const unregisteredStack = { useEffect: [props] };
@@ -30,17 +33,23 @@ const unregisteredStackWithTwoRecords = {
 };
 
 describe("Hooks Collector", () => {
-  describe("getRegisteredComponentHooks, getRegisteredComponentHook, componentRender, reset", () => {
+  describe("getRegisteredComponentRenders, getRegisteredComponentHooks, componentRender, reset", () => {
     const hooksCollector: ReactHooksCollector = new ReactHooksCollector();
 
     test("Default state", () => {
       expect(hooksCollector.registeredComponents).toEqual({});
       expect(hooksCollector.unregisteredComponents).toEqual({});
       expect(
-        hooksCollector.getRegisteredComponentHooks(registeredComponent)
+        hooksCollector.getRegisteredComponentRenders(registeredComponent)
       ).toBeUndefined();
       expect(
-        hooksCollector.getRegisteredComponentHook(
+        hooksCollector.getRegisteredComponentRenders(
+          registeredComponent,
+          "fake-id"
+        )
+      ).toBeUndefined();
+      expect(
+        hooksCollector.getRegisteredComponentHooks(
           registeredComponent,
           "useEffect"
         )
@@ -51,7 +60,8 @@ describe("Hooks Collector", () => {
       hooksCollector.componentRender(registeredComponent);
 
       expect(
-        hooksCollector.getRegisteredComponentHooks(registeredComponent)?.length
+        hooksCollector.getRegisteredComponentRenders(registeredComponent)
+          ?.length
       ).toBe(1);
     });
 
@@ -60,118 +70,123 @@ describe("Hooks Collector", () => {
         registeredStack;
 
       expect(
-        hooksCollector.getRegisteredComponentHooks(registeredComponent)
-      ).toEqual(registeredStack);
+        hooksCollector.getRegisteredComponentRenders(registeredComponent)
+      ).toEqual(registeredStack.map((render) => render.hooks));
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          .getRegisteredComponentHooks(registeredComponent, "useCallback")
           ?.getRender(1)
       ).toBeUndefined();
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRender(1)?.length
       ).toBe(1);
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRender(2)
       ).toBeUndefined();
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRender(1)
-      ).toEqual(registeredStack[0].useEffect);
+      ).toEqual(registeredStack[0].hooks.useEffect);
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRenderHooks(1, 1)
-      ).toEqual(registeredStack[0].useEffect[0]);
+      ).toEqual(registeredStack[0].hooks.useEffect[0]);
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRenderHooks(2, 1)
       ).toBeUndefined();
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRenderHooks(1, 2)
       ).toBeUndefined();
     });
 
-    test("getRegisteredComponentHook", () => {
+    test("getRegisteredComponentHooks", () => {
       const registeredStack = {
         [registeredComponent]: [
-          { useEffect: [{ deps: [5, 9] }, { deps: [3, 2] }] },
-          { useEffect: [{ deps: [9, 5] }] },
-          { useCallback: [{ deps: [7] }] }
+          {
+            hooks: { useEffect: [{ deps: [5, 9] }, { deps: [3, 2] }] }
+          },
+          { hooks: { useEffect: [{ deps: [9, 5] }] } },
+
+          { hooks: { useCallback: [{ deps: [7] }] } }
         ]
       };
       hooksCollector.registeredComponents = registeredStack;
 
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRender(1)
-      ).toEqual(registeredStack[registeredComponent][0].useEffect);
+      ).toEqual(registeredStack[registeredComponent][0].hooks.useEffect);
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRender(2)
-      ).toEqual(registeredStack[registeredComponent][1].useEffect);
+      ).toEqual(registeredStack[registeredComponent][1].hooks.useEffect);
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRender(3)
       ).toBeUndefined();
 
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          .getRegisteredComponentHooks(registeredComponent, "useCallback")
           ?.getRender(1)
       ).toBeUndefined();
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          .getRegisteredComponentHooks(registeredComponent, "useCallback")
           ?.getRender(3)
-      ).toEqual(registeredStack[registeredComponent][2].useCallback);
+      ).toEqual(registeredStack[registeredComponent][2].hooks.useCallback);
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          .getRegisteredComponentHooks(registeredComponent, "useCallback")
           ?.getRender(2)
-      ).toEqual(registeredStack[registeredComponent][1].useCallback);
+      ).toEqual(registeredStack[registeredComponent][1].hooks.useCallback);
 
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRenderHooks(1, 1)
-      ).toEqual(registeredStack[registeredComponent][0].useEffect?.[0]);
+      ).toEqual(registeredStack[registeredComponent][0].hooks.useEffect![0]);
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRenderHooks(1, 2)
-      ).toEqual(registeredStack[registeredComponent][0].useEffect?.[1]);
+      ).toEqual(registeredStack[registeredComponent][0].hooks.useEffect![1]);
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useEffect")
+          .getRegisteredComponentHooks(registeredComponent, "useEffect")
           ?.getRenderHooks(1, 3)
       ).toBeUndefined();
 
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          .getRegisteredComponentHooks(registeredComponent, "useCallback")
           ?.getRenderHooks(2, 1)
-      ).toEqual(registeredStack[registeredComponent][1].useCallback?.[0]);
+      ).toEqual(registeredStack[registeredComponent][1].hooks.useCallback?.[0]);
 
       expect(
         hooksCollector
-          .getRegisteredComponentHook(registeredComponent, "useCallback")
+          .getRegisteredComponentHooks(registeredComponent, "useCallback")
           ?.getRenderHooks(2, 2)
       ).toBeUndefined();
 
       expect(
-        hooksCollector.getRegisteredComponentHooks(registeredComponent)
-      ).toEqual(registeredStack[registeredComponent]);
+        hooksCollector.getRegisteredComponentRenders(registeredComponent)
+      ).toEqual(
+        registeredStack[registeredComponent].map((render) => render.hooks)
+      );
     });
 
     test("reset", () => {
@@ -187,29 +202,29 @@ describe("Hooks Collector", () => {
 
     test("Get unregistered component hooks / hook should provide correct values", () => {
       expect(
-        hooksCollector.getUnregisteredComponentHooks(unregisteredComponent)
+        hooksCollector.getUnregisteredComponentRenders(unregisteredComponent)
       ).toBeUndefined;
 
       hooksCollector.unregisteredComponents[unregisteredComponent] =
         unregisteredStack;
 
       expect(
-        hooksCollector.getUnregisteredComponentHooks(unregisteredComponent)
+        hooksCollector.getUnregisteredComponentRenders(unregisteredComponent)
       ).toEqual(unregisteredStack);
       expect(
-        hooksCollector.getUnregisteredComponentHook(
+        hooksCollector.getUnregisteredComponentHooks(
           unregisteredComponent,
           "useCallback"
         )
       ).toBeUndefined();
       expect(
         hooksCollector
-          .getUnregisteredComponentHook(unregisteredComponent, "useEffect")
+          .getUnregisteredComponentHooks(unregisteredComponent, "useEffect")
           ?.getHook(1)
       ).toEqual(unregisteredStack.useEffect[0]);
       expect(
         hooksCollector
-          .getUnregisteredComponentHook(unregisteredComponent, "useEffect")
+          .getUnregisteredComponentHooks(unregisteredComponent, "useEffect")
           ?.getHook(2)
       ).toBeUndefined();
 
@@ -228,6 +243,7 @@ describe("Hooks Collector", () => {
     const hooksCollector: ReactHooksCollector = new ReactHooksCollector();
 
     test("Register hook with not rendered component should create a record in unregistered components", () => {
+      // register useEffect
       const register = hooksCollector.registerHook(
         unregisteredComponent,
         "useEffect"
@@ -240,6 +256,13 @@ describe("Hooks Collector", () => {
       expect(hooksCollector.unregisteredComponents).toEqual(
         unregisteredStackDefault
       );
+
+      const useEffectHooks = hooksCollector.getUnregisteredComponentHooks(
+        unregisteredComponent,
+        "useEffect"
+      );
+
+      expect(useEffectHooks?.getHook(1)).toEqual({});
     });
 
     test("Render component and register hook should create new record", () => {
@@ -257,6 +280,7 @@ describe("Hooks Collector", () => {
         1
       );
 
+      // register useEffect
       const register = hooksCollector.registerHook(
         registeredComponent,
         "useEffect"
@@ -271,6 +295,13 @@ describe("Hooks Collector", () => {
       expect(hooksCollector.unregisteredComponents).toEqual(
         unregisteredStackDefault
       );
+
+      const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
+        registeredComponent,
+        "useEffect"
+      );
+
+      expect(useEffectHooks?.getRenderHooks(1, 1)).toEqual({});
     });
 
     test("2nd register hook with registered component should create second record", () => {
@@ -334,6 +365,44 @@ describe("Hooks Collector", () => {
       expect(hooksCollector.unregisteredComponents).toEqual(
         unregisteredStackWithTwoRecords
       );
+    });
+
+    test("Register more effects", () => {
+      let register;
+
+      // register useCallback
+      register = hooksCollector.registerHook(
+        registeredComponent,
+        "useCallback"
+      );
+
+      expect(register.index).toBe(0);
+      expect(register.renderIndex).toBe(1);
+
+      const useCallbackHooksRegistered =
+        hooksCollector.getRegisteredComponentHooks(
+          registeredComponent,
+          "useCallback"
+        );
+
+      expect(useCallbackHooksRegistered?.getRenderHooks(2, 1)).toEqual({});
+
+      // register useCallback
+      register = hooksCollector.registerHook(
+        unregisteredComponent,
+        "useCallback"
+      );
+
+      expect(register.index).toBe(0);
+      expect(register.renderIndex).toBeUndefined();
+
+      const useCallbackHooksUnregistered =
+        hooksCollector.getUnregisteredComponentHooks(
+          unregisteredComponent,
+          "useCallback"
+        );
+
+      expect(useCallbackHooksUnregistered?.getHook(1)).toEqual({});
     });
   });
 
@@ -402,7 +471,7 @@ describe("Hooks Collector", () => {
     const hooksCollector: ReactHooksCollector = new ReactHooksCollector();
 
     test("Set hook on registered component without hook", () => {
-      const registeredComponents = { [registeredComponent]: [{}] };
+      const registeredComponents = { [registeredComponent]: [{ hooks: {} }] };
 
       hooksCollector.registeredComponents = registeredComponents;
 
@@ -505,6 +574,102 @@ describe("Hooks Collector", () => {
       );
     });
   });
+
+  test("Complete workflow", () => {
+    const testId = "test-id";
+    const props1 = { action: jest.fn() };
+    const props2 = { unmountAction: jest.fn() };
+    const hooksCollector: ReactHooksCollector = new ReactHooksCollector();
+
+    hooksCollector.componentRender(registeredComponent, testId);
+
+    expect(hooksCollector["activeDataTestId"]).toBe(testId);
+
+    expect(
+      hooksCollector.getComponentRenderCount(registeredComponent, testId)
+    ).toBe(1);
+
+    let register;
+
+    register = hooksCollector.registerHook(registeredComponent, "useEffect");
+
+    hooksCollector.setHook({
+      componentName: registeredComponent,
+      index: register.index,
+      renderIndex: register.renderIndex,
+      type: "useEffect",
+      props: props1
+    });
+
+    expect(
+      hooksCollector.getRegisteredComponentRenders(registeredComponent, testId)
+    ).toEqual([
+      {
+        useEffect: [props1]
+      }
+    ]);
+    expect(
+      hooksCollector.getRegisteredComponentRenders(
+        registeredComponent,
+        "fake-id"
+      )
+    ).toEqual([]);
+
+    // first render, first register
+    const componentHook = hooksCollector.getRegisteredComponentHooks(
+      registeredComponent,
+      "useEffect",
+      testId
+    );
+
+    expect(componentHook?.getRender(1)).toEqual([props1]);
+    expect(componentHook?.getRender(2)).toBeUndefined();
+    expect(componentHook?.getRenderHooks(1, 1)).toEqual(props1);
+    expect(componentHook?.getRenderHooks(1, 2)).toBeUndefined();
+    expect(componentHook?.getRenderHooks(2, 1)).toBeUndefined();
+
+    expect(
+      hooksCollector.getRegisteredComponentHooks(
+        registeredComponent,
+        "useEffect",
+        "fake-id"
+      )
+    ).toBeUndefined();
+
+    // first render, second register
+    register = hooksCollector.registerHook(registeredComponent, "useEffect");
+
+    hooksCollector.setHook({
+      componentName: registeredComponent,
+      index: register.index,
+      renderIndex: register.renderIndex,
+      type: "useEffect",
+      props: props2
+    });
+
+    expect(componentHook?.getRender(1)).toEqual([props1, props2]);
+    expect(componentHook?.getRenderHooks(1, 2)).toEqual(props2);
+
+    hooksCollector.componentRender(registeredComponent, testId);
+
+    expect(
+      hooksCollector.getComponentRenderCount(registeredComponent, testId)
+    ).toBe(2);
+
+    // second render, first register
+    register = hooksCollector.registerHook(registeredComponent, "useEffect");
+
+    hooksCollector.setHook({
+      componentName: registeredComponent,
+      index: register.index,
+      renderIndex: register.renderIndex,
+      type: "useEffect",
+      props: props2
+    });
+
+    expect(componentHook?.getRender(2)).toEqual([props2]);
+    expect(componentHook?.getRenderHooks(2, 1)).toEqual(props2);
+  });
 });
 
 describe("Mock React Hooks", () => {
@@ -533,7 +698,7 @@ describe("Mock React Hooks", () => {
     const reactOrigin = { someProperty: "property", useEffect: oiginUseEffect };
     const mockedReactOrigin = mockReactHooks(reactOrigin, hooksCollector);
 
-    const registeredComponent = hooksCollector.getRegisteredComponentHook(
+    const registeredComponent = hooksCollector.getRegisteredComponentHooks(
       componentName,
       "useEffect"
     );
@@ -546,12 +711,12 @@ describe("Mock React Hooks", () => {
     test("Before calling useEffect, hooks collector mustn't contain hooks", () => {
       expect(
         hooksCollector
-          .getRegisteredComponentHook(componentName, "useEffect")
+          .getRegisteredComponentHooks(componentName, "useEffect")
           ?.getRender(1)
       ).toBeUndefined();
-      expect(hooksCollector.getRegisteredComponentHooks(componentName)).toEqual(
-        [{}]
-      );
+      expect(
+        hooksCollector.getRegisteredComponentRenders(componentName)
+      ).toEqual([{}]);
     });
 
     test("When useEfect is called, it must record an action and deps", () => {

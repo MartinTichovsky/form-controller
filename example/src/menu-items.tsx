@@ -1,15 +1,16 @@
-import { SimpleForm } from "./basic/SimpleForm";
-import { SimpleFormWithDefaultValues } from "./basic/SimpleFormDefaultValues";
-import { SimpleFormValidateOnChange } from "./basic/SimpleFormValidateOnChange";
-import { SimpleFormWithDisabledSubmit } from "./basic/SimpleFormWithDisabledSubmit";
-import { SimpleFormWithLabel } from "./basic/SimpleFormWithLabel";
-import { ComponentError } from "./customized/ComponentError";
-import { ComponentInput } from "./customized/ComponentInput";
-import { ComponentSubmit } from "./customized/ComponentSubmit";
-import { ConditionForm } from "./customized/ConditionForm";
-import { CustomSubmit } from "./customized/CustomSubmit";
-import { DisabledInput } from "./customized/DisabledInput";
-import { DisableOnSubmit } from "./customized/DisableOnSubmit";
+import { GeneralCondition } from "form-controller/lib/examples/GeneralCondition";
+import { GeneralDisableAllOnSubmit } from "form-controller/lib/examples/GeneralDisableAllOnSubmit";
+import { GeneralErrorFor } from "form-controller/lib/examples/GeneralErrorFor";
+import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
+import { GeneralValidateOnChange } from "form-controller/lib/examples/GeneralValidateOnChange";
+import { GeneralValidation } from "form-controller/lib/examples/GeneralValidation";
+import { SubmitDefaultDisabled } from "form-controller/lib/examples/SubmitDefaultDisabled";
+import { SubmitDisabledOnSubmit } from "form-controller/lib/examples/SubmitDisabledOnSubmit";
+import { TextField } from "form-controller/lib/examples/TextField";
+import { TextFieldDefaultValues } from "form-controller/lib/examples/TextFieldDefaultValues";
+import { TextFieldDisabled } from "form-controller/lib/examples/TextFieldDisabled";
+import { TextFieldErrorComponent } from "form-controller/lib/examples/TextFieldErrorComponent";
+import { TextFieldInputComponent } from "form-controller/lib/examples/TextFieldInputComponent";
 
 interface MenuIitem {
   label: string;
@@ -22,68 +23,101 @@ interface MenuItems {
 }
 
 export const menuItems: MenuItems = {
-  Basic: [
+  "Text Fields": [
     {
-      label: "Simple Form",
-      key: "simple-form",
-      render: () => <SimpleForm />
+      label: "Basic Text Fields",
+      key: "text-field",
+      render: () => <TextField />
     },
     {
-      label: "Simple Form with Default Values",
-      key: "simple-form-with-default-values",
-      render: () => <SimpleFormWithDefaultValues />
+      label: "Disabled Text Field",
+      key: "disabled-text-field",
+      render: () => <TextFieldDisabled />
     },
     {
-      label: "Simple Form with Label",
-      key: "simple-form-with-label",
-      render: () => <SimpleFormWithLabel />
+      label: "Default Values",
+      key: "default-values",
+      render: () => <TextFieldDefaultValues />
     },
     {
-      label: "Simple Form with Disabled Submit",
-      key: "simple-form-with-disabled-submit",
-      render: () => <SimpleFormWithDisabledSubmit />
+      label: "Error Component",
+      key: "error-component",
+      render: () => <TextFieldErrorComponent />
     },
     {
-      label: "Simple Form with Validate on Change",
-      key: "simple-form-with-validate-on-change",
-      render: () => <SimpleFormValidateOnChange />
+      label: "Input Component",
+      key: "input-component",
+      render: () => <TextFieldInputComponent />
     }
   ],
-  Customized: [
+  Submit: [
     {
-      label: "Condition in Form",
-      key: "condition-in-form",
-      render: () => <ConditionForm />
+      label: "Disabled Submit by Default",
+      key: "disabled-submit-by-default",
+      render: () => <SubmitDefaultDisabled />
     },
     {
-      label: "Disabled Input",
-      key: "disabled-input",
-      render: () => <DisabledInput />
-    },
-    {
-      label: "Component Input",
-      key: "component-input",
-      render: () => <ComponentInput />
-    },
-    {
-      label: "Component Error",
-      key: "component-error",
-      render: () => <ComponentError />
-    },
-    {
-      label: "Component Submit",
-      key: "component-submit",
-      render: () => <ComponentSubmit />
-    },
-    {
-      label: "Custom Submit",
-      key: "custom-submit",
-      render: () => <CustomSubmit />
-    },
-    {
-      label: "Disable on Submit",
-      key: "disable-on-submit",
-      render: () => <DisableOnSubmit />
+      label: "Disabled Submit After Click",
+      key: "disabled-submit-after-click",
+      render: () => <SubmitDisabledOnSubmit />
     }
+  ],
+  General: [
+    {
+      label: "Condition",
+      key: "condition",
+      render: () => <GeneralCondition />
+    },
+    {
+      label: "Disable All on Submit",
+      key: "disable-all-on-submit",
+      render: () => <GeneralDisableAllOnSubmit />
+    },
+    {
+      label: "Error Outside the Input",
+      key: "error-outside-the-input",
+      render: () => <GeneralErrorFor />
+    },
+    {
+      label: "Label",
+      key: "label",
+      render: () => <GeneralLabel />
+    },
+    {
+      label: "Validate on Change",
+      key: "validate-on-change",
+      render: () => <GeneralValidateOnChange />
+    },
+    {
+      label: "Validation Provided Through Parent Element",
+      key: "validation",
+      render: () => <GeneralValidation />
+    }
+
+    // {
+    //   label: "Component Input",
+    //   key: "component-input",
+    //   render: () => <ComponentInput />
+    // },
+    // {
+    //   label: "Component Error",
+    //   key: "component-error",
+    //   render: () => <ComponentError />
+    // },
+    // {
+    //   label: "Component Submit",
+    //   key: "component-submit",
+    //   render: () => <ComponentSubmit />
+    // },
+    // {
+    //   label: "Custom Submit",
+    //   key: "custom-submit",
+    //   render: () => <CustomSubmit />
+    // },
+    // {
+    //   label: "Disable on Submit",
+    //   key: "disable-on-submit",
+    //   render: () => <DisableOnSubmit />
+    // }
   ]
 };

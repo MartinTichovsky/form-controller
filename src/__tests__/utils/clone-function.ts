@@ -5,14 +5,21 @@ if (!("clone" in Function.prototype)) {
   Function.prototype["clone"] = function (hooksCollector: ReactHooksCollector) {
     const _this = this;
     const _overload = {
+      // this scope will be called on each render
       [_this.name]: function () {
         if (!arguments.length) {
           return undefined;
         }
 
-        hooksCollector.componentRender(_this.name);
+        hooksCollector.componentRender(
+          _this.name,
+          arguments?.[0]?.["data-testid"]
+        );
 
-        return _this.apply(_this, arguments);
+        const result = _this.apply(_this, arguments);
+        hooksCollector.componentUnmount();
+
+        return result;
       }
     };
 
