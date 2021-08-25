@@ -82,7 +82,7 @@ export class ReactHooksCollector {
 
     return this.registeredComponents[componentName]
       .filter((render) => render.dataTestId === dataTestId)
-      ?.map((render) => render.hooks);
+      .map((render) => render.hooks);
   }
 
   getRegisteredComponentHooks(

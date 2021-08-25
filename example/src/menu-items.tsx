@@ -2,6 +2,7 @@ import { GeneralCondition } from "form-controller/lib/examples/GeneralCondition"
 import { GeneralErrorFor } from "form-controller/lib/examples/GeneralErrorFor";
 import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
 import { GeneralValidateOnChange } from "form-controller/lib/examples/GeneralValidateOnChange";
+import { GeneralValidation } from "form-controller/lib/examples/GeneralValidation";
 import { SubmitDefaultDisabled } from "form-controller/lib/examples/SubmitDefaultDisabled";
 import { SubmitDisabledOnSubmit } from "form-controller/lib/examples/SubmitDisabledOnSubmit";
 import { TextField } from "form-controller/lib/examples/TextField";
@@ -53,6 +54,11 @@ export const menuItems: MenuItems = {
       label: "Condition",
       key: "condition",
       render: () => <GeneralCondition />
+    },
+    {
+      label: "Validation Provided Through Parent Element",
+      key: "validation",
+      render: () => <GeneralValidation />
     },
     {
       label: "Error Outside the Input",

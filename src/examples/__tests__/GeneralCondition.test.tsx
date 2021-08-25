@@ -19,7 +19,7 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-test("Basic workflow", async () => {
+test("GeneralCondition", async () => {
   const { container } = render(<GeneralCondition />);
 
   // Error messages should not exist

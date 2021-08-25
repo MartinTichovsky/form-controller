@@ -16,7 +16,7 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-test("Basic workflow", () => {
+test("SubmitDefaultDisabled", () => {
   const { container } = render(<SubmitDefaultDisabled />);
 
   // Error messages should not exist

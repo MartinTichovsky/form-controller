@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { GeneralValidateOnChange } from "../GeneralValidateOnChange";
+import { GeneralValidation } from "../GeneralValidation";
 import { testErrorMessage } from "../utils/selectors";
 
 console.log = jest.fn();
@@ -15,8 +15,18 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-test("GeneralValidateOnChange", () => {
-  const { container } = render(<GeneralValidateOnChange />);
+test("GeneralValidation", () => {
+  const { container } = render(<GeneralValidation />);
+
+  // Error messages should not exist
+  testErrorMessage(container, 0);
+
+  // submit invalid form
+  fireEvent.click(screen.getByTestId(submitTestId));
+  testErrorMessage(container, 2);
+
+  // reset the form
+  fireEvent.click(screen.getByTestId(resetTestId));
 
   // Error messages should not exist
   testErrorMessage(container, 0);
@@ -53,6 +63,4 @@ test("GeneralValidateOnChange", () => {
   fireEvent.click(screen.getByTestId(submitTestId));
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
-
-  fireEvent.click(screen.getByTestId(resetTestId));
 });

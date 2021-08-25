@@ -19,7 +19,7 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-test("Basic workflow", async () => {
+test("GeneralErrorFor", async () => {
   const { container } = render(<GeneralErrorFor />);
 
   // Error messages should not exist
@@ -49,6 +49,11 @@ test("Basic workflow", async () => {
 
   expect(screen.queryByText(givenNameErrorText)).not.toBeInTheDocument();
   expect(screen.queryByText(surnameErrorText)).not.toBeInTheDocument();
+
+  // submit valid form
+  fireEvent.click(screen.getByTestId(submitTestId));
+  expect(console.log).toBeCalledTimes(1);
+  expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {

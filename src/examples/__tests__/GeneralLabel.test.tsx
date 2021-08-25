@@ -16,7 +16,7 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-test("Basic workflow", () => {
+test("GeneralLabel", () => {
   const { container } = render(<GeneralLabel />);
 
   // three labels exist

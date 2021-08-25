@@ -15,7 +15,7 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-test("Basic workflow", () => {
+test("TextFieldDefaultValues", () => {
   const { container } = render(<TextFieldDefaultValues />);
 
   // must have default values
@@ -46,6 +46,9 @@ test("Basic workflow", () => {
   });
 
   testErrorMessage(container, 2);
+
+  fireEvent.click(screen.getByTestId(submitTestId));
+  expect(console.log).toBeCalledTimes(1);
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));

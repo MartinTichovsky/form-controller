@@ -43,6 +43,12 @@ describe("Hooks Collector", () => {
         hooksCollector.getRegisteredComponentRenders(registeredComponent)
       ).toBeUndefined();
       expect(
+        hooksCollector.getRegisteredComponentRenders(
+          registeredComponent,
+          "fake-id"
+        )
+      ).toBeUndefined();
+      expect(
         hooksCollector.getRegisteredComponentHooks(
           registeredComponent,
           "useEffect"

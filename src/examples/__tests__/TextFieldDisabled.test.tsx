@@ -16,7 +16,7 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-test("Basic workflow", () => {
+test("TextFieldDisabled", () => {
   const { container } = render(<TextFieldDisabled />);
 
   // first and third input must be disabled
