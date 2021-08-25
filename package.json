@@ -51,6 +51,9 @@
       "**/?(*.)+(spec|test).ts?(x)"
     ],
     "preset": "ts-jest",
+    "setupFiles": [
+      "./jest-react-hooks.js"
+    ],
     "testEnvironment": "jsdom",
     "roots": [
       "<rootDir>/src"

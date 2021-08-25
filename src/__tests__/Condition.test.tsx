@@ -3,7 +3,6 @@ import React from "react";
 import { Condition } from "../components/Condition/Condition";
 import { ConditionComponent } from "../components/Condition/ConditionComponent";
 import { Controller } from "../controller";
-import { ReactHooksCollector } from "./utils/react-hooks-collector";
 import { getGeneratedValues } from "./utils/value-generator";
 
 type Form = {
@@ -12,36 +11,6 @@ type Form = {
 
 const testid = "test-id";
 let controller: Controller<Form>;
-let hooksCollector: ReactHooksCollector;
-
-// mocking react to get statistics from calling hooks
-jest.mock("react", () => {
-  const origin = jest.requireActual("react");
-  const {
-    mockReactHooks,
-    ReactHooksCollector
-  } = require("./utils/react-hooks-collector");
-  hooksCollector = new ReactHooksCollector();
-
-  return mockReactHooks(origin, hooksCollector);
-});
-
-// mocking the component to get statistics of render count
-jest.mock("../components/Condition/ConditionComponent", () => {
-  const origin = jest.requireActual(
-    "../components/Condition/ConditionComponent"
-  );
-  const { mockComponent } = require("./utils/clone-function");
-
-  return {
-    ...origin,
-    ConditionComponent: mockComponent(
-      origin,
-      origin.ConditionComponent.name,
-      hooksCollector
-    )
-  };
-});
 
 const testValidForm = (unmount: () => void) => {
   const useEffectHooks = hooksCollector.getRegisteredComponentHooks(

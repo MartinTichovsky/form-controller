@@ -17,6 +17,10 @@ type ComponentHooks = {
   [key in HookType]?: Hook[];
 };
 
+declare global {
+  var hooksCollector: ReactHooksCollector;
+}
+
 export class ReactHooksCollector {
   registeredComponents: {
     [key: string]: { dataTestId?: string; hooks: ComponentHooks }[];

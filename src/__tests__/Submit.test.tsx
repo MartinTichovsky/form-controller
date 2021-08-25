@@ -4,7 +4,6 @@ import React from "react";
 import { Submit } from "../components/Submit/Submit";
 import { SubmitComponent } from "../components/Submit/SubmitComponent";
 import { Controller } from "../controller";
-import { ReactHooksCollector } from "./utils/react-hooks-collector";
 import { getGeneratedValues } from "./utils/value-generator";
 
 type Form = {
@@ -13,34 +12,6 @@ type Form = {
 
 const buttonText = "Test text";
 let controller: Controller<Form>;
-let hooksCollector: ReactHooksCollector;
-
-// mocking react to get statistics from calling hooks
-jest.mock("react", () => {
-  const origin = jest.requireActual("react");
-  const {
-    mockReactHooks,
-    ReactHooksCollector
-  } = require("./utils/react-hooks-collector");
-  hooksCollector = new ReactHooksCollector();
-
-  return mockReactHooks(origin, hooksCollector);
-});
-
-// mocking the component to get statistics of render count
-jest.mock("../components/Submit/SubmitComponent", () => {
-  const origin = jest.requireActual("../components/Submit/SubmitComponent");
-  const { mockComponent } = require("./utils/clone-function");
-
-  return {
-    ...origin,
-    SubmitComponent: mockComponent(
-      origin,
-      origin.SubmitComponent.name,
-      hooksCollector
-    )
-  };
-});
 
 const defaultFunctionalityTest = (
   unmount: () => void,

@@ -4,7 +4,6 @@ import React from "react";
 import { Input } from "../components/Input/Input";
 import { InputComponent } from "../components/Input/InputComponent";
 import { Controller } from "../controller";
-import { ReactHooksCollector } from "./utils/react-hooks-collector";
 import { getGeneratedValues } from "./utils/value-generator";
 
 type Form = {
@@ -13,34 +12,6 @@ type Form = {
 
 const testid = "test-id";
 let controller: Controller<Form>;
-let hooksCollector: ReactHooksCollector;
-
-// mocking react to get statistics from calling hooks
-jest.mock("react", () => {
-  const origin = jest.requireActual("react");
-  const {
-    mockReactHooks,
-    ReactHooksCollector
-  } = require("./utils/react-hooks-collector");
-  hooksCollector = new ReactHooksCollector();
-
-  return mockReactHooks(origin, hooksCollector);
-});
-
-// mocking the component to get statistics of render count
-jest.mock("../components/Input/InputComponent", () => {
-  const origin = jest.requireActual("../components/Input/InputComponent");
-  const { mockComponent } = require("./utils/clone-function");
-
-  return {
-    ...origin,
-    InputComponent: mockComponent(
-      origin,
-      origin.InputComponent.name,
-      hooksCollector
-    )
-  };
-});
 
 console.error = jest.fn();
 
