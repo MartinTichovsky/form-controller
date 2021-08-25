@@ -15,7 +15,7 @@ const submitTopTestId = "submit-top";
 test("SubmitDisabledOnSubmit", () => {
   const { container } = render(<SubmitDisabledOnSubmit />);
 
-  // Error messages should not exist
+  // error messages should not exist
   testErrorMessage(container, 0);
 
   // buttons must not be disabled

@@ -16,7 +16,7 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-test("GeneralErrorFor", async () => {
+test("GeneralDisableAllOnSubmit", async () => {
   render(<GeneralDisableAllOnSubmit />);
 
   expect(screen.getByTestId(input1TestId)).not.toBeDisabled();

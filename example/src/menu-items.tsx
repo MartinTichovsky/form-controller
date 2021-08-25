@@ -4,6 +4,8 @@ import { GeneralErrorFor } from "form-controller/lib/examples/GeneralErrorFor";
 import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
 import { GeneralValidateOnChange } from "form-controller/lib/examples/GeneralValidateOnChange";
 import { GeneralValidation } from "form-controller/lib/examples/GeneralValidation";
+import { SubmitComponent } from "form-controller/lib/examples/SubmitComponent";
+import { SubmitCustom } from "form-controller/lib/examples/SubmitCustom";
 import { SubmitDefaultDisabled } from "form-controller/lib/examples/SubmitDefaultDisabled";
 import { SubmitDisabledOnSubmit } from "form-controller/lib/examples/SubmitDisabledOnSubmit";
 import { TextField } from "form-controller/lib/examples/TextField";
@@ -60,6 +62,16 @@ export const menuItems: MenuItems = {
       label: "Disabled Submit After Click",
       key: "disabled-submit-after-click",
       render: () => <SubmitDisabledOnSubmit />
+    },
+    {
+      label: "Submit Component",
+      key: "submit-component",
+      render: () => <SubmitComponent />
+    },
+    {
+      label: "Submit Custom",
+      key: "submit-custom",
+      render: () => <SubmitCustom />
     }
   ],
   General: [
