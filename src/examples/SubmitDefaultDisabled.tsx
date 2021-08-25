@@ -1,5 +1,5 @@
 import React from "react";
-import { FormController, Input, Submit } from "..";
+import { FormController, Input, Submit } from "../index";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -7,7 +7,7 @@ type MyForm = {
   surname: string;
 };
 
-export const GeneralValidateOnChange = () => {
+export const SubmitDefaultDisabled = () => {
   return (
     <Template>
       <FormController<MyForm>
@@ -16,6 +16,16 @@ export const GeneralValidateOnChange = () => {
       >
         {(controller) => (
           <>
+            <div className="field-row">
+              <Submit
+                controller={controller}
+                data-testid="submit-top"
+                disableIfNotValid
+                disabledByDefault
+              >
+                Top Submit
+              </Submit>
+            </div>
             <div className="field-row">
               <Input
                 controller={controller}
@@ -39,8 +49,13 @@ export const GeneralValidateOnChange = () => {
               />
             </div>
             <div className="field-row">
-              <Submit data-testid="submit" controller={controller}>
-                Submit
+              <Submit
+                controller={controller}
+                data-testid="submit-bottom"
+                disableIfNotValid
+                disabledByDefault
+              >
+                Bottom Submit
               </Submit>{" "}
               <button
                 data-testid="reset"
@@ -51,7 +66,8 @@ export const GeneralValidateOnChange = () => {
               </button>
             </div>
             <div className="info">
-              * Validate on change, input an empty string to test it
+              * After filling all text inputs, the submit buttons will be
+              enabled
             </div>
           </>
         )}

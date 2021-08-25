@@ -18,7 +18,7 @@ const getRender = (key: string) => {
 
 export const App = () => {
   const [selectedKey, setSelectedKey] = React.useState(
-    getHash() || menuItems.Basic[0].key
+    getHash() || menuItems["Text Fields"][0].key
   );
 
   return (

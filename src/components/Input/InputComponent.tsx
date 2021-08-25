@@ -9,7 +9,7 @@ let idCounter = 0;
 const getRandomId = () => `input-${++idCounter}`;
 
 type State = {
-  error: false | string | undefined | null;
+  error: ValidationResult;
   isDisabled: boolean;
   isVisible: boolean;
 };
@@ -267,7 +267,9 @@ export const InputComponent = <
         ) : (
           label
         ))}
-      {state.error && <ErrorElement>{state.error}</ErrorElement>}
+      {state.error && state.error !== true && (
+        <ErrorElement>{state.error}</ErrorElement>
+      )}
     </>
   );
 };

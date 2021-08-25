@@ -53,7 +53,7 @@ export const SubmitComponent = <
   React.useEffect(() => {
     if (disableIfNotValid) {
       const onChangeAction = (isValid: boolean) => {
-        setDisabled(isValid === false);
+        setDisabled((controller.isSubmitted || disabledByDefault) && !isValid);
       };
 
       controller.subscribeOnChange(onChangeAction);

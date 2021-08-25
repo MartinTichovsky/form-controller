@@ -69,6 +69,11 @@ export const TextFieldDisabled = () => {
                 Reset
               </button>
             </div>
+            <div className="info">
+              * Salutation is disabled until the surname is not valid, the
+              surname is disabled until the first name is not valid and the
+              submit button is disabled until all text fields are filled
+            </div>
           </>
         )}
       </FormController>

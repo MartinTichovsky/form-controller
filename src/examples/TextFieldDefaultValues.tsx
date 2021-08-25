@@ -55,6 +55,7 @@ export const TextFieldDefaultValues = () => {
                 Reset
               </button>
             </div>
+            <div className="info">* Each text field has a default value</div>
           </>
         )}
       </FormController>

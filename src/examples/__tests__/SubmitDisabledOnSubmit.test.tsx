@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { SubmitDisabled } from "../SubmitDisabled";
+import { SubmitDisabledOnSubmit } from "../SubmitDisabledOnSubmit";
 import { testErrorMessage } from "../utils/selectors";
 
 console.log = jest.fn();
@@ -17,48 +17,62 @@ afterAll(() => {
 });
 
 test("Basic workflow", () => {
-  const { container } = render(<SubmitDisabled />);
+  const { container } = render(<SubmitDisabledOnSubmit />);
 
   // Error messages should not exist
   testErrorMessage(container, 0);
 
+  // buttons must not be disabled
+  expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
+  expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
+
+  // submit invalid form
+  fireEvent.click(screen.getByTestId(submitBottomTestId));
+
   // buttons must be disabled
   expect(screen.getByTestId(submitBottomTestId)).toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).toBeDisabled();
+
+  testErrorMessage(container, 2);
+
+  // reset form
+  fireEvent.click(screen.getByTestId(resetTestId));
+
+  // Error messages should not exist
+  testErrorMessage(container, 0);
+
+  // buttons must not be disabled
+  expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
+  expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input1TestId), {
     target: { value: " " }
   });
 
-  testErrorMessage(container, 1);
+  testErrorMessage(container, 0);
 
-  // buttons must be disabled
-  expect(screen.getByTestId(submitBottomTestId)).toBeDisabled();
-  expect(screen.getByTestId(submitTopTestId)).toBeDisabled();
+  // buttons must not be disabled
+  expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
+  expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input2TestId), {
     target: { value: " " }
   });
 
-  testErrorMessage(container, 2);
+  testErrorMessage(container, 0);
+
+  // buttons must not be disabled
+  expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
+  expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
+
+  // submit invalid form
+  fireEvent.click(screen.getByTestId(submitBottomTestId));
 
   // buttons must be disabled
   expect(screen.getByTestId(submitBottomTestId)).toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).toBeDisabled();
-
-  // input a valid text
-  fireEvent.change(screen.getByTestId(input1TestId), {
-    target: { value: "J" }
-  });
-
-  testErrorMessage(container, 1);
-
-  // input an empty value
-  fireEvent.change(screen.getByTestId(input1TestId), {
-    target: { value: "" }
-  });
 
   testErrorMessage(container, 2);
 
@@ -95,6 +109,4 @@ test("Basic workflow", () => {
   testErrorMessage(container, 0);
   expect(console.log).toBeCalledTimes(2);
   expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
-
-  fireEvent.click(screen.getByTestId(resetTestId));
 });

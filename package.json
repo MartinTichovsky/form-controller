@@ -5,9 +5,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "yarn clean && yarn build:tsc",
-    "build:tsc": "tsc --project tsconfig.build.json",
-    "build:watch": "yarn build:tsc --watch",
+    "build": "yarn clean && tsc --project tsconfig.build.json",
+    "build:local": "yarn clean && tsc --project tsconfig.local.json",
+    "build:watch": "yarn build:local --watch",
     "clean": "rimraf tsconfig*.tsbuildinfo lib",
     "test": "jest --no-cache --silent --collect-coverage",
     "test:examples": "jest --no-cache --collect-coverage src/examples",

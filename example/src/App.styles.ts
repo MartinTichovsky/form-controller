@@ -18,7 +18,8 @@ export const Content = styled("div")({
       fontFamily: "Arial",
       fontSize: ".8em",
       fontWeight: "bolder",
-      marginTop: 20
+      marginTop: 20,
+      maxWidth: 300
     }
   }
 });

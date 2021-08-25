@@ -1,6 +1,9 @@
+import { GeneralCondition } from "form-controller/lib/examples/GeneralCondition";
+import { GeneralErrorFor } from "form-controller/lib/examples/GeneralErrorFor";
 import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
 import { GeneralValidateOnChange } from "form-controller/lib/examples/GeneralValidateOnChange";
-import { SubmitDisabled } from "form-controller/lib/examples/SubmitDisabled";
+import { SubmitDefaultDisabled } from "form-controller/lib/examples/SubmitDefaultDisabled";
+import { SubmitDisabledOnSubmit } from "form-controller/lib/examples/SubmitDisabledOnSubmit";
 import { TextField } from "form-controller/lib/examples/TextField";
 import { TextFieldDefaultValues } from "form-controller/lib/examples/TextFieldDefaultValues";
 import { TextFieldDisabled } from "form-controller/lib/examples/TextFieldDisabled";
@@ -35,12 +38,27 @@ export const menuItems: MenuItems = {
   ],
   Submit: [
     {
-      label: "Disabled Submit",
-      key: "disabled-submit",
-      render: () => <SubmitDisabled />
+      label: "Disabled Submit by Default",
+      key: "disabled-submit-by-default",
+      render: () => <SubmitDefaultDisabled />
+    },
+    {
+      label: "Disabled Submit After Click",
+      key: "disabled-submit-after-click",
+      render: () => <SubmitDisabledOnSubmit />
     }
   ],
   General: [
+    {
+      label: "Condition",
+      key: "condition",
+      render: () => <GeneralCondition />
+    },
+    {
+      label: "Error Outside the Input",
+      key: "error-outside-the-input",
+      render: () => <GeneralErrorFor />
+    },
     {
       label: "Label",
       key: "label",
@@ -51,11 +69,7 @@ export const menuItems: MenuItems = {
       key: "validate-on-change",
       render: () => <GeneralValidateOnChange />
     }
-    // {
-    //   label: "Condition in Form",
-    //   key: "condition-in-form",
-    //   render: () => <ConditionForm />
-    // },
+
     // {
     //   label: "Component Input",
     //   key: "component-input",

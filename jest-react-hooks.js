@@ -10,6 +10,8 @@ jest.mock("react", () => {
   return mockReactHooks(origin, hooksCollector);
 });
 
+// mocking the component to get statistics of render count
+
 jest.mock("./src/components/Condition/ConditionComponent", () => {
   const origin = jest.requireActual(
     "./src/components/Condition/ConditionComponent"
@@ -26,7 +28,16 @@ jest.mock("./src/components/Condition/ConditionComponent", () => {
   };
 });
 
-// mocking the component to get statistics of render count
+jest.mock("./src/components/ErrorFor", () => {
+  const origin = jest.requireActual("./src/components/ErrorFor");
+  const { mockComponent } = require("./src/__tests__/utils/clone-function");
+
+  return {
+    ...origin,
+    ErrorFor: mockComponent(origin, origin.ErrorFor.name, hooksCollector)
+  };
+});
+
 jest.mock("./src/components/FormController/FormControllerComponent", () => {
   const origin = jest.requireActual(
     "./src/components/FormController/FormControllerComponent"
@@ -68,5 +79,15 @@ jest.mock("./src/components/Submit/SubmitComponent", () => {
       origin.SubmitComponent.name,
       hooksCollector
     )
+  };
+});
+
+jest.mock("./src/components/Validation", () => {
+  const origin = jest.requireActual("./src/components/Validation");
+  const { mockComponent } = require("./src/__tests__/utils/clone-function");
+
+  return {
+    ...origin,
+    Validation: mockComponent(origin, origin.Validation.name, hooksCollector)
   };
 });

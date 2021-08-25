@@ -51,6 +51,9 @@ export const TextField = () => {
                 Reset
               </button>
             </div>
+            <div className="info">
+              * Basic text field functionality, text fields must be not empty
+            </div>
           </>
         )}
       </FormController>

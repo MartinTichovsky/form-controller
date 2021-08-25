@@ -1,5 +1,5 @@
 import React from "react";
-import { FormController, Input, Submit } from "../index";
+import { Condition, FormController, Input, Submit } from "../";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -7,25 +7,15 @@ type MyForm = {
   surname: string;
 };
 
-export const SubmitDisabled = () => {
+export const formIsValidText = "Form is valid";
+export const submitConditionText = "Submit button was clicked";
+
+export const GeneralCondition = () => {
   return (
     <Template>
-      <FormController<MyForm>
-        onSubmit={(fields) => console.log(fields)}
-        validateOnChange
-      >
+      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
         {(controller) => (
           <>
-            <div className="field-row">
-              <Submit
-                controller={controller}
-                data-testid="submit-top"
-                disableIfNotValid
-                disabledByDefault
-              >
-                Top Submit
-              </Submit>
-            </div>
             <div className="field-row">
               <Input
                 controller={controller}
@@ -48,14 +38,18 @@ export const SubmitDisabled = () => {
                 }
               />
             </div>
+            <Condition controller={controller} ifFormValid>
+              <div className="field-row">{formIsValidText}</div>
+            </Condition>
+            <Condition
+              controller={controller}
+              customCondition={() => controller.isSubmitted}
+            >
+              <div className="field-row">{submitConditionText}</div>
+            </Condition>
             <div className="field-row">
-              <Submit
-                controller={controller}
-                data-testid="submit-bottom"
-                disableIfNotValid
-                disabledByDefault
-              >
-                Bottom Submit
+              <Submit controller={controller} data-testid="submit">
+                Submit
               </Submit>{" "}
               <button
                 data-testid="reset"
@@ -64,6 +58,11 @@ export const SubmitDisabled = () => {
               >
                 Reset
               </button>
+            </div>
+            <div className="info">
+              * Text `Form is valid` will be shown after all text inputs are
+              valid. Text `Submit button was clicked` will be shown after click
+              on the submit button.
             </div>
           </>
         )}

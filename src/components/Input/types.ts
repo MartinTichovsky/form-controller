@@ -1,4 +1,4 @@
-import { Controller, FormFields } from "../../controller";
+import { Controller, FormFields, ValidationResult } from "../../controller";
 
 export interface InitialState {
   isDisabled: boolean;
@@ -83,7 +83,7 @@ export interface InputComponentType<
           validate?: (
             value: T[K] | undefined,
             props: typeof rest
-          ) => false | string | null | undefined;
+          ) => ValidationResult;
           value?: undefined;
         }
       | {

@@ -1,5 +1,6 @@
 import React from "react";
 import { FormController, Input, Submit } from "..";
+import { ErrorFor } from "../components/ErrorFor";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -7,39 +8,47 @@ type MyForm = {
   surname: string;
 };
 
-export const GeneralValidateOnChange = () => {
+export const givenNameErrorText = "Provide a valid given name";
+export const surnameErrorText = "Provide a valid surname";
+
+export const GeneralErrorFor = () => {
   return (
     <Template>
-      <FormController<MyForm>
-        onSubmit={(fields) => console.log(fields)}
-        validateOnChange
-      >
+      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
         {(controller) => (
           <>
             <div className="field-row">
               <Input
                 controller={controller}
                 data-testid="input-1"
+                hideError
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) =>
-                  !value?.trim() && "Provide a valid given name"
-                }
+                validate={(value) => !value?.trim()}
               />
+            </div>
+            <div className="field-row">
+              <ErrorFor controller={controller} name="givenName">
+                {givenNameErrorText}
+              </ErrorFor>
             </div>
             <div className="field-row">
               <Input
                 controller={controller}
                 data-testid="input-2"
+                hideError
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) =>
-                  !value?.trim() && "Provide a valid surname"
-                }
+                validate={(value) => !value?.trim()}
               />
             </div>
             <div className="field-row">
-              <Submit data-testid="submit" controller={controller}>
+              <ErrorFor controller={controller} name="surname">
+                {surnameErrorText}
+              </ErrorFor>
+            </div>
+            <div className="field-row">
+              <Submit controller={controller} data-testid="submit">
                 Submit
               </Submit>{" "}
               <button
@@ -51,7 +60,8 @@ export const GeneralValidateOnChange = () => {
               </button>
             </div>
             <div className="info">
-              * Validate on change, input an empty string to test it
+              * When a text field is not valid, error message outside the Input
+              will be shown
             </div>
           </>
         )}

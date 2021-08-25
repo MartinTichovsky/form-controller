@@ -59,7 +59,9 @@ export const GeneralLabel = () => {
                 Reset
               </button>
             </div>
-            <div className="info">* Three ways how to provide a label</div>
+            <div className="info">
+              * Three different ways how to provide a label
+            </div>
           </>
         )}
       </FormController>

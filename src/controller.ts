@@ -30,7 +30,7 @@ export type ValidatorAction = () => ValidationResult;
 export type ValidatorResultAction = (
   validationResult: ValidationResult
 ) => void;
-export type ValidationResult = false | string | null | undefined;
+export type ValidationResult = boolean | string | null | undefined;
 
 export class Controller<T extends FormFields<T>> {
   static uniqueIndex: number = 0;
@@ -329,8 +329,8 @@ export class Controller<T extends FormFields<T>> {
   }
 
   public submit() {
-    this.validate();
     this.isSubmitted = true;
+    this.validate();
 
     if (this._onSubmit && this.isValid) {
       this._onSubmit(this.fields, this);
