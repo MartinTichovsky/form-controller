@@ -11,10 +11,6 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 test("TextFieldDefaultValues", () => {
   const { container } = render(<TextFieldDefaultValues />);
 

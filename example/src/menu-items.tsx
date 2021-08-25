@@ -1,4 +1,5 @@
 import { GeneralCondition } from "form-controller/lib/examples/GeneralCondition";
+import { GeneralDisableAllOnSubmit } from "form-controller/lib/examples/GeneralDisableAllOnSubmit";
 import { GeneralErrorFor } from "form-controller/lib/examples/GeneralErrorFor";
 import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
 import { GeneralValidateOnChange } from "form-controller/lib/examples/GeneralValidateOnChange";
@@ -8,6 +9,8 @@ import { SubmitDisabledOnSubmit } from "form-controller/lib/examples/SubmitDisab
 import { TextField } from "form-controller/lib/examples/TextField";
 import { TextFieldDefaultValues } from "form-controller/lib/examples/TextFieldDefaultValues";
 import { TextFieldDisabled } from "form-controller/lib/examples/TextFieldDisabled";
+import { TextFieldErrorComponent } from "form-controller/lib/examples/TextFieldErrorComponent";
+import { TextFieldInputComponent } from "form-controller/lib/examples/TextFieldInputComponent";
 
 interface MenuIitem {
   label: string;
@@ -22,7 +25,7 @@ interface MenuItems {
 export const menuItems: MenuItems = {
   "Text Fields": [
     {
-      label: "Text Field",
+      label: "Basic Text Fields",
       key: "text-field",
       render: () => <TextField />
     },
@@ -35,6 +38,16 @@ export const menuItems: MenuItems = {
       label: "Default Values",
       key: "default-values",
       render: () => <TextFieldDefaultValues />
+    },
+    {
+      label: "Error Component",
+      key: "error-component",
+      render: () => <TextFieldErrorComponent />
+    },
+    {
+      label: "Input Component",
+      key: "input-component",
+      render: () => <TextFieldInputComponent />
     }
   ],
   Submit: [
@@ -56,9 +69,9 @@ export const menuItems: MenuItems = {
       render: () => <GeneralCondition />
     },
     {
-      label: "Validation Provided Through Parent Element",
-      key: "validation",
-      render: () => <GeneralValidation />
+      label: "Disable All on Submit",
+      key: "disable-all-on-submit",
+      render: () => <GeneralDisableAllOnSubmit />
     },
     {
       label: "Error Outside the Input",
@@ -74,6 +87,11 @@ export const menuItems: MenuItems = {
       label: "Validate on Change",
       key: "validate-on-change",
       render: () => <GeneralValidateOnChange />
+    },
+    {
+      label: "Validation Provided Through Parent Element",
+      key: "validation",
+      render: () => <GeneralValidation />
     }
 
     // {

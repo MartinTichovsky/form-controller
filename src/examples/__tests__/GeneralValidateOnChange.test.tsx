@@ -11,14 +11,10 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 test("GeneralValidateOnChange", () => {
   const { container } = render(<GeneralValidateOnChange />);
 
-  // Error messages should not exist
+  // error messages should not exist
   testErrorMessage(container, 0);
 
   // input an empty value should show an error

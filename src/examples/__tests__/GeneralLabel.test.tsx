@@ -12,10 +12,6 @@ const input3TestId = "input-3";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 test("GeneralLabel", () => {
   const { container } = render(<GeneralLabel />);
 

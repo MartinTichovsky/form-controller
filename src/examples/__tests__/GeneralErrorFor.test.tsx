@@ -15,14 +15,10 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 test("GeneralErrorFor", async () => {
   const { container } = render(<GeneralErrorFor />);
 
-  // Error messages should not exist
+  // error messages should not exist
   testErrorMessage(container, 0);
 
   expect(screen.queryByText(givenNameErrorText)).not.toBeInTheDocument();

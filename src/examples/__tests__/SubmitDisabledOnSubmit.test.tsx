@@ -12,10 +12,6 @@ const resetTestId = "reset";
 const submitBottomTestId = "submit-bottom";
 const submitTopTestId = "submit-top";
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 test("SubmitDisabledOnSubmit", () => {
   const { container } = render(<SubmitDisabledOnSubmit />);
 
