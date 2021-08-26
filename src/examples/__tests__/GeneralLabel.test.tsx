@@ -15,24 +15,26 @@ const submitTestId = "submit";
 test("GeneralLabel", () => {
   const { container } = render(<GeneralLabel />);
 
-  // three labels exist
+  // three labels must exist
   const labels = container.querySelectorAll("label");
   expect(labels.length).toBe(3);
 
-  // click on the first
+  // click on the first label
   userEvent.click(screen.getByText("Salutation"));
   expect(screen.getByTestId(input1TestId)).toHaveFocus();
 
-  // click on the second
+  // click on the second label
   userEvent.click(screen.getByText("Given name"));
   expect(screen.getByTestId(input2TestId)).toHaveFocus();
 
-  // click on the third
+  // click on the third label
   userEvent.click(screen.getByText("Surname"));
   expect(screen.getByTestId(input3TestId)).toHaveFocus();
 
   // submit valid form
   fireEvent.click(screen.getByTestId(submitTestId));
+
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).toBeCalledWith({});
 

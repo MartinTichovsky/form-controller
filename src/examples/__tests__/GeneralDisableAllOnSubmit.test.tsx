@@ -19,6 +19,7 @@ afterAll(() => {
 test("GeneralDisableAllOnSubmit", async () => {
   render(<GeneralDisableAllOnSubmit />);
 
+  // all fields must not be disabled
   expect(screen.getByTestId(input1TestId)).not.toBeDisabled();
   expect(screen.getByTestId(input2TestId)).not.toBeDisabled();
   expect(screen.getByTestId(radio1TestId)).not.toBeDisabled();
@@ -27,6 +28,7 @@ test("GeneralDisableAllOnSubmit", async () => {
   // submit the form
   fireEvent.click(screen.getByTestId(submitTestId));
 
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).toBeCalledWith({});
 
@@ -39,6 +41,7 @@ test("GeneralDisableAllOnSubmit", async () => {
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
+  // all inputs most not be disabled
   expect(screen.getByTestId(input1TestId)).not.toBeDisabled();
   expect(screen.getByTestId(input2TestId)).not.toBeDisabled();
   expect(screen.getByTestId(radio1TestId)).not.toBeDisabled();

@@ -4,24 +4,24 @@ import { ConditionComponentType } from "./types";
 export const ConditionComponent: ConditionComponentType = ({
   children,
   controller,
-  customCondition,
-  ifFormValid
+  ifFormValid,
+  showIf
 }) => {
   const [isVisible, setIsVisible] = React.useState(false);
 
   React.useEffect(() => {
     const action = (isValid: boolean) => {
-      if (ifFormValid === undefined && !customCondition) {
+      if (ifFormValid === undefined && !showIf) {
         setIsVisible(true);
       }
-      if (ifFormValid !== undefined && !customCondition) {
+      if (ifFormValid !== undefined && !showIf) {
         isValid ? setIsVisible(true) : setIsVisible(false);
       }
-      if (ifFormValid === undefined && customCondition) {
-        customCondition() ? setIsVisible(true) : setIsVisible(false);
+      if (ifFormValid === undefined && showIf) {
+        showIf() ? setIsVisible(true) : setIsVisible(false);
       }
-      if (ifFormValid !== undefined && customCondition) {
-        isValid && customCondition() ? setIsVisible(true) : setIsVisible(false);
+      if (ifFormValid !== undefined && showIf) {
+        isValid && showIf() ? setIsVisible(true) : setIsVisible(false);
       }
     };
 
@@ -30,7 +30,7 @@ export const ConditionComponent: ConditionComponentType = ({
     return () => {
       controller.unsubscribeOnChange(action);
     };
-  }, [controller, customCondition, ifFormValid]);
+  }, [controller, ifFormValid, showIf]);
 
   return <>{isVisible && children}</>;
 };

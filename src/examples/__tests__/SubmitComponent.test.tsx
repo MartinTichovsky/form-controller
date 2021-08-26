@@ -5,8 +5,6 @@ import { sleep } from "../../__tests__/utils/utils";
 import { SubmitComponent } from "../SubmitComponent";
 import { testErrorMessage } from "../utils/selectors";
 
-jest.setTimeout(10000);
-
 console.error = jest.fn();
 console.log = jest.fn();
 
@@ -21,9 +19,10 @@ const submitFunctionalComponentTestId = "functional-submit";
 test("SubmitComponent", async () => {
   const { container } = render(<SubmitComponent />);
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
+  // the buttons must not have the pending text
   expect(screen.getByTestId(submitClassComponentTestId)).not.toHaveTextContent(
     buttonClassPendingText
   );
@@ -34,26 +33,27 @@ test("SubmitComponent", async () => {
   // click on the class submit component
   fireEvent.click(screen.getByTestId(submitClassComponentTestId));
 
-  // errors must be shown
+  // two errors should be shown
   testErrorMessage(container, 2);
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   // click on the functional submit component
   fireEvent.click(screen.getByTestId(submitFunctionalComponentTestId));
 
-  // errors must be shown
+  // two errors must be shown
   testErrorMessage(container, 2);
 
-  // input valid text
+  // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {
     target: { value: "James" }
   });
 
+  // one error should be shown
   testErrorMessage(container, 1);
 
   // input valid text
@@ -61,11 +61,13 @@ test("SubmitComponent", async () => {
     target: { value: "Bond" }
   });
 
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   // click on the class submit component
   fireEvent.click(screen.getByTestId(submitClassComponentTestId));
 
+  // the class component button must have the pending text
   expect(screen.getByTestId(submitClassComponentTestId)).toHaveTextContent(
     buttonClassPendingText
   );
@@ -73,6 +75,7 @@ test("SubmitComponent", async () => {
     screen.getByTestId(submitFunctionalComponentTestId)
   ).not.toHaveTextContent(buttonFunctionalPendingText);
 
+  // check the onSubmit action
   expect(console.log).toHaveBeenCalledTimes(1);
   expect(console.log).toHaveBeenCalledWith({
     givenName: "James",
@@ -82,6 +85,7 @@ test("SubmitComponent", async () => {
   // click on the functional submit component
   fireEvent.click(screen.getByTestId(submitFunctionalComponentTestId));
 
+  // the functional component button must have the pending text
   expect(screen.getByTestId(submitClassComponentTestId)).toHaveTextContent(
     buttonClassPendingText
   );
@@ -89,6 +93,7 @@ test("SubmitComponent", async () => {
     buttonFunctionalPendingText
   );
 
+  // check the onSubmit action
   expect(console.log).toHaveBeenCalledTimes(2);
   expect(console.log).toHaveBeenCalledWith({
     givenName: "James",
@@ -100,6 +105,7 @@ test("SubmitComponent", async () => {
     await sleep(2000);
   });
 
+  // after timout the submit buttons must not have the pending text
   expect(screen.getByTestId(submitClassComponentTestId)).not.toHaveTextContent(
     buttonClassPendingText
   );
@@ -107,10 +113,11 @@ test("SubmitComponent", async () => {
     screen.getByTestId(submitFunctionalComponentTestId)
   ).not.toHaveTextContent(buttonFunctionalPendingText);
 
+  // click on the buttons to cause pending again
   fireEvent.click(screen.getByTestId(submitFunctionalComponentTestId));
   fireEvent.click(screen.getByTestId(submitClassComponentTestId));
 
-  // reset the form
+  // reset the form to unmount the elements and create new ones
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // wait for delay
@@ -118,12 +125,14 @@ test("SubmitComponent", async () => {
     await sleep(2000);
   });
 
+  // no console errors should be caused
   expect(console.error).not.toBeCalled();
 
+  // the submit buttons must not have the pending text
   expect(screen.getByTestId(submitClassComponentTestId)).not.toHaveTextContent(
     buttonClassPendingText
   );
   expect(
     screen.getByTestId(submitFunctionalComponentTestId)
   ).not.toHaveTextContent(buttonFunctionalPendingText);
-});
+}, 10000);

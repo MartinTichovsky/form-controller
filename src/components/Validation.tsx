@@ -1,16 +1,27 @@
 import React from "react";
+import { FormFields, ValidationResult } from "../controller";
 import { ValidationProvider } from "../providers";
 
-export const Validation = ({
+export const Validation = <T extends FormFields<T>>({
   children,
+  disableIf,
+  hideIf,
   validate
 }: React.PropsWithChildren<{
-  validate: (
-    value: string | undefined,
+  disableIf?: (fields: Partial<T>) => boolean;
+  hideIf?: (fields: Partial<T>) => boolean;
+  validate?: (
+    value: string | boolean | undefined,
     props: unknown
-  ) => false | string | null | undefined;
+  ) => ValidationResult;
 }>) => {
   return (
-    <ValidationProvider validation={validate}>{children}</ValidationProvider>
+    <ValidationProvider
+      disableIf={disableIf}
+      hideIf={hideIf}
+      validate={validate}
+    >
+      {children}
+    </ValidationProvider>
   );
 };

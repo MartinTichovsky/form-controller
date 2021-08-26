@@ -15,7 +15,7 @@ const submitTestId = "submit";
 test("TextFieldErrorComponent", () => {
   render(<TextFieldErrorComponent />);
 
-  // errors shouldn't be shown
+  // errors should not be shown
   expect(() => screen.getByTestId(classComponentTestId)).toThrowError();
   expect(() => screen.getByTestId(functionalComponentTestId)).toThrowError();
 
@@ -29,7 +29,7 @@ test("TextFieldErrorComponent", () => {
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
-  // errors shouldn't be shown
+  // errors should not be shown
   expect(() => screen.getByTestId(classComponentTestId)).toThrowError();
   expect(() => screen.getByTestId(functionalComponentTestId)).toThrowError();
 
@@ -47,7 +47,7 @@ test("TextFieldErrorComponent", () => {
     target: { value: " " }
   });
 
-  // all errors must be shown
+  // two errors must be shown
   expect(screen.getByTestId(classComponentTestId)).toBeTruthy();
   expect(screen.getByTestId(functionalComponentTestId)).toBeTruthy();
 
@@ -59,13 +59,14 @@ test("TextFieldErrorComponent", () => {
     target: { value: "Bond" }
   });
 
-  // errors shouldn't be shown
+  // errors should not be shown
   expect(() => screen.getByTestId(classComponentTestId)).toThrowError();
   expect(() => screen.getByTestId(functionalComponentTestId)).toThrowError();
 
   // submit valid form
   fireEvent.click(screen.getByTestId(submitTestId));
 
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).toBeCalledWith({
     givenName: "James",

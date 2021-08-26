@@ -8,7 +8,7 @@ type MyForm = {
   surname: string;
 };
 
-export const TextFieldDisabled = () => {
+export const TextFieldHiddenUseCase1 = () => {
   return (
     <Template>
       <FormController<MyForm>
@@ -21,7 +21,7 @@ export const TextFieldDisabled = () => {
               <Input
                 controller={controller}
                 data-testid="input-1"
-                disableIf={(fields) => !fields.surname?.trim()}
+                hideIf={(fields) => !fields.surname?.trim()}
                 name="salutation"
                 placeholder="Input salutation"
                 validate={(value) =>
@@ -44,7 +44,7 @@ export const TextFieldDisabled = () => {
               <Input
                 controller={controller}
                 data-testid="input-3"
-                disableIf={(fields) => !fields.givenName?.trim()}
+                hideIf={(fields) => !fields.givenName?.trim()}
                 name="surname"
                 placeholder="Input a surname"
                 validate={(value) =>
@@ -70,9 +70,9 @@ export const TextFieldDisabled = () => {
               </button>
             </div>
             <div className="info">
-              * Salutation is disabled until the surname is not valid, the
-              surname is disabled until the first name is not valid and the
-              submit button is disabled until all text fields are filled
+              * Salutation is hidden until the surname is not valid, the surname
+              is hidden until the first name is not valid and the submit button
+              is disabled until all text fields are filled
             </div>
           </>
         )}

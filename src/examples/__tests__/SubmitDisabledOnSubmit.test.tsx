@@ -15,61 +15,65 @@ const submitTopTestId = "submit-top";
 test("SubmitDisabledOnSubmit", () => {
   const { container } = render(<SubmitDisabledOnSubmit />);
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
-  // buttons must not be disabled
+  // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
 
   // submit invalid form
   fireEvent.click(screen.getByTestId(submitBottomTestId));
 
-  // buttons must be disabled
+  // the buttons must be still disabled
   expect(screen.getByTestId(submitBottomTestId)).toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).toBeDisabled();
 
+  // two errors should be shown
   testErrorMessage(container, 2);
 
-  // reset form
+  // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
-  // Error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
-  // buttons must not be disabled
+  // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
 
-  // input an empty value should show an error
+  // input an empty value, the `validateOnChange` option is false, the empty value shouldn't cause an error
   fireEvent.change(screen.getByTestId(input1TestId), {
     target: { value: " " }
   });
 
+  // errors should not be shown
   testErrorMessage(container, 0);
 
-  // buttons must not be disabled
+  // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
 
-  // input an empty value should show an error
+  // input an empty value, the `validateOnChange` option is false, the empty value shouldn't cause an error
   fireEvent.change(screen.getByTestId(input2TestId), {
     target: { value: " " }
   });
 
+  // errors should not be shown
   testErrorMessage(container, 0);
 
-  // buttons must not be disabled
+  // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
 
   // submit invalid form
   fireEvent.click(screen.getByTestId(submitBottomTestId));
 
-  // buttons must be disabled
+  // the buttons must be disabled
   expect(screen.getByTestId(submitBottomTestId)).toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).toBeDisabled();
 
+  // two errors should be shown
   testErrorMessage(container, 2);
 
   // input a valid text
@@ -77,9 +81,10 @@ test("SubmitDisabledOnSubmit", () => {
     target: { value: "James" }
   });
 
+  // one error should be shown
   testErrorMessage(container, 1);
 
-  // buttons must be disabled
+  // the buttons must be disabled
   expect(screen.getByTestId(submitBottomTestId)).toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).toBeDisabled();
 
@@ -88,21 +93,30 @@ test("SubmitDisabledOnSubmit", () => {
     target: { value: "Bond" }
   });
 
+  // errors should not be shown
   testErrorMessage(container, 0);
 
-  // buttons must be not disabled
+  // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
   expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
 
   // submit valid form
   fireEvent.click(screen.getByTestId(submitTopTestId));
+
+  // errors should not be shown
   testErrorMessage(container, 0);
+
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
 
   // submit valid form
   fireEvent.click(screen.getByTestId(submitBottomTestId));
+
+  // errors should not be shown
   testErrorMessage(container, 0);
+
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(2);
   expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
 });

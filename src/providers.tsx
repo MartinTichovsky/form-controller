@@ -1,12 +1,20 @@
 import React from "react";
-import { FormFields } from "./controller";
+import { FormFields, ValidationResult } from "./controller";
 
 type ValidationAction<T> = (
   value: T | undefined,
   props: unknown
-) => false | string | null | undefined;
+) => ValidationResult;
 
-export const validationContext = React.createContext<
+export const disableIfContext = React.createContext<
+  ((fields: unknown) => boolean) | undefined
+>(undefined);
+
+export const hideIfContext = React.createContext<
+  ((fields: unknown) => boolean) | undefined
+>(undefined);
+
+export const validateContext = React.createContext<
   ValidationAction<string | boolean> | undefined
 >(undefined);
 
@@ -14,19 +22,46 @@ type ValidationProviderProps<
   T extends FormFields<T>,
   K extends keyof T
 > = React.PropsWithChildren<{
-  readonly validation: ValidationAction<T[K]>;
+  readonly disableIf?: (fields: Partial<T>) => boolean;
+  readonly hideIf?: (fields: Partial<T>) => boolean;
+  readonly validate?: ValidationAction<T[K]>;
 }>;
 
-export const ValidationProvider = <T extends FormFields<T>, K extends keyof T>(
-  props: ValidationProviderProps<T, K>
-) => {
-  const { children, validation } = props;
+export const ValidationProvider = <T extends FormFields<T>, K extends keyof T>({
+  children,
+  disableIf,
+  hideIf,
+  validate
+}: ValidationProviderProps<T, K>) => {
+  let result = <>{children}</>;
 
-  return (
-    <validationContext.Provider
-      value={validation as ValidationAction<string | boolean>}
-    >
-      {children}
-    </validationContext.Provider>
-  );
+  if (disableIf) {
+    result = (
+      <disableIfContext.Provider
+        value={disableIf as (fields: unknown) => boolean}
+      >
+        {result}
+      </disableIfContext.Provider>
+    );
+  }
+
+  if (hideIf) {
+    result = (
+      <hideIfContext.Provider value={hideIf as (fields: unknown) => boolean}>
+        {result}
+      </hideIfContext.Provider>
+    );
+  }
+
+  if (validate) {
+    result = (
+      <validateContext.Provider
+        value={validate as ValidationAction<string | boolean>}
+      >
+        {result}
+      </validateContext.Provider>
+    );
+  }
+
+  return result;
 };

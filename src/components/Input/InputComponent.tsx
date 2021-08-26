@@ -1,12 +1,7 @@
 import React from "react";
 import { errorClassName } from "../../constants";
 import { FormFields, ValidationResult } from "../../controller";
-import { validationContext } from "../../providers";
 import { InitialState, InputComponentType, InputPrivateProps } from "./types";
-
-let idCounter = 0;
-
-const getRandomId = () => `input-${++idCounter}`;
 
 type State = {
   error: ValidationResult;
@@ -45,20 +40,21 @@ export const InputComponent = <
   const refState = React.useRef(state);
   const defaultValue = React.useRef(controller.getFieldValue(name) || "");
   const key = React.useRef(0);
-  const id = React.useRef(
-    (label && !rest.id) || rest.type === "radio" ? getRandomId() : rest.id
-  );
 
   refState.current = state;
-  rest.id = id.current;
-
-  if (!validate) {
-    validate = React.useContext(validationContext);
-  }
 
   if (rest.type === "radio" && hideError === undefined) {
     hideError = true;
   }
+
+  React.useEffect(
+    () => {
+      return () => {
+        controller.deleteField(name, rest.id);
+      };
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    [controller]
+  );
 
   React.useEffect(
     () => {
@@ -80,6 +76,7 @@ export const InputComponent = <
 
       controller.subscribeValidator({
         action,
+        id: rest.id,
         key: name,
         type: rest.type,
         validate: () => validate!(controller.getFieldValue(name), rest)
@@ -113,18 +110,25 @@ export const InputComponent = <
   React.useEffect(() => {
     if (disableIf) {
       const action = () => {
-        const disable = disableIf(controller.fields);
-        controller.setIsDisabled(name, disable, id.current);
+        const isDisabled = disableIf(controller.fields);
 
-        if (disable && !refState.current.isDisabled) {
+        controller.setIsDisabled({
+          id: rest.id,
+          isDisabled,
+          key: name,
+          type: rest.type
+        });
+
+        if (isDisabled && !refState.current.isDisabled) {
           key.current = key.current + 1;
           defaultValue.current = controller.getFieldValue(name) || "";
+
           setState((prevState) => ({
             ...prevState,
             error: undefined,
             isDisabled: true
           }));
-        } else if (!disable && refState.current.isDisabled) {
+        } else if (!isDisabled && refState.current.isDisabled) {
           setState((prevState) => ({ ...prevState, isDisabled: false }));
         }
       };
@@ -158,9 +162,18 @@ export const InputComponent = <
     () => {
       if (hideIf) {
         const action = () => {
-          if (hideIf(controller.fields)) {
+          const isVisible = !hideIf(controller.fields);
+
+          controller.setIsVisible({
+            id: rest.id,
+            isVisible,
+            key: name,
+            type: rest.type
+          });
+
+          if (!isVisible && refState.current.isVisible) {
             setState((prevState) => ({ ...prevState, isVisible: false }));
-          } else {
+          } else if (isVisible && !refState.current.isVisible) {
             setState((prevState) => ({ ...prevState, isVisible: true }));
           }
         };
@@ -228,7 +241,7 @@ export const InputComponent = <
     rest.type === "radio" &&
     defaultValue.current === value
   ) {
-    controller.setDefaultActiveId(name, id.current);
+    controller.setDefaultActiveId(name, rest.id);
     props.defaultChecked = true;
     defaultValue.current = "";
   }
@@ -250,7 +263,7 @@ export const InputComponent = <
         key={key.current}
         name={name as string}
         onChange={(event) =>
-          controller.setFieldValue(name, event.currentTarget.value, id.current)
+          controller.setFieldValue(name, event.currentTarget.value, rest.id)
         }
         onKeyDown={(event) => {
           if (event.key === "Enter") {

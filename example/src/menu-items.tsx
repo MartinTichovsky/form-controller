@@ -4,14 +4,22 @@ import { GeneralErrorFor } from "form-controller/lib/examples/GeneralErrorFor";
 import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
 import { GeneralValidateOnChange } from "form-controller/lib/examples/GeneralValidateOnChange";
 import { GeneralValidation } from "form-controller/lib/examples/GeneralValidation";
+import { RadioField } from "form-controller/lib/examples/RadioField";
+import { RadioFieldDisabledUseCase1 } from "form-controller/lib/examples/RadioFieldDisabledUseCase1";
+import { RadioFieldDisabledUseCase2 } from "form-controller/lib/examples/RadioFieldDisabledUseCase2";
+import { RadioFieldHiddenUseCase1 } from "form-controller/lib/examples/RadioFieldHiddenUseCase1";
+import { RadioFieldHiddenUseCase2 } from "form-controller/lib/examples/RadioFieldHiddenUseCase2";
 import { SubmitComponent } from "form-controller/lib/examples/SubmitComponent";
 import { SubmitCustom } from "form-controller/lib/examples/SubmitCustom";
 import { SubmitDefaultDisabled } from "form-controller/lib/examples/SubmitDefaultDisabled";
 import { SubmitDisabledOnSubmit } from "form-controller/lib/examples/SubmitDisabledOnSubmit";
 import { TextField } from "form-controller/lib/examples/TextField";
 import { TextFieldDefaultValues } from "form-controller/lib/examples/TextFieldDefaultValues";
-import { TextFieldDisabled } from "form-controller/lib/examples/TextFieldDisabled";
+import { TextFieldDisabledUseCase1 } from "form-controller/lib/examples/TextFieldDisabledUseCase1";
+import { TextFieldDisabledUseCase2 } from "form-controller/lib/examples/TextFieldDisabledUseCase2";
 import { TextFieldErrorComponent } from "form-controller/lib/examples/TextFieldErrorComponent";
+import { TextFieldHiddenUseCase1 } from "form-controller/lib/examples/TextFieldHiddenUseCase1";
+import { TextFieldHiddenUseCase2 } from "form-controller/lib/examples/TextFieldHiddenUseCase2";
 import { TextFieldInputComponent } from "form-controller/lib/examples/TextFieldInputComponent";
 
 interface MenuIitem {
@@ -32,24 +40,66 @@ export const menuItems: MenuItems = {
       render: () => <TextField />
     },
     {
-      label: "Disabled Text Field",
-      key: "disabled-text-field",
-      render: () => <TextFieldDisabled />
+      label: "Disabled Text Field - UseCase 1",
+      key: "disabled-text-field-usecase-1",
+      render: () => <TextFieldDisabledUseCase1 />
+    },
+    {
+      label: "Disabled Text Field - UseCase 2",
+      key: "disabled-text-field-usecase-2",
+      render: () => <TextFieldDisabledUseCase2 />
     },
     {
       label: "Default Values",
-      key: "default-values",
+      key: "text-fields-default-values",
       render: () => <TextFieldDefaultValues />
     },
     {
       label: "Error Component",
-      key: "error-component",
+      key: "text-fields-error-component",
       render: () => <TextFieldErrorComponent />
     },
     {
+      label: "Hidden Text Field - UseCase 1",
+      key: "hidden-text-field-usecase-1",
+      render: () => <TextFieldHiddenUseCase1 />
+    },
+    {
+      label: "Hidden Text Field - UseCase 2",
+      key: "hidden-text-field-usecase-2",
+      render: () => <TextFieldHiddenUseCase2 />
+    },
+    {
       label: "Input Component",
-      key: "input-component",
+      key: "text-fields-input-component",
       render: () => <TextFieldInputComponent />
+    }
+  ],
+  "Radio Fields": [
+    {
+      label: "Basic Radio Fields",
+      key: "radio-field",
+      render: () => <RadioField />
+    },
+    {
+      label: "Disabled Radio Field - UseCase 1",
+      key: "disabled-radio-field-usecase-1",
+      render: () => <RadioFieldDisabledUseCase1 />
+    },
+    {
+      label: "Disabled Radio Field - UseCase 2",
+      key: "disabled-radio-field-usecase-2",
+      render: () => <RadioFieldDisabledUseCase2 />
+    },
+    {
+      label: "Hidden Radio Field - UseCase 1",
+      key: "hidden-radio-field-usecase-1",
+      render: () => <RadioFieldHiddenUseCase1 />
+    },
+    {
+      label: "Hidden Radio Field - UseCase 2",
+      key: "hidden-radio-field-usecase-2",
+      render: () => <RadioFieldHiddenUseCase2 />
     }
   ],
   Submit: [

@@ -5,8 +5,6 @@ import { sleep } from "../../__tests__/utils/utils";
 import { SubmitCustom } from "../SubmitCustom";
 import { testErrorMessage } from "../utils/selectors";
 
-jest.setTimeout(10000);
-
 console.error = jest.fn();
 console.log = jest.fn();
 
@@ -19,26 +17,27 @@ const submitTestId = "submit";
 test("SubmitCustom", async () => {
   const { container } = render(<SubmitCustom />);
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
+  // the submit button must not have the pending text
   expect(screen.getByTestId(submitTestId)).not.toHaveTextContent(
     buttonPendingText
   );
 
-  // click on the submit
+  // click on the submit button
   fireEvent.click(screen.getByTestId(submitTestId));
 
-  // errors must be shown
+  // two errors should be shown
   testErrorMessage(container, 2);
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
-  // input valid text
+  // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {
     target: { value: "James" }
   });
@@ -47,11 +46,13 @@ test("SubmitCustom", async () => {
     target: { value: "Bond" }
   });
 
-  // click on the class submit component
+  // click on the submit button
   fireEvent.click(screen.getByTestId(submitTestId));
 
+  // the submit button must have the pending text
   expect(screen.getByTestId(submitTestId)).toHaveTextContent(buttonPendingText);
 
+  // check the onSubmit action
   expect(console.log).toHaveBeenCalledTimes(1);
   expect(console.log).toHaveBeenCalledWith({
     givenName: "James",
@@ -63,13 +64,15 @@ test("SubmitCustom", async () => {
     await sleep(2000);
   });
 
+  // after timouet, the submit button must not have the pending text
   expect(screen.getByTestId(submitTestId)).not.toHaveTextContent(
     buttonPendingText
   );
 
+  // submit the form to show the pending text again
   fireEvent.click(screen.getByTestId(submitTestId));
 
-  // reset the form
+  // reset the form to unmount the elements and create new ones
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // wait for delay
@@ -77,9 +80,11 @@ test("SubmitCustom", async () => {
     await sleep(2000);
   });
 
+  // no console errors should be caused
   expect(console.error).not.toBeCalled();
 
+  // the submit button must not have the pending text
   expect(screen.getByTestId(submitTestId)).not.toHaveTextContent(
     buttonPendingText
   );
-});
+}, 10000);

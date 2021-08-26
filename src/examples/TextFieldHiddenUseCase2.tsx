@@ -1,23 +1,35 @@
 import React from "react";
-import { FormController, Input, Submit } from "../";
+import { FormController, Input, Submit } from "../index";
 import { Template } from "./utils/Template";
 
 type MyForm = {
   givenName: string;
+  salutation: string;
   surname: string;
-  radio: string;
 };
 
-export const GeneralDisableAllOnSubmit = () => {
+export const TextFieldHiddenUseCase2 = () => {
   return (
     <Template>
-      <FormController<MyForm>>
+      <FormController<MyForm>
+        onSubmit={(fields) => console.log(fields)}
+        validateOnChange
+      >
         {(controller) => (
           <>
             <div className="field-row">
               <Input
                 controller={controller}
                 data-testid="input-1"
+                hideIf={(fields) => !fields.surname?.trim()}
+                name="salutation"
+                placeholder="Input salutation"
+              />
+            </div>
+            <div className="field-row">
+              <Input
+                controller={controller}
+                data-testid="input-2"
                 name="givenName"
                 placeholder="Input a given name"
               />
@@ -25,30 +37,13 @@ export const GeneralDisableAllOnSubmit = () => {
             <div className="field-row">
               <Input
                 controller={controller}
-                data-testid="input-2"
+                data-testid="input-3"
+                hideIf={(fields) => !fields.givenName?.trim()}
                 name="surname"
                 placeholder="Input a surname"
-              />
-            </div>
-
-            <div className="field-row">
-              <Input
-                controller={controller}
-                data-testid="radio-1"
-                label="Option 1"
-                name="radio"
-                type="radio"
-                value="Option 1"
-              />
-            </div>
-            <div className="field-row">
-              <Input
-                controller={controller}
-                data-testid="radio-2"
-                label="Option 2"
-                name="radio"
-                type="radio"
-                value="Option 2"
+                validate={(value) =>
+                  !value?.trim() && "Provide a valid surname"
+                }
               />
             </div>
             <div className="field-row">
@@ -56,10 +51,7 @@ export const GeneralDisableAllOnSubmit = () => {
                 controller={controller}
                 data-testid="submit"
                 disableIfNotValid
-                onSubmit={(fields, controller) => {
-                  console.log(fields);
-                  controller.disableFields(true);
-                }}
+                disabledByDefault
               >
                 Submit
               </Submit>{" "}
@@ -72,8 +64,12 @@ export const GeneralDisableAllOnSubmit = () => {
               </button>
             </div>
             <div className="info">
-              * When the form is submitted, all inputs will be disabled. Reset
-              the form to enable them again. No validation is provided.
+              * The form is valid because `Given Name` field doesn't have a
+              validation. You can submit an empty form. The surname is hidden
+              until the given name is filled. After typing your given name, you
+              must fill your surname, otherwise is form invalid. Salutation is
+              optional and it is hidden until given name and surname are not
+              filled.
             </div>
           </>
         )}

@@ -16,16 +16,17 @@ const submitTestId = "submit";
 test("TextFieldInputComponent", () => {
   const { container } = render(<TextFieldInputComponent />);
 
-  // errors shouldn't be shown
+  // the inputs with this id must be in the document
   expect(container.querySelector(`#${classInputId}`)).toBeTruthy();
   expect(container.querySelector(`#${functionalInputId}`)).toBeTruthy();
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   // submit invalid form
   fireEvent.click(screen.getByTestId(submitTestId));
 
+  // two errors must be shown
   testErrorMessage(container, 2);
 
   // input a valid text
@@ -33,18 +34,21 @@ test("TextFieldInputComponent", () => {
     target: { value: "James" }
   });
 
+  // one error must be shown
   testErrorMessage(container, 1);
 
-  // input an empty text
+  // input a valid text
   fireEvent.change(screen.getByTestId(input2TestId), {
     target: { value: "Bond" }
   });
 
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   // submit valid form
   fireEvent.click(screen.getByTestId(submitTestId));
 
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).toBeCalledWith({
     givenName: "James",

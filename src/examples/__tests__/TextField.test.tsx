@@ -20,10 +20,10 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
-test("Basic workflow", () => {
+test("TextField", () => {
   const { container } = render(<TextField />);
 
-  // Render count check
+  // render count check
   expect(
     hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
   ).toBe(1);
@@ -34,12 +34,13 @@ test("Basic workflow", () => {
     hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
   ).toBe(1);
 
-  // Error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
-  // Error messages should be visible after click
+  // error messages should be visible after click
   fireEvent.click(screen.getByTestId(submitTestId));
 
+  // two errors should be shown
   testErrorMessage(container, 2);
 
   expect(
@@ -52,7 +53,7 @@ test("Basic workflow", () => {
     hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
   ).toBe(1);
 
-  // Repeat submit should no more render the inputs
+  // repeat submit should no more render the inputs
   fireEvent.click(screen.getByTestId(submitTestId));
 
   expect(
@@ -65,35 +66,46 @@ test("Basic workflow", () => {
     hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
   ).toBe(1);
 
-  // Input text to the first input, after change or submit should be visible only one error message
+  // input a text to the first input, after change or submit should be visible only one error message
   fireEvent.change(screen.getByTestId(input1TestId), {
     target: { value: "James" }
   });
+
+  // one error should be shown
   testErrorMessage(container, 1);
 
+  // submit the form
   fireEvent.click(screen.getByTestId(submitTestId));
+
+  // one error should be shown
   testErrorMessage(container, 1);
 
-  // Input text to the second input, after change should be visible no errors
+  // input a text to the second input, after change should be visible no errors
   fireEvent.change(screen.getByTestId(input2TestId), {
     target: { value: "Bond" }
   });
+
+  // errors should not be shown
   testErrorMessage(container, 0);
 
-  // Submit valid form
+  // submit valid form
   fireEvent.click(screen.getByTestId(submitTestId));
+
+  // errors should not be shown
   testErrorMessage(container, 0);
+
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
 });
 
 describe("Re-render", () => {
-  test("Without values", () => {
+  test("Without Values", () => {
     hooksCollector.reset();
 
     render(<TextField />);
 
-    // Render count check
+    // render count check
     expect(
       hooksCollector.getComponentRenderCount(
         FormControllerComponent.name,
@@ -112,7 +124,7 @@ describe("Re-render", () => {
 
     fireEvent.click(screen.getByTestId(reRenderTestId));
 
-    // Render count check
+    // render count check
     expect(
       hooksCollector.getComponentRenderCount(
         FormControllerComponent.name,
@@ -129,7 +141,7 @@ describe("Re-render", () => {
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
     ).toBe(1);
 
-    // Render count check
+    // render count check
     expect(
       hooksCollector.getComponentRenderCount(
         FormControllerComponent.name,
@@ -147,7 +159,7 @@ describe("Re-render", () => {
     ).toBe(1);
   });
 
-  test("With errors", () => {
+  test("With Errors", () => {
     hooksCollector.reset();
 
     const { container } = render(<TextField />);
@@ -155,7 +167,7 @@ describe("Re-render", () => {
     fireEvent.click(screen.getByTestId(submitTestId));
     fireEvent.click(screen.getByTestId(reRenderTestId));
 
-    // Render count check
+    // render count check
     expect(
       hooksCollector.getComponentRenderCount(
         FormControllerComponent.name,
@@ -172,13 +184,13 @@ describe("Re-render", () => {
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
     ).toBe(1);
 
-    // error must be visible
+    // two errors should be shown
     testErrorMessage(container, 2);
 
     fireEvent.click(screen.getByTestId(reRenderTestId));
   });
 
-  test("With values", () => {
+  test("With Values", () => {
     hooksCollector.reset();
 
     render(<TextField />);
@@ -192,7 +204,7 @@ describe("Re-render", () => {
 
     fireEvent.click(screen.getByTestId(reRenderTestId));
 
-    // Render count check
+    // render count check
     expect(
       hooksCollector.getComponentRenderCount(
         FormControllerComponent.name,
@@ -215,14 +227,14 @@ describe("Re-render", () => {
 });
 
 describe("Reset", () => {
-  test("Without values", () => {
+  test("Without Values", () => {
     hooksCollector.reset();
 
     render(<TextField />);
 
     fireEvent.click(screen.getByTestId(resetTestId));
 
-    // Render count check
+    // render count check
     expect(
       hooksCollector.getComponentRenderCount(
         FormControllerComponent.name,
@@ -241,7 +253,7 @@ describe("Reset", () => {
 
     fireEvent.click(screen.getByTestId(resetTestId));
 
-    // Render count check
+    // render count check
     expect(
       hooksCollector.getComponentRenderCount(
         FormControllerComponent.name,
@@ -259,7 +271,7 @@ describe("Reset", () => {
     ).toBe(3);
   });
 
-  test("With errors", () => {
+  test("With Errors", () => {
     hooksCollector.reset();
 
     const { container } = render(<TextField />);
@@ -267,7 +279,7 @@ describe("Reset", () => {
     fireEvent.click(screen.getByTestId(submitTestId));
     fireEvent.click(screen.getByTestId(resetTestId));
 
-    // Render count check
+    // render count check
     expect(
       hooksCollector.getComponentRenderCount(
         FormControllerComponent.name,
@@ -284,7 +296,7 @@ describe("Reset", () => {
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
     ).toBe(2);
 
-    // error must be visible
+    // no errors must be shown
     testErrorMessage(container, 0);
   });
 
@@ -303,7 +315,7 @@ describe("Reset", () => {
     const reset = screen.getByTestId(resetTestId);
     fireEvent.click(reset);
 
-    // Render count check
+    // render count check
     expect(
       hooksCollector.getComponentRenderCount(
         FormControllerComponent.name,

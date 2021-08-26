@@ -14,11 +14,11 @@ const submitTestId = "submit";
 test("TextFieldDefaultValues", () => {
   const { container } = render(<TextFieldDefaultValues />);
 
-  // must have default values
+  // the inputs must have default values
   expect(screen.getByTestId(input1TestId)).toHaveValue("James");
   expect(screen.getByTestId(input2TestId)).toHaveValue("Bond");
 
-  // Error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   // submit valid form
@@ -34,6 +34,7 @@ test("TextFieldDefaultValues", () => {
     target: { value: "" }
   });
 
+  // one error should be shown
   testErrorMessage(container, 1);
 
   // input an empty value should show an error
@@ -41,15 +42,17 @@ test("TextFieldDefaultValues", () => {
     target: { value: "" }
   });
 
+  // two errors should be shown
   testErrorMessage(container, 2);
 
+  // submit the form
   fireEvent.click(screen.getByTestId(submitTestId));
   expect(console.log).toBeCalledTimes(1);
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
-  // must have default values
+  // the inputs must have default values
   expect(screen.getByTestId(input1TestId)).toHaveValue("James");
   expect(screen.getByTestId(input2TestId)).toHaveValue("Bond");
 });

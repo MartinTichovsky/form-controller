@@ -43,7 +43,7 @@ export const GeneralCondition = () => {
             </Condition>
             <Condition
               controller={controller}
-              customCondition={() => controller.isSubmitted}
+              showIf={() => controller.isSubmitted}
             >
               <div className="field-row">{submitConditionText}</div>
             </Condition>

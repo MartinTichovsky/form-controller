@@ -8,10 +8,7 @@ export const Condition: ConditionComponentType = (props) => {
     throw new Error("Controller is not provided");
   }
 
-  if (
-    props.customCondition !== undefined &&
-    typeof props.customCondition !== "function"
-  ) {
+  if (props.showIf !== undefined && typeof props.showIf !== "function") {
     throw new Error("CustomCondition is not a function");
   }
 

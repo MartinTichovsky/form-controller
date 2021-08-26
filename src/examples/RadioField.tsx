@@ -4,45 +4,56 @@ import { Validation } from "../components/Validation";
 import { Template } from "./utils/Template";
 
 type MyForm = {
-  givenName: string;
-  surname: string;
+  radio: string;
 };
 
-export const GeneralValidation = () => {
+export const RadioField = () => {
   return (
     <Template>
-      <FormController<MyForm>
-        onSubmit={(fields) => console.log(fields)}
-        validateOnChange
-      >
+      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
         {(controller) => (
           <>
             <Validation
               validate={(value) =>
-                (value === undefined ||
-                  (typeof value === "string" && !value.trim())) &&
-                "Provide a valid text"
+                value === undefined && (
+                  <span style={{ color: "red" }}>Choose an option</span>
+                )
               }
             >
               <div className="field-row">
                 <Input
                   controller={controller}
-                  data-testid="input-1"
-                  name="givenName"
-                  placeholder="Input a given name"
+                  data-testid="radio-1"
+                  hideError={false}
+                  label="Option 1"
+                  name="radio"
+                  type="radio"
+                  value="Option 1"
                 />
               </div>
               <div className="field-row">
                 <Input
                   controller={controller}
-                  data-testid="input-2"
-                  name="surname"
-                  placeholder="Input a surname"
+                  data-testid="radio-2"
+                  label="Option 2"
+                  name="radio"
+                  type="radio"
+                  value="Option 2"
+                />
+              </div>
+              <div className="field-row">
+                <Input
+                  controller={controller}
+                  data-testid="radio-3"
+                  label="Option 3"
+                  name="radio"
+                  type="radio"
+                  value="Option 3"
                 />
               </div>
             </Validation>
             <div className="field-row">
-              <Submit data-testid="submit" controller={controller}>
+              <Submit controller={controller} data-testid="submit">
                 Submit
               </Submit>{" "}
               <button
@@ -54,8 +65,7 @@ export const GeneralValidation = () => {
               </button>
             </div>
             <div className="info">
-              * Providing the validation as a parental element, it should show
-              the same error for each text input
+              * Basic radio field functionality, one option must be selected
             </div>
           </>
         )}

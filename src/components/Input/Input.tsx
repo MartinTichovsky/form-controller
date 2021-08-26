@@ -1,7 +1,16 @@
 import React from "react";
 import { Controller, FormFields } from "../../controller";
+import {
+  disableIfContext,
+  hideIfContext,
+  validateContext
+} from "../../providers";
 import { InputComponent } from "./InputComponent";
 import { InitialState, InputComponentType, InputPrivateProps } from "./types";
+
+let idCounter = 0;
+
+const getRandomId = () => `input-${++idCounter}`;
 
 export const Input = <
   T extends FormFields<T>,
@@ -10,16 +19,20 @@ export const Input = <
     React.ComponentProps<IComponent> & InputPrivateProps
   >,
   EComponent extends React.ElementType
->(
-  props: React.ComponentProps<
-    InputComponentType<T, K, IComponent, EComponent, never>
-  >
-) => {
+>({
+  disableIf,
+  id,
+  hideIf,
+  validate,
+  ...props
+}: React.ComponentProps<
+  InputComponentType<T, K, IComponent, EComponent, never>
+>) => {
   if (!(props.controller instanceof Controller)) {
     throw new Error("Controller is not provided");
   }
 
-  if (props.disableIf && typeof props.disableIf !== "function") {
+  if (disableIf && typeof disableIf !== "function") {
     throw new Error("DisableIf is not a function");
   }
 
@@ -31,30 +44,63 @@ export const Input = <
     throw new Error("OnFormChange is not a function");
   }
 
-  if (props.validate && typeof props.validate !== "function") {
+  if (validate && typeof validate !== "function") {
     throw new Error("Validate is not a function");
   }
 
+  if (!disableIf) {
+    disableIf = React.useContext(disableIfContext);
+  }
+
+  if (!hideIf) {
+    hideIf = React.useContext(hideIfContext);
+  }
+
+  if (!validate) {
+    validate = React.useContext(validateContext);
+  }
+
+  id = (props.label && !id) || props.type === "radio" ? getRandomId() : id;
+
   const initialState: InitialState = {
-    isDisabled: props.disableIf
-      ? props.disableIf(props.controller.fields)
-      : false,
-    isVisible: props.hideIf ? !props.hideIf(props.controller.fields) : true
+    isDisabled: disableIf ? disableIf(props.controller.fields) : false,
+    isVisible: hideIf ? !hideIf(props.controller.fields) : true
   };
 
   if (initialState.isDisabled) {
-    props.controller.setDefaultIsDisabled(
-      props.name,
-      props.validate
-        ? !props.validate(props.controller.getFieldValue(props.name), props)
-        : true
-    );
-  } else if (props.validate) {
-    props.controller.setDefaultIsValid(
-      props.name,
-      !props.validate(props.controller.getFieldValue(props.name), props)
-    );
+    props.controller.setDefaultIsDisabled({
+      id,
+      key: props.name,
+      type: props.type
+    });
+  } else if (!initialState.isVisible) {
+    props.controller.setDefaultIsNotVisible({
+      id,
+      key: props.name,
+      type: props.type
+    });
+  } else if (
+    validate &&
+    !validate(props.controller.getFieldValue(props.name), props)
+  ) {
+    props.controller.setDefaultIsInvalid({
+      key: props.name,
+      type: props.type
+    });
   }
 
-  return <InputComponent {...props} initialState={initialState} />;
+  return (
+    <InputComponent
+      {...({
+        ...props,
+        disableIf,
+        id,
+        hideIf,
+        initialState,
+        validate
+      } as React.ComponentProps<
+        InputComponentType<T, K, IComponent, EComponent, InitialState>
+      >)}
+    />
+  );
 };

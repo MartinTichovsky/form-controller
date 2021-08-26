@@ -45,6 +45,7 @@ const testValidForm = (unmount: () => void) => {
   controller["_fields"].input = {
     isDisabled: false,
     isValid: false,
+    isVisible: true,
     value: undefined
   };
 
@@ -104,7 +105,7 @@ describe("Condition Element", () => {
 
     values.forEach((value) => {
       expect(() => {
-        render(<Condition controller={controller} customCondition={value} />);
+        render(<Condition controller={controller} showIf={value} />);
       }).toThrowError();
     });
   });
@@ -122,6 +123,7 @@ describe("Condition Element", () => {
     controller["_fields"].input = {
       isDisabled: false,
       isValid: true,
+      isVisible: true,
       value: undefined
     };
 
@@ -163,10 +165,7 @@ describe("ConditionComponent Element", () => {
     });
 
     const { unmount } = render(
-      <ConditionComponent
-        controller={controller}
-        customCondition={customCondition}
-      >
+      <ConditionComponent controller={controller} showIf={customCondition}>
         <div data-testid={testid}></div>
       </ConditionComponent>
     );
@@ -185,7 +184,7 @@ describe("ConditionComponent Element", () => {
       <ConditionComponent
         controller={controller}
         ifFormValid
-        customCondition={customCondition}
+        showIf={customCondition}
       >
         <div data-testid={testid}></div>
       </ConditionComponent>
@@ -205,7 +204,7 @@ describe("ConditionComponent Element", () => {
       <ConditionComponent
         controller={controller}
         ifFormValid
-        customCondition={customCondition}
+        showIf={customCondition}
       >
         <div data-testid={testid}></div>
       </ConditionComponent>

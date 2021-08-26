@@ -18,18 +18,21 @@ const submitTestId = "submit";
 test("GeneralCondition", async () => {
   const { container } = render(<GeneralCondition />);
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
+  // the condition text must not be in the document
   expect(screen.queryByText(formIsValidText)).not.toBeInTheDocument();
   expect(screen.queryByText(submitConditionText)).not.toBeInTheDocument();
 
-  // click the submit button
+  // click on the submit button
   fireEvent.click(screen.getByTestId(submitTestId));
 
+  // the custom condition text must be in the document
   expect(screen.queryByText(formIsValidText)).not.toBeInTheDocument();
   expect(screen.queryByText(submitConditionText)).toBeInTheDocument();
 
+  // two errors should be shown
   testErrorMessage(container, 2);
 
   // input a valid text
@@ -37,9 +40,11 @@ test("GeneralCondition", async () => {
     target: { value: "James" }
   });
 
+  // the custom condition text must be in the document
   expect(screen.queryByText(formIsValidText)).not.toBeInTheDocument();
   expect(screen.queryByText(submitConditionText)).toBeInTheDocument();
 
+  // one error should be shown
   testErrorMessage(container, 1);
 
   // input a valid text
@@ -47,18 +52,24 @@ test("GeneralCondition", async () => {
     target: { value: "Bond" }
   });
 
+  // both condition text must be in the document
   expect(screen.queryByText(formIsValidText)).toBeInTheDocument();
   expect(screen.queryByText(submitConditionText)).toBeInTheDocument();
 
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   // submit valid form
   fireEvent.click(screen.getByTestId(submitTestId));
+
+  //check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
 
+  // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
+  // the condition text must not be in the document
   expect(screen.queryByText(formIsValidText)).not.toBeInTheDocument();
   expect(screen.queryByText(submitConditionText)).not.toBeInTheDocument();
 });

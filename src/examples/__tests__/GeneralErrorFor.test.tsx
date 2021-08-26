@@ -18,7 +18,7 @@ const submitTestId = "submit";
 test("GeneralErrorFor", async () => {
   const { container } = render(<GeneralErrorFor />);
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   expect(screen.queryByText(givenNameErrorText)).not.toBeInTheDocument();

@@ -14,7 +14,7 @@ const submitTestId = "submit";
 test("GeneralValidation", () => {
   const { container } = render(<GeneralValidation />);
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   // submit invalid form
@@ -24,7 +24,7 @@ test("GeneralValidation", () => {
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
-  // error messages should not exist
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   // input an empty value should show an error
@@ -32,6 +32,7 @@ test("GeneralValidation", () => {
     target: { value: " " }
   });
 
+  // one error should be shown
   testErrorMessage(container, 1);
 
   // input an empty value should show an error
@@ -39,24 +40,29 @@ test("GeneralValidation", () => {
     target: { value: " " }
   });
 
+  // two errors should be shown
   testErrorMessage(container, 2);
 
-  // input valid text
+  // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {
     target: { value: "James" }
   });
 
+  // one error should be shown
   testErrorMessage(container, 1);
 
-  // input valid text
+  // input a valid text
   fireEvent.change(screen.getByTestId(input2TestId), {
     target: { value: "Bond" }
   });
 
+  // errors should not be shown
   testErrorMessage(container, 0);
 
   // submit valid form
   fireEvent.click(screen.getByTestId(submitTestId));
+
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
 });

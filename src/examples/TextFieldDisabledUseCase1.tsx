@@ -1,54 +1,55 @@
 import React from "react";
-import { FormController, Input, Submit } from "../";
+import { FormController, Input, Submit } from "../index";
 import { Template } from "./utils/Template";
 
 type MyForm = {
   givenName: string;
+  salutation: string;
   surname: string;
-  radio: string;
 };
 
-export const GeneralDisableAllOnSubmit = () => {
+export const TextFieldDisabledUseCase1 = () => {
   return (
     <Template>
-      <FormController<MyForm>>
+      <FormController<MyForm>
+        onSubmit={(fields) => console.log(fields)}
+        validateOnChange
+      >
         {(controller) => (
           <>
             <div className="field-row">
               <Input
                 controller={controller}
                 data-testid="input-1"
-                name="givenName"
-                placeholder="Input a given name"
+                disableIf={(fields) => !fields.surname?.trim()}
+                name="salutation"
+                placeholder="Input salutation"
+                validate={(value) =>
+                  !value?.trim() && "Provide a valid salutation"
+                }
               />
             </div>
             <div className="field-row">
               <Input
                 controller={controller}
                 data-testid="input-2"
+                name="givenName"
+                placeholder="Input a given name"
+                validate={(value) =>
+                  !value?.trim() && "Provide a valid given name"
+                }
+              />
+            </div>
+            <div className="field-row">
+              <Input
+                controller={controller}
+                data-testid="input-3"
+                disableIf={(fields) => !fields.givenName?.trim()}
                 name="surname"
                 placeholder="Input a surname"
-              />
-            </div>
-
-            <div className="field-row">
-              <Input
-                controller={controller}
-                data-testid="radio-1"
-                label="Option 1"
-                name="radio"
-                type="radio"
-                value="Option 1"
-              />
-            </div>
-            <div className="field-row">
-              <Input
-                controller={controller}
-                data-testid="radio-2"
-                label="Option 2"
-                name="radio"
-                type="radio"
-                value="Option 2"
+                validate={(value) =>
+                  !value?.trim() && "Provide a valid surname"
+                }
               />
             </div>
             <div className="field-row">
@@ -56,10 +57,7 @@ export const GeneralDisableAllOnSubmit = () => {
                 controller={controller}
                 data-testid="submit"
                 disableIfNotValid
-                onSubmit={(fields, controller) => {
-                  console.log(fields);
-                  controller.disableFields(true);
-                }}
+                disabledByDefault
               >
                 Submit
               </Submit>{" "}
@@ -72,8 +70,9 @@ export const GeneralDisableAllOnSubmit = () => {
               </button>
             </div>
             <div className="info">
-              * When the form is submitted, all inputs will be disabled. Reset
-              the form to enable them again. No validation is provided.
+              * Salutation is disabled until the surname is not valid, the
+              surname is disabled until the first name is not valid and the
+              submit button is disabled until all text fields are filled
             </div>
           </>
         )}
