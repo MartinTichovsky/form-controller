@@ -73,6 +73,7 @@ afterAll(() => {
 });
 
 beforeEach(() => {
+  hooksCollector.reset();
   const setController = jest.fn();
   controller = new Controller<Form>({ setController });
 });
@@ -107,8 +108,6 @@ describe("Submit Element", () => {
 
 describe("SubmitComponent Element", () => {
   test("Default functionality", () => {
-    hooksCollector.reset();
-
     const { unmount } = render(
       <SubmitComponent controller={controller}>{buttonText}</SubmitComponent>
     );
@@ -117,8 +116,6 @@ describe("SubmitComponent Element", () => {
   });
 
   test("DisabledByDefault is set to true and disableIfNotValid is false, the behaviour must be the same as default", () => {
-    hooksCollector.reset();
-
     const { unmount } = render(
       <SubmitComponent controller={controller} disabledByDefault>
         {buttonText}
@@ -129,8 +126,6 @@ describe("SubmitComponent Element", () => {
   });
 
   test("DisabledByDefault is true and disableIfNotValid is true", () => {
-    hooksCollector.reset();
-
     const { unmount } = render(
       <SubmitComponent
         controller={controller}
@@ -211,8 +206,6 @@ describe("SubmitComponent Element", () => {
   });
 
   test("OnSubmit is provided", () => {
-    hooksCollector.reset();
-
     const onSubmit = jest.fn();
 
     render(
@@ -230,8 +223,6 @@ describe("SubmitComponent Element", () => {
   });
 
   test("On disable action triggered from controller should disable the button", () => {
-    hooksCollector.reset();
-
     render(
       <SubmitComponent controller={controller}>{buttonText}</SubmitComponent>
     );
@@ -246,7 +237,6 @@ describe("SubmitComponent Element", () => {
   });
 
   test("On disable action triggered from controller should disable the button", () => {
-    hooksCollector.reset();
     const testid = "test-id";
 
     const onSubmit = jest.fn();

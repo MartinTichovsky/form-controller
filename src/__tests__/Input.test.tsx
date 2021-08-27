@@ -20,6 +20,7 @@ afterAll(() => {
 });
 
 beforeEach(() => {
+  hooksCollector.reset();
   const setController = jest.fn();
   controller = new Controller<Form>({ setController });
 });
@@ -44,8 +45,6 @@ describe("Input Element", () => {
 
 describe("InputComponent Element", () => {
   test("Default functionality", () => {
-    hooksCollector.reset();
-
     const { unmount } = render(
       <InputComponent controller={controller} name="input" />
     );

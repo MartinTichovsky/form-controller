@@ -7,8 +7,10 @@ import { GeneralValidation } from "form-controller/lib/examples/GeneralValidatio
 import { RadioField } from "form-controller/lib/examples/RadioField";
 import { RadioFieldDisabledUseCase1 } from "form-controller/lib/examples/RadioFieldDisabledUseCase1";
 import { RadioFieldDisabledUseCase2 } from "form-controller/lib/examples/RadioFieldDisabledUseCase2";
+import { RadioFieldDisabledUseCase3 } from "form-controller/lib/examples/RadioFieldDisabledUseCase3";
 import { RadioFieldHiddenUseCase1 } from "form-controller/lib/examples/RadioFieldHiddenUseCase1";
 import { RadioFieldHiddenUseCase2 } from "form-controller/lib/examples/RadioFieldHiddenUseCase2";
+import { RadioFieldHiddenUseCase3 } from "form-controller/lib/examples/RadioFieldHiddenUseCase3";
 import { SubmitComponent } from "form-controller/lib/examples/SubmitComponent";
 import { SubmitCustom } from "form-controller/lib/examples/SubmitCustom";
 import { SubmitDefaultDisabled } from "form-controller/lib/examples/SubmitDefaultDisabled";
@@ -92,6 +94,11 @@ export const menuItems: MenuItems = {
       render: () => <RadioFieldDisabledUseCase2 />
     },
     {
+      label: "Disabled Radio Field - UseCase 3",
+      key: "disabled-radio-field-usecase-3",
+      render: () => <RadioFieldDisabledUseCase3 />
+    },
+    {
       label: "Hidden Radio Field - UseCase 1",
       key: "hidden-radio-field-usecase-1",
       render: () => <RadioFieldHiddenUseCase1 />
@@ -100,6 +107,11 @@ export const menuItems: MenuItems = {
       label: "Hidden Radio Field - UseCase 2",
       key: "hidden-radio-field-usecase-2",
       render: () => <RadioFieldHiddenUseCase2 />
+    },
+    {
+      label: "Hidden Radio Field - UseCase 3",
+      key: "hidden-radio-field-usecase-3",
+      render: () => <RadioFieldHiddenUseCase3 />
     }
   ],
   Submit: [

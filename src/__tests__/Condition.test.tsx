@@ -85,6 +85,7 @@ afterAll(() => {
 });
 
 beforeEach(() => {
+  hooksCollector.reset();
   const setController = jest.fn();
   controller = new Controller<Form>({ setController });
 });
@@ -134,8 +135,6 @@ describe("Condition Element", () => {
 
 describe("ConditionComponent Element", () => {
   test("Default functionality", () => {
-    hooksCollector.reset();
-
     render(
       <ConditionComponent controller={controller}>
         <div data-testid={testid}></div>
@@ -146,8 +145,6 @@ describe("ConditionComponent Element", () => {
   });
 
   test("IfFormValid is true and customCondition is undefined", () => {
-    hooksCollector.reset();
-
     const { unmount } = render(
       <ConditionComponent controller={controller} ifFormValid>
         <div data-testid={testid}></div>
@@ -158,8 +155,6 @@ describe("ConditionComponent Element", () => {
   });
 
   test("IfFormValid is undefined and customCondition is set", () => {
-    hooksCollector.reset();
-
     const customCondition = jest.fn(() => {
       return controller.isValid;
     });
@@ -174,8 +169,6 @@ describe("ConditionComponent Element", () => {
   });
 
   test("IfFormValid is true and customCondition is set - default", () => {
-    hooksCollector.reset();
-
     const customCondition = jest.fn(() => {
       return controller.isValid;
     });
@@ -194,8 +187,6 @@ describe("ConditionComponent Element", () => {
   });
 
   test("IfFormValid is true and customCondition is set - custom", () => {
-    hooksCollector.reset();
-
     const customCondition = jest.fn(() => {
       return false;
     });

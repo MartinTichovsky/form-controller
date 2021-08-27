@@ -241,7 +241,7 @@ export class Controller<T extends FormFields<T>> {
         isValid: true,
         isVisible: true,
         options: type === "radio" ? new Map() : undefined,
-        value: undefined
+        value: this._initialValues?.[key]
       };
     }
 
@@ -254,6 +254,10 @@ export class Controller<T extends FormFields<T>> {
     } else {
       this._fields[key].options?.set(id, { isDisabled: true, isVisible: true });
     }
+
+    this._fields[key].isVisible = Array.from(
+      this._fields[key]!.options!.values()
+    ).every((item) => item.isDisabled);
   }
 
   public setDefaultIsInvalid({ key, type }: { key: keyof T; type?: string }) {
@@ -268,7 +272,7 @@ export class Controller<T extends FormFields<T>> {
         isValid: false,
         isVisible: true,
         options: type === "radio" ? new Map() : undefined,
-        value: undefined
+        value: this._initialValues?.[key]
       };
     }
   }
@@ -285,7 +289,7 @@ export class Controller<T extends FormFields<T>> {
     if (key in this._fields) {
       this._fields[key] = {
         ...this._fields[key],
-        isDVisible: false
+        isVisible: false
       };
     } else {
       this._fields[key] = {
@@ -293,7 +297,7 @@ export class Controller<T extends FormFields<T>> {
         isValid: true,
         isVisible: false,
         options: type === "radio" ? new Map() : undefined,
-        value: undefined
+        value: this._initialValues?.[key]
       };
     }
 
@@ -309,6 +313,10 @@ export class Controller<T extends FormFields<T>> {
         isVisible: false
       });
     }
+
+    this._fields[key].isVisible = Array.from(
+      this._fields[key]!.options!.values()
+    ).some((item) => item.isVisible);
   }
 
   public setFieldValue(key: keyof T, value: Value, id?: string) {
@@ -422,7 +430,7 @@ export class Controller<T extends FormFields<T>> {
 
     if (type === "radio" && id && this._fields[key]?.options?.has(id)) {
       this._fields[key]!.options!.get(id)!.isVisible = isVisible;
-      visible = Array.from(this._fields[key]!.options!.values()).every(
+      visible = Array.from(this._fields[key]!.options!.values()).some(
         (item) => item.isVisible
       );
     }
@@ -500,7 +508,7 @@ export class Controller<T extends FormFields<T>> {
         isValid: false,
         isVisible: true,
         options: type === "radio" ? new Map() : undefined,
-        value: undefined
+        value: this._initialValues?.[key]
       };
     }
 

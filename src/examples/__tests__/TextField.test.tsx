@@ -20,6 +20,10 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
+beforeEach(() => {
+  hooksCollector.reset();
+});
+
 test("TextField", () => {
   const { container } = render(<TextField />);
 
@@ -101,8 +105,6 @@ test("TextField", () => {
 
 describe("Re-render", () => {
   test("Without Values", () => {
-    hooksCollector.reset();
-
     render(<TextField />);
 
     // render count check
@@ -160,8 +162,6 @@ describe("Re-render", () => {
   });
 
   test("With Errors", () => {
-    hooksCollector.reset();
-
     const { container } = render(<TextField />);
 
     fireEvent.click(screen.getByTestId(submitTestId));
@@ -191,8 +191,6 @@ describe("Re-render", () => {
   });
 
   test("With Values", () => {
-    hooksCollector.reset();
-
     render(<TextField />);
 
     fireEvent.change(screen.getByTestId(input1TestId), {
@@ -228,8 +226,6 @@ describe("Re-render", () => {
 
 describe("Reset", () => {
   test("Without Values", () => {
-    hooksCollector.reset();
-
     render(<TextField />);
 
     fireEvent.click(screen.getByTestId(resetTestId));
@@ -272,8 +268,6 @@ describe("Reset", () => {
   });
 
   test("With Errors", () => {
-    hooksCollector.reset();
-
     const { container } = render(<TextField />);
 
     fireEvent.click(screen.getByTestId(submitTestId));
@@ -301,8 +295,6 @@ describe("Reset", () => {
   });
 
   test("With values", () => {
-    hooksCollector.reset();
-
     render(<TextField />);
 
     fireEvent.change(screen.getByTestId(input1TestId), {

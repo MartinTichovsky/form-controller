@@ -17,6 +17,10 @@ afterAll(() => {
   jest.restoreAllMocks();
 });
 
+beforeEach(() => {
+  hooksCollector.reset();
+});
+
 describe("FormController Element", () => {
   test("Default functionality", () => {
     render(
@@ -71,8 +75,6 @@ describe("FormController Element", () => {
 
 describe("FormControllerComponent Element", () => {
   test("Default functionality", () => {
-    hooksCollector.reset();
-
     let controller: Controller<Form> | undefined;
     let renderCount = 0;
 

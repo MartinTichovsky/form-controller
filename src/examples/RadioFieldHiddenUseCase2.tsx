@@ -120,7 +120,7 @@ export const RadioFieldHiddenUseCase2 = () => {
             </div>
             <div className="info">
               * Radio Volume 1 is hidden until the Option 2-1 is not selected.
-              Radio Volume 3 is hidden untill the Option 2-2 is not selected.
+              Radio Volume 3 is hidden until the Option 2-2 is not selected.
               This example uses component Condition to hide fields.
             </div>
           </>
