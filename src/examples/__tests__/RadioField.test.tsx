@@ -35,7 +35,7 @@ test("RadioField", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({ radio: "Option 1" });
+  expect(console.log).lastCalledWith({ radio: "Option 1" });
 
   // click on the second option
   fireEvent.click(screen.getByTestId(radio2TestId));
@@ -48,7 +48,7 @@ test("RadioField", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(2);
-  expect(console.log).toBeCalledWith({ radio: "Option 2" });
+  expect(console.log).lastCalledWith({ radio: "Option 2" });
 
   // click on the third option
   fireEvent.click(screen.getByTestId(radio3TestId));
@@ -61,7 +61,7 @@ test("RadioField", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(3);
-  expect(console.log).toBeCalledWith({ radio: "Option 3" });
+  expect(console.log).lastCalledWith({ radio: "Option 3" });
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));

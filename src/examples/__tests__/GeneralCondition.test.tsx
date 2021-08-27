@@ -64,7 +64,7 @@ test("GeneralCondition", async () => {
 
   //check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
+  expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));

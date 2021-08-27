@@ -13,10 +13,6 @@ const testid = "test-id";
 
 console.error = jest.fn();
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 beforeEach(() => {
   hooksCollector.reset();
 });

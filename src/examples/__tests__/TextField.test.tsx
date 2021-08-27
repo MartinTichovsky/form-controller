@@ -16,10 +16,6 @@ const reRenderTestId = "re-render";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 beforeEach(() => {
   hooksCollector.reset();
 });
@@ -100,7 +96,7 @@ test("TextField", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
+  expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
 });
 
 describe("Re-render", () => {

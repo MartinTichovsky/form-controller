@@ -1,7 +1,8 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { GeneralValidation } from "../GeneralValidation";
+import { GeneralValidationUseCase1 } from "../GeneralValidationUseCase1";
+import { GeneralValidationUseCase2 } from "../GeneralValidationUseCase2";
 import { testErrorMessage } from "../utils/selectors";
 
 console.log = jest.fn();
@@ -11,9 +12,7 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("GeneralValidation", () => {
-  const { container } = render(<GeneralValidation />);
-
+const testWorkflow = (container: HTMLElement) => {
   // errors should not be shown
   testErrorMessage(container, 0);
 
@@ -64,5 +63,21 @@ test("GeneralValidation", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
+  expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
+};
+
+afterEach(() => {
+  jest.resetAllMocks();
+});
+
+test("GeneralValidationUseCase1", () => {
+  const { container } = render(<GeneralValidationUseCase1 />);
+
+  testWorkflow(container);
+});
+
+test("GeneralValidationUseCase2", () => {
+  const { container } = render(<GeneralValidationUseCase2 />);
+
+  testWorkflow(container);
 });

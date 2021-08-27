@@ -108,7 +108,7 @@ test("SubmitDisabledOnSubmit", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
+  expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
 
   // submit valid form
   fireEvent.click(screen.getByTestId(submitBottomTestId));
@@ -118,5 +118,5 @@ test("SubmitDisabledOnSubmit", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(2);
-  expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
+  expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
 });

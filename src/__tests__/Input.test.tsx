@@ -15,10 +15,6 @@ let controller: Controller<Form>;
 
 console.error = jest.fn();
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 beforeEach(() => {
   hooksCollector.reset();
   const setController = jest.fn();

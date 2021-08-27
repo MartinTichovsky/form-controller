@@ -28,7 +28,7 @@ test("TextFieldDisabledUseCase2", () => {
   fireEvent.click(screen.getByTestId(submitTestId));
 
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({});
+  expect(console.log).lastCalledWith({});
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -90,7 +90,7 @@ test("TextFieldDisabledUseCase2", () => {
   fireEvent.click(screen.getByTestId(submitTestId));
 
   expect(console.log).toBeCalledTimes(2);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     givenName: "James",
     surname: "Bond"
   });
@@ -113,7 +113,7 @@ test("TextFieldDisabledUseCase2", () => {
   fireEvent.click(screen.getByTestId(submitTestId));
 
   expect(console.log).toBeCalledTimes(3);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     givenName: "James",
     salutation: " ",
     surname: "Bond"
@@ -137,7 +137,7 @@ test("TextFieldDisabledUseCase2", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(4);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     givenName: "James",
     salutation: "Mr.",
     surname: "Bond"

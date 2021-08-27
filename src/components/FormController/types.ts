@@ -1,4 +1,9 @@
-import { Controller, FormFields, OnSubmit } from "../../controller";
+import {
+  Controller,
+  FormFields,
+  OnSubmit,
+  ValidationResult
+} from "../../controller";
 
 export type FormControllerComponentProps<T extends FormFields<T>> =
   FormControllerProps<T> &
@@ -6,8 +11,20 @@ export type FormControllerComponentProps<T extends FormFields<T>> =
 
 export type FormControllerProps<T extends FormFields<T>> =
   React.PropsWithChildren<{
-    initialValues?: Partial<T>;
     children: (controller: Controller<T>) => React.ReactNode;
+    disableIf?: {
+      [key in keyof T]?: (fields: Partial<T>) => boolean;
+    };
+    hideIf?: {
+      [key in keyof T]?: (fields: Partial<T>) => boolean;
+    };
+    initialValues?: Partial<T>;
     onSubmit?: OnSubmit<T>;
     validateOnChange?: boolean;
+    validation?: {
+      [key in keyof T]?: (
+        value: T[key] | undefined,
+        props: unknown
+      ) => ValidationResult;
+    };
   }>;

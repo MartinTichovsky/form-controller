@@ -52,7 +52,7 @@ test("RadioFieldDisabledUseCase2", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     radioVolume1: "Option 1-3",
     radioVolume2: "Option 2-1",
     radioVolume3: "Option 3-3"
@@ -90,7 +90,7 @@ test("RadioFieldDisabledUseCase2", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(2);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     radioVolume1: "Option 1-3",
     radioVolume2: "Option 2-2",
     radioVolume3: "Option 3-3"
@@ -114,7 +114,7 @@ test("RadioFieldDisabledUseCase2", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(3);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     radioVolume1: "Option 1-3",
     radioVolume2: "Option 2-2",
     radioVolume3: "Option 3-2"
@@ -128,7 +128,7 @@ test("RadioFieldDisabledUseCase2", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(4);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     radioVolume1: "Option 1-2",
     radioVolume2: "Option 2-2",
     radioVolume3: "Option 3-2"
@@ -178,7 +178,7 @@ test("RadioFieldDisabledUseCase2", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(5);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     radioVolume1: "Option 1-1",
     radioVolume2: "Option 2-1",
     radioVolume3: "Option 3-1"

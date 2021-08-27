@@ -24,7 +24,7 @@ test("TextFieldDefaultValues", () => {
   // submit valid form
   fireEvent.click(screen.getByTestId(submitTestId));
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     givenName: "James",
     surname: "Bond"
   });

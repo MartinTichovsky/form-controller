@@ -6,6 +6,7 @@ import { InitialState, InputComponentType, InputPrivateProps } from "./types";
 type State = {
   error: ValidationResult;
   isDisabled: boolean;
+  isSelected: boolean;
   isVisible: boolean;
 };
 
@@ -35,7 +36,8 @@ export const InputComponent = <
 >) => {
   const [state, setState] = React.useState<State>({
     ...initialState!,
-    error: undefined
+    error: undefined,
+    isSelected: controller.getFieldValue(name) === value
   });
   const refState = React.useRef(state);
   const defaultValue = React.useRef(controller.getFieldValue(name) || "");
@@ -49,6 +51,14 @@ export const InputComponent = <
 
   React.useEffect(
     () => {
+      if (
+        rest.type === "radio" &&
+        rest.id &&
+        controller.getFieldValue(name) === value
+      ) {
+        controller.setDefaultActiveId(name, rest.id);
+      }
+
       return () => {
         controller.deleteField(name, rest.id);
       };
@@ -68,9 +78,15 @@ export const InputComponent = <
         }
 
         if (errorMessage) {
-          setState((prevState) => ({ ...prevState, error: errorMessage }));
+          setState((prevState) => ({
+            ...prevState,
+            error: errorMessage
+          }));
         } else {
-          setState((prevState) => ({ ...prevState, error: undefined }));
+          setState((prevState) => ({
+            ...prevState,
+            error: undefined
+          }));
         }
       };
 
@@ -79,7 +95,7 @@ export const InputComponent = <
         id: rest.id,
         key: name,
         type: rest.type,
-        validate: () => validate!(controller.getFieldValue(name), rest)
+        validate: () => validate(controller.getFieldValue(name), rest)
       });
 
       return () => {
@@ -93,7 +109,10 @@ export const InputComponent = <
     () => {
       const action = {
         action: (disable: boolean) => {
-          setState((prevState) => ({ ...prevState, isDisabled: disable }));
+          setState((prevState) => ({
+            ...prevState,
+            isDisabled: disable
+          }));
         },
         key: name
       };
@@ -120,16 +139,19 @@ export const InputComponent = <
         });
 
         if (isDisabled && !refState.current.isDisabled) {
-          key.current = key.current + 1;
-          defaultValue.current = controller.getFieldValue(name) || "";
+          key.current++;
 
           setState((prevState) => ({
             ...prevState,
             error: undefined,
-            isDisabled: true
+            isDisabled: true,
+            isSelected: controller.getFieldValue(name) === value
           }));
         } else if (!isDisabled && refState.current.isDisabled) {
-          setState((prevState) => ({ ...prevState, isDisabled: false }));
+          setState((prevState) => ({
+            ...prevState,
+            isDisabled: false
+          }));
         }
       };
 
@@ -172,9 +194,18 @@ export const InputComponent = <
           });
 
           if (!isVisible && refState.current.isVisible) {
-            setState((prevState) => ({ ...prevState, isVisible: false }));
+            setState((prevState) => ({
+              ...prevState,
+              isVisible: false
+            }));
           } else if (isVisible && !refState.current.isVisible) {
-            setState((prevState) => ({ ...prevState, isVisible: true }));
+            key.current++;
+
+            setState((prevState) => ({
+              ...prevState,
+              isSelected: controller.getFieldValue(name) === value,
+              isVisible: true
+            }));
           }
         };
 
@@ -186,6 +217,29 @@ export const InputComponent = <
       }
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
     [controller, hideIf, setState]
+  );
+
+  React.useEffect(
+    () => {
+      if (rest.type === "radio" && rest.id) {
+        controller.subscribeIsSelected(rest.id, () => {
+          key.current++;
+          setState((prevState) => ({
+            ...prevState,
+            error:
+              prevState.error && validate
+                ? validate(controller.getFieldValue(name), rest)
+                : undefined,
+            isSelected: true
+          }));
+        });
+
+        return () => {
+          controller.unsubscribeIsSelected(rest.id!);
+        };
+      }
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    [controller, setState]
   );
 
   const InputElement = React.useCallback(
@@ -236,14 +290,8 @@ export const InputComponent = <
     defaultValue: value || (defaultValue.current as string)
   };
 
-  if (
-    defaultValue.current &&
-    rest.type === "radio" &&
-    defaultValue.current === value
-  ) {
-    controller.setDefaultActiveId(name, rest.id);
+  if (rest.type === "radio" && state.isSelected) {
     props.defaultChecked = true;
-    defaultValue.current = "";
   }
 
   return (

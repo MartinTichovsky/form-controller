@@ -66,7 +66,7 @@ test("RadioFieldHiddenUseCase2", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     radioVolume1: "Option 1-2",
     radioVolume2: "Option 2-1"
   });
@@ -99,7 +99,7 @@ test("RadioFieldHiddenUseCase2", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(2);
-  expect(console.log).toBeCalledWith({
+  expect(console.log).lastCalledWith({
     radioVolume2: "Option 2-2",
     radioVolume3: "Option 3-1"
   });

@@ -12,10 +12,6 @@ const radio2TestId = "radio-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 test("GeneralDisableAllOnSubmit", async () => {
   render(<GeneralDisableAllOnSubmit />);
 
@@ -30,7 +26,7 @@ test("GeneralDisableAllOnSubmit", async () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({});
+  expect(console.log).lastCalledWith({});
 
   // all inputs must be disabled
   expect(screen.getByTestId(input1TestId)).toBeDisabled();

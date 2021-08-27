@@ -67,7 +67,7 @@
 //     expect(controller.isSubmitted).toBeTruthy();
 //     expect(onChange).toBeCalledTimes(1);
 //     expect(validate).toBeCalledTimes(1);
-//     expect(onSubmit).toBeCalledWith({ input: value }, controller);
+//     expect(onSubmit).lastCalledWith({ input: value }, controller);
 //   });
 
 //   it("initialValues", () => {
@@ -171,15 +171,15 @@
 
 //     controller.disableFields(true);
 //     expect(onDisableListener).toHaveBeenCalledTimes(1);
-//     expect(onDisableListener).toBeCalledWith(true);
+//     expect(onDisableListener).lastCalledWith(true);
 //     expect(onDisableButtonListener).toHaveBeenCalledTimes(1);
-//     expect(onDisableButtonListener).toBeCalledWith(true);
+//     expect(onDisableButtonListener).lastCalledWith(true);
 
 //     controller.disableFields(false);
 //     expect(onDisableListener).toHaveBeenCalledTimes(2);
-//     expect(onDisableListener).toBeCalledWith(false);
+//     expect(onDisableListener).lastCalledWith(false);
 //     expect(onDisableButtonListener).toHaveBeenCalledTimes(2);
-//     expect(onDisableButtonListener).toBeCalledWith(false);
+//     expect(onDisableButtonListener).lastCalledWith(false);
 
 //     jest.resetAllMocks();
 
@@ -210,12 +210,12 @@
 //     controller.subscribeValidator("input", () => false);
 
 //     expect(onChangeListener).toBeCalledTimes(1);
-//     expect(onChangeListener).toBeCalledWith(true);
+//     expect(onChangeListener).lastCalledWith(true);
 
 //     controller.validate();
 
 //     expect(onChangeListener).toBeCalledTimes(2);
-//     expect(onChangeListener).toBeCalledWith(false);
+//     expect(onChangeListener).lastCalledWith(false);
 
 //     controller.unsubscribeOnChange(onChangeListener);
 //     expect(controller["onChangeListeners"].size).toBe(0);
@@ -249,7 +249,7 @@
 //     expect(controller.getFieldValue("input")).toBe(value);
 
 //     expect(validatorListener).toHaveBeenCalledTimes(1);
-//     expect(validatorListener).toBeCalledWith(true);
+//     expect(validatorListener).lastCalledWith(true);
 
 //     expect(controller.getField("input")).toEqual({
 //       isDisabled: false,
@@ -260,13 +260,13 @@
 //     controller.isSubmitted = true;
 //     controller.setFieldValue("input", "new value 1");
 //     expect(validatorListener).toHaveBeenCalledTimes(2);
-//     expect(validatorListener).toBeCalledWith();
+//     expect(validatorListener).lastCalledWith();
 
 //     controller.isSubmitted = false;
 //     controller["_validateOnChange"] = true;
 //     controller.setFieldValue("input", "new value 2");
 //     expect(validatorListener).toHaveBeenCalledTimes(3);
-//     expect(validatorListener).toBeCalledWith();
+//     expect(validatorListener).lastCalledWith();
 
 //     controller.isSubmitted = true;
 //     controller["_fields"].input.isDisabled = true;
@@ -349,7 +349,7 @@
 //     });
 
 //     expect(validatorListener1).toHaveBeenCalledTimes(1);
-//     expect(validatorListener1).toBeCalledWith(true);
+//     expect(validatorListener1).lastCalledWith(true);
 
 //     const validatorListener2 = jest.fn(() => false);
 //     controller.subscribeValidator("input", validatorListener2);
@@ -362,7 +362,7 @@
 //     });
 
 //     expect(validatorListener2).toHaveBeenCalledTimes(1);
-//     expect(validatorListener2).toBeCalledWith(true);
+//     expect(validatorListener2).lastCalledWith(true);
 //   });
 
 //   it("submit", () => {
@@ -380,7 +380,7 @@
 //     controller.submit();
 //     expect(controller.isSubmitted).toBeTruthy();
 //     expect(onSubmit).toBeCalledTimes(1);
-//     expect(onSubmit).toBeCalledWith(
+//     expect(onSubmit).lastCalledWith(
 //       { input: controller.getFieldValue("input") },
 //       controller
 //     );

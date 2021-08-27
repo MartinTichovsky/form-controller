@@ -731,7 +731,7 @@ describe("Mock React Hooks", () => {
       expect(registeredComponent).not.toBeUndefined();
       expect(registeredComponent?.getRender(1)?.length).toBe(1);
       expect(oiginUseEffect).toBeCalledTimes(1);
-      expect(oiginUseEffect).toBeCalledWith(
+      expect(oiginUseEffect).lastCalledWith(
         registeredComponent?.getRenderHooks(1, 1)?.action,
         ...deps
       );

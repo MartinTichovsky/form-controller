@@ -49,7 +49,7 @@ test("GeneralErrorFor", async () => {
   // submit valid form
   fireEvent.click(screen.getByTestId(submitTestId));
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({ givenName: "James", surname: "Bond" });
+  expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {

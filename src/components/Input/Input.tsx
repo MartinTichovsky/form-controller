@@ -52,12 +52,24 @@ export const Input = <
     disableIf = React.useContext(disableIfContext);
   }
 
+  if (!disableIf) {
+    disableIf = props.controller.getDisableCondition(props.name);
+  }
+
   if (!hideIf) {
     hideIf = React.useContext(hideIfContext);
   }
 
+  if (!hideIf) {
+    hideIf = props.controller.getHideCondition(props.name);
+  }
+
   if (!validate) {
     validate = React.useContext(validateContext);
+  }
+
+  if (!validate) {
+    validate = props.controller.getValidateCondition(props.name);
   }
 
   id = (props.label && !id) || props.type === "radio" ? getRandomId() : id;

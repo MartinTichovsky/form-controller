@@ -8,7 +8,7 @@ type MyForm = {
   surname: string;
 };
 
-export const GeneralValidation = () => {
+export const GeneralValidationUseCase1 = () => {
   return (
     <Template>
       <FormController<MyForm>

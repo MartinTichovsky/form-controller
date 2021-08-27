@@ -36,7 +36,7 @@ test("GeneralLabel", () => {
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
-  expect(console.log).toBeCalledWith({});
+  expect(console.log).lastCalledWith({});
 
   fireEvent.click(screen.getByTestId(resetTestId));
 });

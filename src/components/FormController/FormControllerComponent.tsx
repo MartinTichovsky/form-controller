@@ -4,9 +4,12 @@ import { FormControllerComponentProps } from "./types";
 
 export const FormControllerComponent = <T extends FormFields<T>>({
   children,
+  disableIf,
+  hideIf,
   initialValues,
   onSubmit,
   validateOnChange = false,
+  validation,
   ...rest
 }: FormControllerComponentProps<T>) => {
   const [controller, setController] = React.useState<Controller<T>>();
@@ -14,10 +17,13 @@ export const FormControllerComponent = <T extends FormFields<T>>({
   React.useEffect(
     () => {
       const controller = new Controller<T>({
+        disableIf,
+        hideIf,
         initialValues,
         onSubmit,
         setController,
-        validateOnChange
+        validateOnChange,
+        validation
       });
       setController(controller);
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
