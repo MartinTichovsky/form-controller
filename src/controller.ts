@@ -50,8 +50,9 @@ export class Controller<T extends FormFields<T>> {
 
   private _afterAll: {
     disable: Map<keyof T, Action>;
-    validate: Map<keyof T, Action>;
-  } = { disable: new Map(), validate: new Map() };
+    validate: Action[];
+    visible: Map<keyof T, Action>;
+  } = { disable: new Map(), validate: [], visible: new Map() };
   private _onChangeCounter = 0;
   private _defaultActiveId: { [key in keyof T]?: string } = {};
   private _disableIf?: { [key in keyof T]?: (fields: Partial<T>) => boolean };
@@ -157,8 +158,11 @@ export class Controller<T extends FormFields<T>> {
           action();
         });
       });
-      this._afterAll.disable = new Map();
-      this._afterAll.validate = new Map();
+      this._afterAll = {
+        disable: new Map(),
+        validate: [],
+        visible: new Map()
+      };
     }
   }
 
@@ -538,8 +542,8 @@ export class Controller<T extends FormFields<T>> {
       this._fields[key].value = undefined;
     }
 
-    if (!this._afterAll.validate.has(key)) {
-      this._afterAll.validate.set(key, () => {
+    if (!this._afterAll.visible.has(key)) {
+      this._afterAll.visible.set(key, () => {
         if (
           this._fields[key].value === undefined &&
           this._fields[key]?.options?.get(this._defaultActiveId?.[key]!)
@@ -567,19 +571,6 @@ export class Controller<T extends FormFields<T>> {
         }
       });
     }
-
-    // if (validateAll && (this.validateOnChange || this.isSubmitted)) {
-    //   this._fields[key].isValid = this.validateAll(key);
-    //   this._afterAll.validate.set(key, () => {
-    //     this.isSelectedAction(this._defaultActiveId[key]!);
-    //     this.errorListeners(key);
-    //   });
-    // } else if (validateAll) {
-    //   this._fields[key].isValid = this.validateAll(key, true);
-    //   this._afterAll.validate.set(key, () => {
-    //     this.isSelectedAction(this._defaultActiveId[key]!);
-    //   });
-    // }
 
     this._fields[key] = {
       ...this._fields[key],
@@ -735,7 +726,10 @@ export class Controller<T extends FormFields<T>> {
       }
     });
 
+    this._afterAll.validate.push(() => {
+      this.errorListeners();
+    });
+
     this.onChange();
-    this.errorListeners();
   }
 }
