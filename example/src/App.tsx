@@ -1,5 +1,5 @@
 import React from "react";
-import { Content, Menu, Wrapper } from "./App.styles";
+import { Content, Menu } from "./App.styles";
 import { menuItems } from "./menu-items";
 
 const getHash = () => {
@@ -23,8 +23,8 @@ export const App = () => {
 
   return (
     <>
-      <Wrapper>
-        <Menu>
+      <Menu>
+        <ul>
           {Object.keys(menuItems).map((key, index) => {
             return (
               <React.Fragment key={index}>
@@ -45,9 +45,11 @@ export const App = () => {
               </React.Fragment>
             );
           })}
-        </Menu>
-        <Content>{getRender(selectedKey)}</Content>
-      </Wrapper>
+        </ul>
+      </Menu>
+      <Content>
+        <div>{getRender(selectedKey)}</div>
+      </Content>
     </>
   );
 };

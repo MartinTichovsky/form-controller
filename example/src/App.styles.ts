@@ -1,69 +1,78 @@
 import styled from "@emotion/styled";
 
 export const Content = styled("div")({
-  gridArea: "content",
+  height: "100%",
+  left: 320,
+  overflowY: "auto",
+  position: "absolute",
+  top: 0,
+  width: "calc(100% - 320px)",
 
-  ".form-controller": {
-    marginTop: 15,
+  "> div": {
+    padding: 10,
 
-    ".field-row": {
+    ".form-controller": {
       marginTop: 15,
 
-      ".input-field-error": {
-        paddingLeft: 10
-      }
-    },
+      ".field-row": {
+        marginTop: 15,
 
-    ".info": {
-      fontFamily: "Arial",
-      fontSize: ".8em",
-      fontWeight: "bolder",
-      marginTop: 20,
-      maxWidth: 300
+        ".input-field-error": {
+          paddingLeft: 10
+        }
+      },
+
+      ".info": {
+        fontFamily: "Arial",
+        fontSize: ".8em",
+        fontWeight: "bolder",
+        marginTop: 20,
+        maxWidth: 300
+      }
     }
   }
 });
 
-export const Menu = styled("ul")({
-  gridArea: "sidebar",
-  margin: 0,
-  padding: 0,
+export const Menu = styled("div")({
+  height: "100%",
+  overflowY: "auto",
+  position: "absolute",
+  top: 0,
+  width: 280,
 
-  li: {
-    listStyle: "none",
+  ul: {
+    margin: 0,
+    padding: 10,
 
-    "&.menu-item": {
-      marginLeft: 10,
-      marginTop: 5,
+    li: {
+      listStyle: "none",
 
-      a: {
-        color: "blue",
-        textDecoration: "none",
+      "&.menu-item": {
+        marginLeft: 10,
+        marginTop: 5,
 
-        "&.selected": {
-          textDecoration: "underline"
-        },
+        a: {
+          color: "blue",
+          textDecoration: "none",
 
-        "&:hover": {
-          textDecoration: "underline"
+          "&.selected": {
+            textDecoration: "underline"
+          },
+
+          "&:hover": {
+            textDecoration: "underline"
+          }
+        }
+      },
+
+      "&.section": {
+        marginBottom: 10,
+        textTransform: "uppercase",
+
+        "&:not(:first-of-type)": {
+          marginTop: 15
         }
       }
-    },
-
-    "&.section": {
-      marginBottom: 10,
-      textTransform: "uppercase",
-
-      "&:not(:first-of-type)": {
-        marginTop: 15
-      }
     }
   }
-});
-
-export const Wrapper = styled("div")({
-  display: "grid",
-  gap: "20px",
-  gridTemplateAreas: "'sidebar content'",
-  gridTemplateColumns: "300px auto"
 });
