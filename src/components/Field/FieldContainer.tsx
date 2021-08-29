@@ -64,6 +64,10 @@ export const FieldContainer = <
     throw new Error("Validate is not a function");
   }
 
+  if (!controller.registerKey(name)) {
+    console.warn(`Key '${name}' is already registered in the form`);
+  }
+
   if (!disableIf) {
     disableIf = React.useContext(disableIfContext);
   }

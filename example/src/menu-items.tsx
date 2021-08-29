@@ -15,6 +15,8 @@ import { RadioFieldHiddenUseCase1 } from "form-controller/lib/examples/RadioFiel
 import { RadioFieldHiddenUseCase2 } from "form-controller/lib/examples/RadioFieldHiddenUseCase2";
 import { RadioFieldHiddenUseCase3 } from "form-controller/lib/examples/RadioFieldHiddenUseCase3";
 import { SelectField } from "form-controller/lib/examples/SelectField";
+import { SelectFieldOptionDisabled } from "form-controller/lib/examples/SelectFieldOptionDisabled";
+import { SelectFieldOptionHidden } from "form-controller/lib/examples/SelectFieldOptionHidden";
 import { SubmitComponent } from "form-controller/lib/examples/SubmitComponent";
 import { SubmitCustom } from "form-controller/lib/examples/SubmitCustom";
 import { SubmitDefaultDisabled } from "form-controller/lib/examples/SubmitDefaultDisabled";
@@ -133,6 +135,16 @@ export const menuItems: MenuItems = {
       label: "Select Field",
       key: "select-field",
       render: () => <SelectField />
+    },
+    {
+      label: "Select Field Option - Disabled",
+      key: "select-field-option-disabled",
+      render: () => <SelectFieldOptionDisabled />
+    },
+    {
+      label: "Select Field Option - Hidden",
+      key: "select-field-option-hidden",
+      render: () => <SelectFieldOptionHidden />
     }
   ],
   Submit: [

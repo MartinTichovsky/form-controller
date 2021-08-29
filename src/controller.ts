@@ -97,12 +97,13 @@ export class Controller<T extends FormFields<T>> {
   private _validationPromiseCounter: { [key in keyof T]?: number } = {};
 
   private isSelectedListeners = new Map<string, Action>();
+  private keyIndex: number;
   private onChangeListeners = new Set<OnChangeAction>();
   private onDisableListeners = new Set<OnDisable<T>>();
   private onDisableButtonListeners = new Set<OnDisableAction>();
   private onValidateMessageListener = new Set<OnValidateMessage<T>>();
+  private registeredKeys: (keyof T)[] = [];
   private validatorListeners = new Map<keyof T, Validator>();
-  private keyIndex: number;
 
   public isSubmitted = false;
 
@@ -282,6 +283,15 @@ export class Controller<T extends FormFields<T>> {
     });
     this._onChangeCounter--;
     this.afterAll();
+  }
+
+  public registerKey(key: keyof T) {
+    if (this.registeredKeys.includes(key)) {
+      return false;
+    }
+
+    this.registeredKeys.push(key);
+    return true;
   }
 
   private registerQueueId(key: keyof T) {
@@ -852,7 +862,7 @@ export class Controller<T extends FormFields<T>> {
     validator?.action?.(validationContent);
   }
 
-  private validateAll(key: keyof T, silent?: boolean) {
+  public validateAll(key: keyof T, silent?: boolean) {
     const validator = this.validatorListeners.get(key);
 
     if (!validator) {

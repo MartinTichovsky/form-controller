@@ -5,6 +5,7 @@ import {
   validClassName
 } from "../../constants";
 import { FormFields, ValidationResult } from "../../controller";
+import { SelectProvider } from "../../providers";
 import {
   FieldInitialProps,
   FieldInternalProps,
@@ -13,10 +14,10 @@ import {
   InitialState
 } from "./types";
 
-type State = {
+interface State extends InitialState {
   message: ValidationResult;
   isSelected: boolean;
-} & InitialState;
+}
 
 export const Field = <
   T extends FormFields<T>,
@@ -109,7 +110,22 @@ export const Field = <
           id: rest.id,
           key: name,
           type: rest.type,
-          validate: () => validate(controller.getFieldValue(name), rest)
+          validate: () => {
+            let proceedValidation = true;
+
+            if (selectRef && selectRef.current && selectRef.current.options) {
+              proceedValidation =
+                Array.prototype.filter.call(
+                  selectRef.current.options,
+                  (option) => option.value && !option.disabled
+                ).length > 0;
+            }
+
+            return (
+              proceedValidation &&
+              validate(controller.getFieldValue(name), rest)
+            );
+          }
         });
 
         return () => {
@@ -272,12 +288,32 @@ export const Field = <
 
   const ComponentElement = React.useCallback(
     (props: React.ComponentProps<React.ElementType>) =>
-      Component && typeof Component === "function" ? (
-        <Component {...restProps} {...props} ref={selectRef} />
-      ) : fieldType === "select" ? (
-        <select {...props} ref={selectRef}>
+      fieldType === "select" ? (
+        Component && typeof Component === "function" ? (
+          <Component {...restProps} {...props} ref={selectRef}>
+            <SelectProvider
+              id={rest.id}
+              name={name as string}
+              selectRef={selectRef}
+            >
+              {children}
+            </SelectProvider>
+          </Component>
+        ) : (
+          <select {...restProps} {...props} ref={selectRef}>
+            <SelectProvider
+              id={rest.id}
+              name={name as string}
+              selectRef={selectRef}
+            >
+              {children}
+            </SelectProvider>
+          </select>
+        )
+      ) : Component && typeof Component === "function" ? (
+        <Component {...restProps} {...props} ref={selectRef}>
           {children}
-        </select>
+        </Component>
       ) : (
         <input {...props} />
       ),
@@ -307,7 +343,7 @@ export const Field = <
   );
 
   if (!state.isVisible) {
-    return <></>;
+    return null;
   }
 
   let props = {
