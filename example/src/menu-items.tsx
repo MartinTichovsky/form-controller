@@ -1,7 +1,7 @@
 import { GeneralCondition } from "form-controller/lib/examples/GeneralCondition";
 import { GeneralDisableAllOnSubmit } from "form-controller/lib/examples/GeneralDisableAllOnSubmit";
-import { GeneralErrorFor } from "form-controller/lib/examples/GeneralErrorFor";
 import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
+import { GeneralMessageFor } from "form-controller/lib/examples/GeneralMessageFor";
 import { GeneralValidateOnChange } from "form-controller/lib/examples/GeneralValidateOnChange";
 import { GeneralValidationUseCase1 } from "form-controller/lib/examples/GeneralValidationUseCase1";
 import { GeneralValidationUseCase2 } from "form-controller/lib/examples/GeneralValidationUseCase2";
@@ -22,10 +22,10 @@ import { TextField } from "form-controller/lib/examples/TextField";
 import { TextFieldDefaultValues } from "form-controller/lib/examples/TextFieldDefaultValues";
 import { TextFieldDisabledUseCase1 } from "form-controller/lib/examples/TextFieldDisabledUseCase1";
 import { TextFieldDisabledUseCase2 } from "form-controller/lib/examples/TextFieldDisabledUseCase2";
-import { TextFieldErrorComponent } from "form-controller/lib/examples/TextFieldErrorComponent";
 import { TextFieldHiddenUseCase1 } from "form-controller/lib/examples/TextFieldHiddenUseCase1";
 import { TextFieldHiddenUseCase2 } from "form-controller/lib/examples/TextFieldHiddenUseCase2";
 import { TextFieldInputComponent } from "form-controller/lib/examples/TextFieldInputComponent";
+import { TextFieldMessageComponent } from "form-controller/lib/examples/TextFieldMessageComponent";
 
 interface MenuIitem {
   label: string;
@@ -60,9 +60,9 @@ export const menuItems: MenuItems = {
       render: () => <TextFieldDefaultValues />
     },
     {
-      label: "Error Component",
-      key: "text-fields-error-component",
-      render: () => <TextFieldErrorComponent />
+      label: "Message Component",
+      key: "text-fields-message-component",
+      render: () => <TextFieldMessageComponent />
     },
     {
       label: "Hidden Text Field - UseCase 1",
@@ -163,7 +163,7 @@ export const menuItems: MenuItems = {
     {
       label: "Error Outside the Input",
       key: "error-outside-the-input",
-      render: () => <GeneralErrorFor />
+      render: () => <GeneralMessageFor />
     },
     {
       label: "Label",

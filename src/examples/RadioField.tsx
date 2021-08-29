@@ -24,7 +24,7 @@ export const RadioField = () => {
                 <Input
                   controller={controller}
                   data-testid="radio-1"
-                  hideError={false}
+                  hideMessage={false}
                   label="Option 1"
                   name="radio"
                   type="radio"

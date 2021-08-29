@@ -1,6 +1,6 @@
 import React from "react";
 import { FormController, Input, Submit } from "..";
-import { ErrorFor } from "../components/ErrorFor";
+import { MessageFor } from "../components/MessageFor";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -11,7 +11,7 @@ type MyForm = {
 export const givenNameErrorText = "Provide a valid given name";
 export const surnameErrorText = "Provide a valid surname";
 
-export const GeneralErrorFor = () => {
+export const GeneralMessageFor = () => {
   return (
     <Template>
       <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
@@ -21,31 +21,31 @@ export const GeneralErrorFor = () => {
               <Input
                 controller={controller}
                 data-testid="input-1"
-                hideError
+                hideMessage
                 name="givenName"
                 placeholder="Input a given name"
                 validate={(value) => !value?.trim()}
               />
             </div>
             <div className="field-row">
-              <ErrorFor controller={controller} name="givenName">
+              <MessageFor controller={controller} name="givenName">
                 {givenNameErrorText}
-              </ErrorFor>
+              </MessageFor>
             </div>
             <div className="field-row">
               <Input
                 controller={controller}
                 data-testid="input-2"
-                hideError
+                hideMessage
                 name="surname"
                 placeholder="Input a surname"
                 validate={(value) => !value?.trim()}
               />
             </div>
             <div className="field-row">
-              <ErrorFor controller={controller} name="surname">
+              <MessageFor controller={controller} name="surname">
                 {surnameErrorText}
-              </ErrorFor>
+              </MessageFor>
             </div>
             <div className="field-row">
               <Submit controller={controller} data-testid="submit">

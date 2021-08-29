@@ -17,7 +17,7 @@ export const Content = styled("div")({
       ".field-row": {
         marginTop: 15,
 
-        ".input-field-error": {
+        ".input-field-message": {
           paddingLeft: 10
         }
       },

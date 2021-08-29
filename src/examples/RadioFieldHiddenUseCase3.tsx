@@ -1,7 +1,8 @@
 import React from "react";
 import { FormController, Input, Submit } from "..";
-import { ErrorFor } from "../components/ErrorFor";
+import { MessageFor } from "../components/MessageFor";
 import { Validation } from "../components/Validation";
+import { invalidClassName } from "../constants";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -19,14 +20,14 @@ export const RadioFieldHiddenUseCase3 = () => {
             <Validation validate={(value) => value === undefined}>
               <div className="field-row">
                 <b>Radio Volume 1</b>
-                <ErrorFor controller={controller} name="radioVolume1">
+                <MessageFor controller={controller} name="radioVolume1">
                   <span
-                    className="input-field-error"
+                    className={invalidClassName}
                     style={{ color: "red", paddingLeft: 10 }}
                   >
                     Choose an option
                   </span>
-                </ErrorFor>
+                </MessageFor>
               </div>
               <div className="field-row">
                 <Input
@@ -63,20 +64,20 @@ export const RadioFieldHiddenUseCase3 = () => {
 
               <div className="field-row">
                 <b>Radio Volume 2</b>
-                <ErrorFor controller={controller} name="radioVolume2">
+                <MessageFor controller={controller} name="radioVolume2">
                   <span
-                    className="input-field-error"
+                    className={invalidClassName}
                     style={{ color: "red", paddingLeft: 10 }}
                   >
                     Choose an option
                   </span>
-                </ErrorFor>
+                </MessageFor>
               </div>
               <div className="field-row">
                 <Input
                   controller={controller}
                   data-testid="radio-2-1"
-                  hideError={false}
+                  hideMessage={false}
                   label="Option 2-1"
                   name="radioVolume2"
                   type="radio"
@@ -96,14 +97,14 @@ export const RadioFieldHiddenUseCase3 = () => {
 
               <div className="field-row">
                 <b>Radio Volume 3</b>
-                <ErrorFor controller={controller} name="radioVolume3">
+                <MessageFor controller={controller} name="radioVolume3">
                   <span
-                    className="input-field-error"
+                    className={invalidClassName}
                     style={{ color: "red", paddingLeft: 10 }}
                   >
                     Choose an option
                   </span>
-                </ErrorFor>
+                </MessageFor>
               </div>
               <div className="field-row">
                 <Input

@@ -1,6 +1,7 @@
 import React from "react";
-import { ErrorFor, FormController, Input, Submit } from "..";
+import { FormController, Input, MessageFor, Submit } from "..";
 import { Validation } from "../components/Validation";
+import { invalidClassName } from "../constants";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -30,14 +31,14 @@ export const RadioFieldDefaultValuesUseCase2 = () => {
             >
               <div className="field-row">
                 <b>Radio Volume 1</b>
-                <ErrorFor controller={controller} name="radioVolume1">
+                <MessageFor controller={controller} name="radioVolume1">
                   <span
-                    className="input-field-error"
+                    className={invalidClassName}
                     style={{ color: "red", paddingLeft: 10 }}
                   >
                     Choose an option
                   </span>
-                </ErrorFor>
+                </MessageFor>
               </div>
               <div className="field-row">
                 <Input
@@ -74,14 +75,14 @@ export const RadioFieldDefaultValuesUseCase2 = () => {
 
               <div className="field-row">
                 <b>Radio Volume 2</b>
-                <ErrorFor controller={controller} name="radioVolume2">
+                <MessageFor controller={controller} name="radioVolume2">
                   <span
-                    className="input-field-error"
+                    className={invalidClassName}
                     style={{ color: "red", paddingLeft: 10 }}
                   >
                     Choose an option
                   </span>
-                </ErrorFor>
+                </MessageFor>
               </div>
               <div className="field-row">
                 <Input
@@ -106,14 +107,14 @@ export const RadioFieldDefaultValuesUseCase2 = () => {
 
               <div className="field-row">
                 <b>Radio Volume 3</b>
-                <ErrorFor controller={controller} name="radioVolume3">
+                <MessageFor controller={controller} name="radioVolume3">
                   <span
-                    className="input-field-error"
+                    className={invalidClassName}
                     style={{ color: "red", paddingLeft: 10 }}
                   >
                     Choose an option
                   </span>
-                </ErrorFor>
+                </MessageFor>
               </div>
               <div className="field-row">
                 <Input

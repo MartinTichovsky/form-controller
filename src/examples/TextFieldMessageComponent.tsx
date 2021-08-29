@@ -1,5 +1,5 @@
 import React from "react";
-import { FormController, Input, Submit } from "../";
+import { FormController, Input, Submit } from "..";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -7,7 +7,7 @@ type MyForm = {
   surname: string;
 };
 
-const FunctionalErrorComponent = ({
+const FunctionalMessageComponent = ({
   children
 }: React.PropsWithChildren<{}>) => {
   return (
@@ -18,7 +18,7 @@ const FunctionalErrorComponent = ({
   );
 };
 
-class ClassErrorComponent extends React.Component {
+class ClassMessageComponent extends React.Component {
   render() {
     return (
       <span data-testid="class-component" style={{ marginLeft: 10 }}>
@@ -29,7 +29,7 @@ class ClassErrorComponent extends React.Component {
   }
 }
 
-export const TextFieldErrorComponent = () => {
+export const TextFieldMessageComponent = () => {
   return (
     <Template>
       <FormController<MyForm>
@@ -42,7 +42,7 @@ export const TextFieldErrorComponent = () => {
               <Input
                 controller={controller}
                 data-testid="input-1"
-                ErrorComponent={FunctionalErrorComponent}
+                MessageComponent={FunctionalMessageComponent}
                 name="givenName"
                 placeholder="Input a given name"
                 validate={(value) =>
@@ -54,7 +54,7 @@ export const TextFieldErrorComponent = () => {
               <Input
                 controller={controller}
                 data-testid="input-2"
-                ErrorComponent={ClassErrorComponent}
+                MessageComponent={ClassMessageComponent}
                 name="surname"
                 placeholder="Input a surname"
                 validate={(value) =>

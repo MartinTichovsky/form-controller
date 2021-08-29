@@ -2,6 +2,7 @@ import { Controller, FormFields, ValidationResult } from "../../controller";
 
 export interface InitialState {
   isDisabled: boolean;
+  isValid?: boolean;
   isVisible: boolean;
 }
 
@@ -15,8 +16,8 @@ export interface InputPrivateProps {
 export interface InputPublicProps<T extends FormFields<T>, K extends keyof T> {
   controller: Controller<T>;
   disableIf?: (fields: Partial<T>) => boolean;
-  hideError?: boolean;
   hideIf?: (fields: Partial<T>) => boolean;
+  hideMessage?: boolean;
   id?: string;
   name: K;
 }
@@ -26,9 +27,12 @@ type RestProps<T> = Omit<
   | "controller"
   | "defaultValue"
   | "disabled"
-  | "ErrorComponent"
+  | "disableIf"
+  | "hideIf"
+  | "hideMessage"
   | "initialState"
   | "InputComponent"
+  | "MessageComponent"
   | "name"
   | "onChange"
   | "onKeyDown"
@@ -42,18 +46,18 @@ export interface InputComponentType<
   IComponent extends React.ComponentType<
     React.ComponentProps<IComponent> & InputPrivateProps
   >,
-  EComponent extends React.ElementType,
+  MComponent extends React.ElementType,
   I
 > {
   ({
     controller,
     disableIf,
-    ErrorComponent,
-    hideError,
+    hideMessage: hideError,
     hideIf,
     initialState,
     InputComponent,
     label,
+    MessageComponent,
     name,
     onFormChange,
     validate,
@@ -63,16 +67,16 @@ export interface InputComponentType<
     onFormChange?: (name: K, props: typeof rest) => void;
   } & (
       | ({
-          ErrorComponent: undefined;
           InputComponent: undefined;
+          MessageComponent: undefined;
         } & RestProps<React.InputHTMLAttributes<HTMLInputElement>>)
       | ({
-          ErrorComponent: EComponent;
           InputComponent: undefined;
+          MessageComponent: MComponent;
         } & RestProps<React.InputHTMLAttributes<HTMLInputElement>>)
       | ({
-          ErrorComponent?: EComponent;
           InputComponent?: IComponent;
+          MessageComponent?: MComponent;
         } & RestProps<React.ComponentPropsWithoutRef<IComponent>>)
     ) &
     (

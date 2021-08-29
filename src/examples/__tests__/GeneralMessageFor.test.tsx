@@ -2,10 +2,10 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import {
-  GeneralErrorFor,
+  GeneralMessageFor,
   givenNameErrorText,
   surnameErrorText
-} from "../GeneralErrorFor";
+} from "../GeneralMessageFor";
 import { testErrorMessage } from "../utils/selectors";
 
 console.log = jest.fn();
@@ -15,8 +15,8 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("GeneralErrorFor", async () => {
-  const { container } = render(<GeneralErrorFor />);
+test("GeneralMessagefor", async () => {
+  const { container } = render(<GeneralMessageFor />);
 
   // errors should not be shown
   testErrorMessage(container, 0);

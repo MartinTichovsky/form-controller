@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { TextFieldErrorComponent } from "../TextFieldErrorComponent";
+import { TextFieldMessageComponent } from "../TextFieldMessageComponent";
 
 console.log = jest.fn();
 
@@ -12,8 +12,8 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("TextFieldErrorComponent", async () => {
-  render(<TextFieldErrorComponent />);
+test("TextFieldMessageComponent", async () => {
+  render(<TextFieldMessageComponent />);
 
   // errors should not be shown
   expect(() => screen.getByTestId(classComponentTestId)).toThrowError();

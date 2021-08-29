@@ -36,7 +36,7 @@ export const RadioFieldDefaultValuesUseCase1 = () => {
                   controller={controller}
                   data-testid="radio-1-1"
                   disableIf={(fields) => fields.radioVolume3 !== "Option 3-1"}
-                  hideError={false}
+                  hideMessage={false}
                   label="Option 1-1"
                   name="radioVolume1"
                   type="radio"
@@ -72,7 +72,7 @@ export const RadioFieldDefaultValuesUseCase1 = () => {
                 <Input
                   controller={controller}
                   data-testid="radio-2-1"
-                  hideError={false}
+                  hideMessage={false}
                   label="Option 2-1"
                   name="radioVolume2"
                   type="radio"
@@ -98,7 +98,7 @@ export const RadioFieldDefaultValuesUseCase1 = () => {
                   controller={controller}
                   data-testid="radio-3-1"
                   disableIf={(fields) => fields.radioVolume2 !== "Option 2-1"}
-                  hideError={false}
+                  hideMessage={false}
                   label="Option 3-1"
                   name="radioVolume3"
                   type="radio"

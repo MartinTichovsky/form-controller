@@ -1,14 +1,16 @@
 import React from "react";
-import { errorClassName } from "../../constants";
+import {
+  invalidClassName,
+  messageClassName,
+  validClassName
+} from "../../constants";
 import { FormFields, ValidationResult } from "../../controller";
 import { InitialState, InputComponentType, InputPrivateProps } from "./types";
 
 type State = {
-  error: ValidationResult;
-  isDisabled: boolean;
+  message: ValidationResult;
   isSelected: boolean;
-  isVisible: boolean;
-};
+} & InitialState;
 
 export const InputComponent = <
   T extends FormFields<T>,
@@ -16,12 +18,12 @@ export const InputComponent = <
   IComponent extends React.ComponentType<
     React.ComponentProps<IComponent> & InputPrivateProps
   >,
-  EComponent extends React.ElementType
+  MComponent extends React.ElementType
 >({
   controller,
   disableIf,
-  ErrorComponent,
-  hideError,
+  MessageComponent,
+  hideMessage,
   hideIf,
   initialState,
   InputComponent,
@@ -32,11 +34,11 @@ export const InputComponent = <
   value,
   ...rest
 }: React.ComponentProps<
-  InputComponentType<T, K, IComponent, EComponent, InitialState>
+  InputComponentType<T, K, IComponent, MComponent, InitialState>
 >) => {
   const [state, setState] = React.useState<State>({
     ...initialState!,
-    error: undefined,
+    message: undefined,
     isSelected: controller.getFieldValue(name) === value
   });
   const refState = React.useRef(state);
@@ -45,8 +47,8 @@ export const InputComponent = <
 
   refState.current = state;
 
-  if (rest.type === "radio" && hideError === undefined) {
-    hideError = true;
+  if (rest.type === "radio" && hideMessage === undefined) {
+    hideMessage = true;
   }
 
   React.useEffect(
@@ -72,20 +74,24 @@ export const InputComponent = <
         return;
       }
 
-      const action = (errorMessage: ValidationResult) => {
-        if (hideError) {
+      const action = (validationResult: ValidationResult) => {
+        if (hideMessage) {
           return;
         }
 
-        if (errorMessage) {
+        const field = controller.getField(name);
+
+        if (validationResult) {
           setState((prevState) => ({
             ...prevState,
-            error: errorMessage
+            isValid: field === undefined || field.isValid,
+            message: validationResult
           }));
         } else {
           setState((prevState) => ({
             ...prevState,
-            error: undefined
+            isValid: undefined,
+            message: undefined
           }));
         }
       };
@@ -102,7 +108,7 @@ export const InputComponent = <
         controller.unsubscribeValidator(name, action);
       };
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [controller, hideError, name, setState, validate]
+    [controller, hideMessage, name, setState, validate]
   );
 
   React.useEffect(
@@ -143,9 +149,10 @@ export const InputComponent = <
 
           setState((prevState) => ({
             ...prevState,
-            error: undefined,
+            message: undefined,
             isDisabled: true,
-            isSelected: controller.getFieldValue(name) === value
+            isSelected: controller.getFieldValue(name) === value,
+            isValid: undefined
           }));
         } else if (!isDisabled && refState.current.isDisabled) {
           setState((prevState) => ({
@@ -224,13 +231,16 @@ export const InputComponent = <
       if (rest.type === "radio" && rest.id) {
         controller.subscribeIsSelected(rest.id, () => {
           key.current++;
+          const field = controller.getField(name);
+
           setState((prevState) => ({
             ...prevState,
-            error:
-              prevState.error && validate
-                ? validate(controller.getFieldValue(name), rest)
+            message:
+              prevState.message && validate
+                ? validate(field?.value as T[K], rest)
                 : undefined,
-            isSelected: true
+            isSelected: true,
+            isValid: field === undefined || field.isValid
           }));
         });
 
@@ -258,27 +268,25 @@ export const InputComponent = <
     [InputComponent]
   );
 
-  const ErrorElement = React.useCallback(
+  const MessageElement = React.useCallback(
     ({
       children,
       ...props
     }: React.PropsWithChildren<React.HTMLProps<HTMLElement>>) =>
-      ErrorComponent && typeof ErrorComponent === "function" ? (
-        <ErrorComponent
+      MessageComponent && typeof MessageComponent === "function" ? (
+        <MessageComponent
           {...({
             ...rest,
             ...props
           } as React.ComponentProps<React.ElementType>)}
         >
           {children}
-        </ErrorComponent>
+        </MessageComponent>
       ) : (
-        <span className={errorClassName} {...props}>
-          {children}
-        </span>
+        <span {...props}>{children}</span>
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ErrorComponent]
+    [MessageComponent]
   );
 
   if (!state.isVisible) {
@@ -328,8 +336,14 @@ export const InputComponent = <
         ) : (
           label
         ))}
-      {state.error && state.error !== true && (
-        <ErrorElement>{state.error}</ErrorElement>
+      {state.message && state.message !== true && (
+        <MessageElement
+          className={`${messageClassName} ${
+            state.isValid === false ? invalidClassName : validClassName
+          }`}
+        >
+          {state.message}
+        </MessageElement>
       )}
     </>
   );

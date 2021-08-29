@@ -101,6 +101,9 @@ export const Input = <
     });
   }
 
+  const field = props.controller.getField(props.name);
+  initialState.isValid = field === undefined || field.isValid;
+
   return (
     <InputComponent
       {...({

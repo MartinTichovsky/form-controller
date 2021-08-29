@@ -28,13 +28,13 @@ jest.mock("./src/components/Condition/ConditionComponent", () => {
   };
 });
 
-jest.mock("./src/components/ErrorFor", () => {
-  const origin = jest.requireActual("./src/components/ErrorFor");
+jest.mock("./src/components/MessageFor", () => {
+  const origin = jest.requireActual("./src/components/MessageFor");
   const { mockComponent } = require("./src/__tests__/utils/clone-function");
 
   return {
     ...origin,
-    ErrorFor: mockComponent(origin, origin.ErrorFor.name, hooksCollector)
+    MessageFor: mockComponent(origin, origin.MessageFor.name, hooksCollector)
   };
 });
 
