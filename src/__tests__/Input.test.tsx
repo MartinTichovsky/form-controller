@@ -1,8 +1,7 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import React from "react";
-import { Input } from "../components/Input/Input";
-import { InputComponent } from "../components/Input/InputComponent";
+import { Input } from "../components/Input";
 import { Controller } from "../controller";
 import { getGeneratedValues } from "./utils/value-generator";
 
@@ -39,10 +38,8 @@ describe("Input Element", () => {
   });
 });
 
-describe("InputComponent Element", () => {
+describe("Component Element", () => {
   test("Default functionality", () => {
-    const { unmount } = render(
-      <InputComponent controller={controller} name="input" />
-    );
+    const { unmount } = render(<Input controller={controller} name="input" />);
   });
 });

@@ -1,8 +1,8 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+import { Field } from "../../components/Field/Field";
 import { FormControllerComponent } from "../../components/FormController/FormControllerComponent";
-import { InputComponent } from "../../components/Input/InputComponent";
 import { SubmitComponent } from "../../components/Submit/SubmitComponent";
 import { TextField } from "../TextField";
 import { testErrorMessage } from "../utils/selectors";
@@ -24,12 +24,12 @@ test("TextField", async () => {
   const { container } = render(<TextField />);
 
   // render count check
-  expect(
-    hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
-  ).toBe(1);
-  expect(
-    hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
-  ).toBe(1);
+  expect(hooksCollector.getComponentRenderCount(Field.name, input1TestId)).toBe(
+    1
+  );
+  expect(hooksCollector.getComponentRenderCount(Field.name, input2TestId)).toBe(
+    1
+  );
   expect(
     hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
   ).toBe(1);
@@ -45,12 +45,12 @@ test("TextField", async () => {
   // two errors should be shown
   testErrorMessage(container, 2);
 
-  expect(
-    hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
-  ).toBe(2);
-  expect(
-    hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
-  ).toBe(2);
+  expect(hooksCollector.getComponentRenderCount(Field.name, input1TestId)).toBe(
+    2
+  );
+  expect(hooksCollector.getComponentRenderCount(Field.name, input2TestId)).toBe(
+    2
+  );
   expect(
     hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
   ).toBe(1);
@@ -60,12 +60,12 @@ test("TextField", async () => {
     fireEvent.click(screen.getByTestId(submitTestId));
   });
 
-  expect(
-    hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
-  ).toBe(3);
-  expect(
-    hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
-  ).toBe(3);
+  expect(hooksCollector.getComponentRenderCount(Field.name, input1TestId)).toBe(
+    3
+  );
+  expect(hooksCollector.getComponentRenderCount(Field.name, input2TestId)).toBe(
+    3
+  );
   expect(
     hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
   ).toBe(1);
@@ -119,10 +119,10 @@ describe("Re-render", () => {
       )
     ).toBe(2); // beacause the form controller creates a controller `useEffect` and set it with `setController`
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
     ).toBe(1);
     expect(
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
@@ -138,10 +138,10 @@ describe("Re-render", () => {
       )
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
     ).toBe(1);
     expect(
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
@@ -155,10 +155,10 @@ describe("Re-render", () => {
       )
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
     ).toBe(1);
     expect(
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
@@ -182,10 +182,10 @@ describe("Re-render", () => {
       )
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
     ).toBe(2); // because the second render is the submit event (validation)
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
     ).toBe(2);
     expect(
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
@@ -217,10 +217,10 @@ describe("Re-render", () => {
       )
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
     ).toBe(1);
     expect(
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
@@ -245,10 +245,10 @@ describe("Reset", () => {
       )
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
     ).toBe(2);
     expect(
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
@@ -264,10 +264,10 @@ describe("Reset", () => {
       )
     ).toBe(4);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
     ).toBe(3);
     expect(
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
@@ -291,10 +291,10 @@ describe("Reset", () => {
       )
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
     ).toBe(3);
     expect(
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
@@ -325,10 +325,10 @@ describe("Reset", () => {
       )
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input1TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(InputComponent.name, input2TestId)
+      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
     ).toBe(2);
     expect(
       hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)

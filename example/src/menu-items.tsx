@@ -14,17 +14,18 @@ import { RadioFieldDisabledUseCase3 } from "form-controller/lib/examples/RadioFi
 import { RadioFieldHiddenUseCase1 } from "form-controller/lib/examples/RadioFieldHiddenUseCase1";
 import { RadioFieldHiddenUseCase2 } from "form-controller/lib/examples/RadioFieldHiddenUseCase2";
 import { RadioFieldHiddenUseCase3 } from "form-controller/lib/examples/RadioFieldHiddenUseCase3";
+import { SelectField } from "form-controller/lib/examples/SelectField";
 import { SubmitComponent } from "form-controller/lib/examples/SubmitComponent";
 import { SubmitCustom } from "form-controller/lib/examples/SubmitCustom";
 import { SubmitDefaultDisabled } from "form-controller/lib/examples/SubmitDefaultDisabled";
 import { SubmitDisabledOnSubmit } from "form-controller/lib/examples/SubmitDisabledOnSubmit";
 import { TextField } from "form-controller/lib/examples/TextField";
+import { TextFieldComponent } from "form-controller/lib/examples/TextFieldComponent";
 import { TextFieldDefaultValues } from "form-controller/lib/examples/TextFieldDefaultValues";
 import { TextFieldDisabledUseCase1 } from "form-controller/lib/examples/TextFieldDisabledUseCase1";
 import { TextFieldDisabledUseCase2 } from "form-controller/lib/examples/TextFieldDisabledUseCase2";
 import { TextFieldHiddenUseCase1 } from "form-controller/lib/examples/TextFieldHiddenUseCase1";
 import { TextFieldHiddenUseCase2 } from "form-controller/lib/examples/TextFieldHiddenUseCase2";
-import { TextFieldInputComponent } from "form-controller/lib/examples/TextFieldInputComponent";
 import { TextFieldMessageComponent } from "form-controller/lib/examples/TextFieldMessageComponent";
 
 interface MenuIitem {
@@ -77,7 +78,7 @@ export const menuItems: MenuItems = {
     {
       label: "Input Component",
       key: "text-fields-input-component",
-      render: () => <TextFieldInputComponent />
+      render: () => <TextFieldComponent />
     }
   ],
   "Radio Fields": [
@@ -125,6 +126,13 @@ export const menuItems: MenuItems = {
       label: "Hidden Radio Field - UseCase 3",
       key: "hidden-radio-field-usecase-3",
       render: () => <RadioFieldHiddenUseCase3 />
+    }
+  ],
+  "Select Fields": [
+    {
+      label: "Select Field",
+      key: "select-field",
+      render: () => <SelectField />
     }
   ],
   Submit: [

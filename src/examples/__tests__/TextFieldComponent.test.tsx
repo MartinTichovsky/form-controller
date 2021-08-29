@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { TextFieldInputComponent } from "../TextFieldInputComponent";
+import { TextFieldComponent } from "../TextFieldComponent";
 import { testErrorMessage } from "../utils/selectors";
 
 console.log = jest.fn();
@@ -13,8 +13,8 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("TextFieldInputComponent", async () => {
-  const { container } = render(<TextFieldInputComponent />);
+test("TextFieldComponent", async () => {
+  const { container } = render(<TextFieldComponent />);
 
   // the inputs with this id must be in the document
   expect(container.querySelector(`#${classInputId}`)).toBeTruthy();

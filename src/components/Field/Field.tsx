@@ -5,43 +5,54 @@ import {
   validClassName
 } from "../../constants";
 import { FormFields, ValidationResult } from "../../controller";
-import { InitialState, InputComponentType, InputPrivateProps } from "./types";
+import {
+  FieldInitialProps,
+  FieldInternalProps,
+  FieldPrivateProps,
+  FieldType,
+  InitialState
+} from "./types";
 
 type State = {
   message: ValidationResult;
   isSelected: boolean;
 } & InitialState;
 
-export const InputComponent = <
+export const Field = <
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
-    React.ComponentProps<IComponent> & InputPrivateProps
+    React.ComponentProps<IComponent> & FieldPrivateProps
   >,
-  MComponent extends React.ElementType
+  MComponent extends React.ElementType,
+  Attributes
 >({
+  children,
   controller,
   disableIf,
-  MessageComponent,
   hideMessage,
   hideIf,
-  initialState,
-  InputComponent,
+  Component,
   label,
+  MessageComponent,
   name,
   onFormChange,
   validate,
   value,
   ...rest
-}: React.ComponentProps<
-  InputComponentType<T, K, IComponent, MComponent, InitialState>
->) => {
+}: React.PropsWithChildren<
+  React.ComponentProps<FieldType<T, K, IComponent, MComponent, Attributes>>
+> &
+  FieldInternalProps &
+  FieldInitialProps) => {
+  const { initialState, fieldType, ...restProps } = rest;
   const [state, setState] = React.useState<State>({
     ...initialState!,
     message: undefined,
     isSelected: controller.getFieldValue(name) === value
   });
   const refState = React.useRef(state);
+  const selectRef = React.useRef<HTMLSelectElement>();
   const defaultValue = React.useRef(controller.getFieldValue(name) || "");
   const key = React.useRef(0);
 
@@ -68,48 +79,46 @@ export const InputComponent = <
     [controller]
   );
 
-  React.useEffect(
-    () => {
-      if (!validate) {
-        return;
-      }
+  if (validate) {
+    React.useEffect(
+      () => {
+        const action = (validationResult: ValidationResult) => {
+          if (hideMessage) {
+            return;
+          }
 
-      const action = (validationResult: ValidationResult) => {
-        if (hideMessage) {
-          return;
-        }
+          const field = controller.getField(name);
 
-        const field = controller.getField(name);
+          if (validationResult) {
+            setState((prevState) => ({
+              ...prevState,
+              isValid: field === undefined || field.isValid,
+              message: validationResult
+            }));
+          } else {
+            setState((prevState) => ({
+              ...prevState,
+              isValid: undefined,
+              message: undefined
+            }));
+          }
+        };
 
-        if (validationResult) {
-          setState((prevState) => ({
-            ...prevState,
-            isValid: field === undefined || field.isValid,
-            message: validationResult
-          }));
-        } else {
-          setState((prevState) => ({
-            ...prevState,
-            isValid: undefined,
-            message: undefined
-          }));
-        }
-      };
+        controller.subscribeValidator({
+          action,
+          id: rest.id,
+          key: name,
+          type: rest.type,
+          validate: () => validate(controller.getFieldValue(name), rest)
+        });
 
-      controller.subscribeValidator({
-        action,
-        id: rest.id,
-        key: name,
-        type: rest.type,
-        validate: () => validate(controller.getFieldValue(name), rest)
-      });
-
-      return () => {
-        controller.unsubscribeValidator(name, action);
-      };
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [controller, hideMessage, name, setState, validate]
-  );
+        return () => {
+          controller.unsubscribeValidator(name, action);
+        };
+      }, // eslint-disable-next-line react-hooks/exhaustive-deps
+      [controller, hideMessage, name, setState, validate]
+    );
+  }
 
   React.useEffect(
     () => {
@@ -132,8 +141,8 @@ export const InputComponent = <
     [controller, name, setState]
   );
 
-  React.useEffect(() => {
-    if (disableIf) {
+  if (disableIf) {
+    React.useEffect(() => {
       const action = () => {
         const isDisabled = disableIf(controller.fields);
 
@@ -167,12 +176,12 @@ export const InputComponent = <
       return () => {
         controller.unsubscribeOnChange(action);
       };
-    }
-  }, [controller, disableIf, key, name, refState, setState]);
+    }, [controller, disableIf, key, name, refState, setState]);
+  }
 
-  React.useEffect(
-    () => {
-      if (onFormChange) {
+  if (onFormChange) {
+    React.useEffect(
+      () => {
         const action = () => {
           onFormChange(name, rest);
         };
@@ -182,14 +191,14 @@ export const InputComponent = <
         return () => {
           controller.unsubscribeOnChange(action);
         };
-      }
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [controller, name, onFormChange]
-  );
+      }, // eslint-disable-next-line react-hooks/exhaustive-deps
+      [controller, name, onFormChange]
+    );
+  }
 
-  React.useEffect(
-    () => {
-      if (hideIf) {
+  if (hideIf) {
+    React.useEffect(
+      () => {
         const action = () => {
           const isVisible = !hideIf(controller.fields);
 
@@ -221,15 +230,15 @@ export const InputComponent = <
         return () => {
           controller.unsubscribeOnChange(action);
         };
-      }
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [controller, hideIf, setState]
-  );
+      }, // eslint-disable-next-line react-hooks/exhaustive-deps
+      [controller, hideIf, setState]
+    );
+  }
 
-  React.useEffect(
-    () => {
-      if (rest.type === "radio" && rest.id) {
-        controller.subscribeIsSelected(rest.id, () => {
+  if (rest.type === "radio" && rest.id) {
+    React.useEffect(
+      () => {
+        controller.subscribeIsSelected(rest.id!, () => {
           key.current++;
           const field = controller.getField(name);
 
@@ -247,25 +256,33 @@ export const InputComponent = <
         return () => {
           controller.unsubscribeIsSelected(rest.id!);
         };
-      }
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [controller, setState]
-  );
+      }, // eslint-disable-next-line react-hooks/exhaustive-deps
+      [controller, setState]
+    );
+  }
 
-  const InputElement = React.useCallback(
-    (props: React.InputHTMLAttributes<HTMLInputElement>) =>
-      InputComponent && typeof InputComponent === "function" ? (
-        <InputComponent
-          {...({
-            ...rest,
-            ...props
-          } as React.ComponentProps<React.ElementType>)}
-        />
+  if (fieldType === "select") {
+    React.useEffect(
+      () => {
+        controller.setFieldValue(name, selectRef.current?.value, rest.id);
+      }, // eslint-disable-next-line react-hooks/exhaustive-deps
+      [controller, selectRef]
+    );
+  }
+
+  const ComponentElement = React.useCallback(
+    (props: React.ComponentProps<React.ElementType>) =>
+      Component && typeof Component === "function" ? (
+        <Component {...restProps} {...props} ref={selectRef} />
+      ) : fieldType === "select" ? (
+        <select {...props} ref={selectRef}>
+          {children}
+        </select>
       ) : (
         <input {...props} />
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [InputComponent]
+    [Component, fieldType]
   );
 
   const MessageElement = React.useCallback(
@@ -276,7 +293,7 @@ export const InputComponent = <
       MessageComponent && typeof MessageComponent === "function" ? (
         <MessageComponent
           {...({
-            ...rest,
+            ...restProps,
             ...props
           } as React.ComponentProps<React.ElementType>)}
         >
@@ -312,16 +329,16 @@ export const InputComponent = <
         ) : (
           label
         ))}
-      <InputElement
-        {...rest}
+      <ComponentElement
+        {...restProps}
         {...props}
         disabled={state.isDisabled}
         key={key.current}
         name={name as string}
-        onChange={(event) =>
+        onChange={(event: React.ChangeEvent<{ value: string }>) =>
           controller.setFieldValue(name, event.currentTarget.value, rest.id)
         }
-        onKeyDown={(event) => {
+        onKeyDown={(event: React.KeyboardEvent) => {
           if (event.key === "Enter") {
             controller.submit();
           }

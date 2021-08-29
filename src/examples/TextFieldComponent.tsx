@@ -79,7 +79,7 @@ class ClassInputComponent extends React.Component<{
   }
 }
 
-export const TextFieldInputComponent = () => {
+export const TextFieldComponent = () => {
   return (
     <Template>
       <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
@@ -89,7 +89,7 @@ export const TextFieldInputComponent = () => {
               <Input
                 controller={controller}
                 data-testid="input-1"
-                InputComponent={FunctionalInputComponent}
+                Component={FunctionalInputComponent}
                 labelText="Functional component"
                 name="givenName"
                 placeholder="Input a given name"
@@ -102,7 +102,7 @@ export const TextFieldInputComponent = () => {
               <Input
                 controller={controller}
                 data-testid="input-2"
-                InputComponent={ClassInputComponent}
+                Component={ClassInputComponent}
                 labelText="Class component"
                 name="surname"
                 placeholder="Input a surname"

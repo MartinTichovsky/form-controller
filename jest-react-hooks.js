@@ -28,13 +28,13 @@ jest.mock("./src/components/Condition/ConditionComponent", () => {
   };
 });
 
-jest.mock("./src/components/MessageFor", () => {
-  const origin = jest.requireActual("./src/components/MessageFor");
+jest.mock("./src/components/Field/Field", () => {
+  const origin = jest.requireActual("./src/components/Field/Field");
   const { mockComponent } = require("./src/__tests__/utils/clone-function");
 
   return {
     ...origin,
-    MessageFor: mockComponent(origin, origin.MessageFor.name, hooksCollector)
+    Field: mockComponent(origin, origin.Field.name, hooksCollector)
   };
 });
 
@@ -54,17 +54,23 @@ jest.mock("./src/components/FormController/FormControllerComponent", () => {
   };
 });
 
-jest.mock("./src/components/Input/InputComponent", () => {
-  const origin = jest.requireActual("./src/components/Input/InputComponent");
+jest.mock("./src/components/MessageFor", () => {
+  const origin = jest.requireActual("./src/components/MessageFor");
   const { mockComponent } = require("./src/__tests__/utils/clone-function");
 
   return {
     ...origin,
-    InputComponent: mockComponent(
-      origin,
-      origin.InputComponent.name,
-      hooksCollector
-    )
+    MessageFor: mockComponent(origin, origin.MessageFor.name, hooksCollector)
+  };
+});
+
+jest.mock("./src/components/Select", () => {
+  const origin = jest.requireActual("./src/components/Select");
+  const { mockComponent } = require("./src/__tests__/utils/clone-function");
+
+  return {
+    ...origin,
+    Select: mockComponent(origin, origin.Select.name, hooksCollector)
   };
 });
 

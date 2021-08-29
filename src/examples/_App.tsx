@@ -39,7 +39,7 @@ export function App() {
               </div>
               <div>
                 <Input
-                  InputComponent={MockedInput1}
+                  Component={MockedInput1}
                   disableIf={(fields) =>
                     !fields.name || fields.name?.trim() === ""
                   }
@@ -50,7 +50,7 @@ export function App() {
               </div>
               <div>
                 <Input
-                  InputComponent={MockedInput2}
+                  Component={MockedInput2}
                   disableIf={(fields) =>
                     !fields.name || fields.name?.trim() === ""
                   }
