@@ -5,7 +5,6 @@ type Action = () => void;
 type Fields<T> = {
   [K in keyof T]: {
     activeId?: string;
-    error: ValidationContentResult;
     isDisabled: boolean;
     isValid: boolean;
     isValidated: boolean;
@@ -18,6 +17,7 @@ type Fields<T> = {
       }
     >;
     validationInProgress: boolean;
+    validationResult: ValidationContentResult;
     value: Value;
   };
 };
@@ -332,7 +332,7 @@ export class Controller<T extends FormFields<T>> {
       };
     } else {
       this._fields[key] = {
-        error: undefined,
+        validationResult: undefined,
         isDisabled: true,
         isValid: true,
         isValidated: false,
@@ -369,7 +369,7 @@ export class Controller<T extends FormFields<T>> {
       };
     } else {
       this._fields[key] = {
-        error: undefined,
+        validationResult: undefined,
         isDisabled: false,
         isValid: false,
         isValidated: false,
@@ -400,7 +400,7 @@ export class Controller<T extends FormFields<T>> {
       };
     } else {
       this._fields[key] = {
-        error: undefined,
+        validationResult: undefined,
         isDisabled: false,
         isValid: true,
         isValidated: false,
@@ -443,7 +443,7 @@ export class Controller<T extends FormFields<T>> {
     } else {
       this._fields[key] = {
         activeId: id,
-        error: undefined,
+        validationResult: undefined,
         isDisabled: false,
         isValid: true,
         isValidated: false,
@@ -471,7 +471,7 @@ export class Controller<T extends FormFields<T>> {
   private setInitialValues(initialValues: Partial<T>) {
     for (let key in initialValues) {
       this._fields[key] = {
-        error: undefined,
+        validationResult: undefined,
         isDisabled: false,
         isValid: true,
         isValidated: false,
@@ -697,7 +697,7 @@ export class Controller<T extends FormFields<T>> {
 
     if (!(key in this._fields)) {
       this._fields[key] = {
-        error: undefined,
+        validationResult: undefined,
         isDisabled: false,
         isValid: false,
         isValidated: false,
@@ -765,7 +765,7 @@ export class Controller<T extends FormFields<T>> {
       }
 
       if (this._fields[key].isValidated && !this._fields[key].isValid) {
-        this.validateActions(key, this._fields[key].error);
+        this.validateActions(key, this._fields[key].validationResult);
         return;
       }
 
@@ -795,7 +795,7 @@ export class Controller<T extends FormFields<T>> {
 
             this._fields[key] = {
               ...this._fields[key],
-              error: result.content,
+              validationResult: result.content,
               isValid: result.isValid,
               isValidated: true
             };
@@ -826,7 +826,7 @@ export class Controller<T extends FormFields<T>> {
 
       this._fields[key] = {
         ...this._fields[key],
-        error: validationContent,
+        validationResult: validationContent,
         isValid,
         isValidated: true
       };
@@ -885,7 +885,7 @@ export class Controller<T extends FormFields<T>> {
 
           this._fields[key] = {
             ...this._fields[key],
-            error: result.content,
+            validationResult: result.content,
             isValid: result.isValid,
             isValidated: true
           };
@@ -922,7 +922,7 @@ export class Controller<T extends FormFields<T>> {
 
     this._fields[key] = {
       ...this._fields[key],
-      error: validationContent,
+      validationResult: validationContent,
       isValid,
       isValidated: true
     };

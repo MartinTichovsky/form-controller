@@ -43,12 +43,12 @@ const testValidForm = (unmount: () => void) => {
 
   // set form values and make the form invalid, it should hide the children
   controller["_fields"].input = {
-    error: "error",
     isDisabled: false,
     isValid: false,
     isValidated: true,
     isVisible: true,
     validationInProgress: false,
+    validationResult: "error",
     value: undefined
   };
 
@@ -121,12 +121,12 @@ describe("Condition Element", () => {
     expect(screen.getByTestId(testid)).toBeTruthy();
 
     controller["_fields"].input = {
-      error: undefined,
       isDisabled: false,
       isValid: true,
       isValidated: true,
       isVisible: true,
       validationInProgress: false,
+      validationResult: undefined,
       value: undefined
     };
 
