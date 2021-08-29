@@ -40,8 +40,8 @@ export const SubmitComponent = <
     [ButtonComponent]
   );
 
-  const handleClick = () => {
-    controller.submit();
+  const handleClick = async () => {
+    await controller.submit();
 
     if (onSubmit) {
       onSubmit(controller.fields, controller);

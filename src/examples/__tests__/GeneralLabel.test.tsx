@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { GeneralLabel } from "../GeneralLabel";
@@ -12,7 +12,7 @@ const input3TestId = "input-3";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("GeneralLabel", () => {
+test("GeneralLabel", async () => {
   const { container } = render(<GeneralLabel />);
 
   // three labels must exist
@@ -32,7 +32,9 @@ test("GeneralLabel", () => {
   expect(screen.getByTestId(input3TestId)).toHaveFocus();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);

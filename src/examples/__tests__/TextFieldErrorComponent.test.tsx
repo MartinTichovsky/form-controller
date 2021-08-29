@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { TextFieldErrorComponent } from "../TextFieldErrorComponent";
 
@@ -12,7 +12,7 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("TextFieldErrorComponent", () => {
+test("TextFieldErrorComponent", async () => {
   render(<TextFieldErrorComponent />);
 
   // errors should not be shown
@@ -20,7 +20,9 @@ test("TextFieldErrorComponent", () => {
   expect(() => screen.getByTestId(functionalComponentTestId)).toThrowError();
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // errors must be shown
   expect(screen.getByTestId(classComponentTestId)).toBeTruthy();
@@ -64,7 +66,9 @@ test("TextFieldErrorComponent", () => {
   expect(() => screen.getByTestId(functionalComponentTestId)).toThrowError();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);

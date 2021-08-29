@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { SubmitDefaultDisabled } from "../SubmitDefaultDisabled";
 import { testErrorMessage } from "../utils/selectors";
@@ -12,7 +12,7 @@ const resetTestId = "reset";
 const submitBottomTestId = "submit-bottom";
 const submitTopTestId = "submit-top";
 
-test("SubmitDefaultDisabled", () => {
+test("SubmitDefaultDisabled", async () => {
   const { container } = render(<SubmitDefaultDisabled />);
 
   // errors should not be shown
@@ -87,7 +87,9 @@ test("SubmitDefaultDisabled", () => {
   expect(screen.getByTestId(submitTopTestId)).not.toBeDisabled();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTopTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTopTestId));
+  });
 
   // errors should not be shown
   testErrorMessage(container, 0);
@@ -97,7 +99,9 @@ test("SubmitDefaultDisabled", () => {
   expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitBottomTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitBottomTestId));
+  });
 
   // errors should not be shown
   testErrorMessage(container, 0);

@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { TextFieldHiddenUseCase1 } from "../TextFieldHiddenUseCase1";
 import { testErrorMessage } from "../utils/selectors";
@@ -12,7 +12,7 @@ const input3TestId = "input-3";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("TextFieldHiddenUseCase1", () => {
+test("TextFieldHiddenUseCase1", async () => {
   const { container } = render(<TextFieldHiddenUseCase1 />);
 
   // the first and the third input must not be in the document and the submit button must be disabled
@@ -123,7 +123,9 @@ test("TextFieldHiddenUseCase1", () => {
   expect(screen.getByTestId(submitTestId)).not.toBeDisabled();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // errors should not be shown
   testErrorMessage(container, 0);

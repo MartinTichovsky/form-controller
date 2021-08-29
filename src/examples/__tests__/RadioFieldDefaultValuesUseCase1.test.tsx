@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { RadioFieldDefaultValuesUseCase1 } from "../RadioFieldDefaultValuesUseCase1";
 import { testErrorMessage } from "../utils/selectors";
@@ -17,7 +17,7 @@ const radio33TestId = "radio-3-3";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("RadioFieldDefaultValuesUseCase1", () => {
+test("RadioFieldDefaultValuesUseCase1", async () => {
   const { container } = render(<RadioFieldDefaultValuesUseCase1 />);
 
   // errors should not be shown
@@ -38,7 +38,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio33TestId)).toBeChecked();
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // one error should be shown
   testErrorMessage(container, 1);
@@ -57,7 +59,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio33TestId)).not.toBeDisabled();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
@@ -76,7 +80,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio33TestId)).toBeChecked();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(2);
@@ -100,7 +106,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio33TestId)).not.toBeDisabled();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(3);
@@ -132,7 +140,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio33TestId)).toBeChecked();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(4);
@@ -161,7 +171,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio32TestId)).toBeChecked();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(5);
@@ -190,7 +202,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio32TestId)).toBeChecked();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(6);
@@ -219,7 +233,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio33TestId)).toBeChecked();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(7);
@@ -248,7 +264,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio31TestId)).toBeChecked();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(8);
@@ -280,7 +298,9 @@ test("RadioFieldDefaultValuesUseCase1", () => {
   expect(screen.getByTestId(radio33TestId)).toBeChecked();
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // one error should be shown
   testErrorMessage(container, 1);

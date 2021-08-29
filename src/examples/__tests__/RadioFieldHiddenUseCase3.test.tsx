@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { RadioFieldHiddenUseCase3 } from "../RadioFieldHiddenUseCase3";
 import { testErrorMessage } from "../utils/selectors";
@@ -17,7 +17,7 @@ const radio33TestId = "radio-3-3";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("RadioFieldHiddenUseCase3", () => {
+test("RadioFieldHiddenUseCase3", async () => {
   const { container } = render(<RadioFieldHiddenUseCase3 />);
 
   // errors should not be shown
@@ -34,7 +34,9 @@ test("RadioFieldHiddenUseCase3", () => {
   expect(screen.getByTestId(radio33TestId)).toBeTruthy();
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // three errors should be shown
   testErrorMessage(container, 3);
@@ -48,7 +50,9 @@ test("RadioFieldHiddenUseCase3", () => {
   testErrorMessage(container, 0);
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
@@ -86,7 +90,9 @@ test("RadioFieldHiddenUseCase3", () => {
   expect(screen.getByTestId(radio33TestId)).toBeChecked();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(2);
@@ -110,7 +116,9 @@ test("RadioFieldHiddenUseCase3", () => {
   expect(screen.getByTestId(radio33TestId)).toBeTruthy();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(3);
@@ -124,7 +132,9 @@ test("RadioFieldHiddenUseCase3", () => {
   fireEvent.click(screen.getByTestId(radio12TestId));
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(4);
@@ -156,7 +166,9 @@ test("RadioFieldHiddenUseCase3", () => {
   testErrorMessage(container, 0);
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // two errros should be shown
   testErrorMessage(container, 2);
@@ -173,7 +185,9 @@ test("RadioFieldHiddenUseCase3", () => {
   fireEvent.click(screen.getByTestId(radio11TestId));
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(5);

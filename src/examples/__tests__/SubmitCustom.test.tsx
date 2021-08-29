@@ -1,7 +1,13 @@
 import "@testing-library/jest-dom";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor
+} from "@testing-library/react";
 import React from "react";
-import { sleep } from "../../__tests__/utils/utils";
+import { wait } from "../../utils/utils";
 import { SubmitCustom } from "../SubmitCustom";
 import { testErrorMessage } from "../utils/selectors";
 
@@ -26,7 +32,9 @@ test("SubmitCustom", async () => {
   );
 
   // click on the submit button
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // two errors should be shown
   testErrorMessage(container, 2);
@@ -47,7 +55,9 @@ test("SubmitCustom", async () => {
   });
 
   // click on the submit button
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // the submit button must have the pending text
   expect(screen.getByTestId(submitTestId)).toHaveTextContent(buttonPendingText);
@@ -61,7 +71,7 @@ test("SubmitCustom", async () => {
 
   // wait for delay
   await act(async () => {
-    await sleep(2000);
+    await wait(2000);
   });
 
   // after timouet, the submit button must not have the pending text
@@ -70,14 +80,16 @@ test("SubmitCustom", async () => {
   );
 
   // submit the form to show the pending text again
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // reset the form to unmount the elements and create new ones
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // wait for delay
   await act(async () => {
-    await sleep(2000);
+    await wait(2000);
   });
 
   // no console errors should be caused

@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { TextFieldInputComponent } from "../TextFieldInputComponent";
 import { testErrorMessage } from "../utils/selectors";
@@ -13,7 +13,7 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("TextFieldInputComponent", () => {
+test("TextFieldInputComponent", async () => {
   const { container } = render(<TextFieldInputComponent />);
 
   // the inputs with this id must be in the document
@@ -24,7 +24,9 @@ test("TextFieldInputComponent", () => {
   testErrorMessage(container, 0);
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // two errors must be shown
   testErrorMessage(container, 2);
@@ -46,7 +48,9 @@ test("TextFieldInputComponent", () => {
   testErrorMessage(container, 0);
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);

@@ -14,7 +14,9 @@ const FunctionalSubmitComponent = ({
   ...rest
 }: React.PropsWithChildren<{
   disabled: boolean; // required
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => Controller<MyForm>; // required
+  onClick: (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => Promise<Controller<MyForm>>; // required
 }>) => {
   const [pending, setPending] = React.useState(false);
   const isMounted = React.useRef(true);
@@ -25,8 +27,8 @@ const FunctionalSubmitComponent = ({
     };
   }, [isMounted]);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const controller = onClick(event);
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    const controller = await onClick(event);
 
     if (controller.isValid) {
       console.log(controller.fields);
@@ -52,7 +54,9 @@ const FunctionalSubmitComponent = ({
 
 interface ClassSubmitComponentProps {
   disabled: boolean; // required
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => Controller<MyForm>; // required
+  onClick: (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => Promise<Controller<MyForm>>; // required
 }
 
 class ClassSubmitComponent extends React.Component<ClassSubmitComponentProps> {
@@ -68,8 +72,8 @@ class ClassSubmitComponent extends React.Component<ClassSubmitComponentProps> {
     this.componentIsMounted = false;
   }
 
-  handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const controller = this.props.onClick(event);
+  handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    const controller = await this.props.onClick(event);
 
     if (controller.isValid) {
       console.log(controller.fields);

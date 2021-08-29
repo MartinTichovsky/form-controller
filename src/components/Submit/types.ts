@@ -39,7 +39,9 @@ export interface SubmitComponentType<
 
 export interface SubmitPrivateProps<T extends FormFields<T>> {
   disabled: boolean;
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => Controller<T>;
+  onClick: (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => Promise<Controller<T>>;
 }
 
 export type SubmitProps<T extends FormFields<T>> = React.PropsWithChildren<

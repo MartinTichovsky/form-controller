@@ -1,7 +1,13 @@
 import "@testing-library/jest-dom";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor
+} from "@testing-library/react";
 import React from "react";
-import { sleep } from "../../__tests__/utils/utils";
+import { wait } from "../../utils/utils";
 import { SubmitComponent } from "../SubmitComponent";
 import { testErrorMessage } from "../utils/selectors";
 
@@ -31,7 +37,9 @@ test("SubmitComponent", async () => {
   ).not.toHaveTextContent(buttonFunctionalPendingText);
 
   // click on the class submit component
-  fireEvent.click(screen.getByTestId(submitClassComponentTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitClassComponentTestId));
+  });
 
   // two errors should be shown
   testErrorMessage(container, 2);
@@ -43,7 +51,9 @@ test("SubmitComponent", async () => {
   testErrorMessage(container, 0);
 
   // click on the functional submit component
-  fireEvent.click(screen.getByTestId(submitFunctionalComponentTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitFunctionalComponentTestId));
+  });
 
   // two errors must be shown
   testErrorMessage(container, 2);
@@ -65,12 +75,14 @@ test("SubmitComponent", async () => {
   testErrorMessage(container, 0);
 
   // click on the class submit component
-  fireEvent.click(screen.getByTestId(submitClassComponentTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitClassComponentTestId));
+  });
 
-  // the class component button must have the pending text
   expect(screen.getByTestId(submitClassComponentTestId)).toHaveTextContent(
     buttonClassPendingText
   );
+
   expect(
     screen.getByTestId(submitFunctionalComponentTestId)
   ).not.toHaveTextContent(buttonFunctionalPendingText);
@@ -83,12 +95,15 @@ test("SubmitComponent", async () => {
   });
 
   // click on the functional submit component
-  fireEvent.click(screen.getByTestId(submitFunctionalComponentTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitFunctionalComponentTestId));
+  });
 
   // the functional component button must have the pending text
   expect(screen.getByTestId(submitClassComponentTestId)).toHaveTextContent(
     buttonClassPendingText
   );
+
   expect(screen.getByTestId(submitFunctionalComponentTestId)).toHaveTextContent(
     buttonFunctionalPendingText
   );
@@ -102,7 +117,7 @@ test("SubmitComponent", async () => {
 
   // wait for delay
   await act(async () => {
-    await sleep(2000);
+    await wait(2000);
   });
 
   // after timout the submit buttons must not have the pending text
@@ -113,16 +128,18 @@ test("SubmitComponent", async () => {
     screen.getByTestId(submitFunctionalComponentTestId)
   ).not.toHaveTextContent(buttonFunctionalPendingText);
 
-  // click on the buttons to cause pending again
-  fireEvent.click(screen.getByTestId(submitFunctionalComponentTestId));
-  fireEvent.click(screen.getByTestId(submitClassComponentTestId));
+  await waitFor(async () => {
+    // click on the buttons to cause pending again
+    fireEvent.click(screen.getByTestId(submitFunctionalComponentTestId));
+    fireEvent.click(screen.getByTestId(submitClassComponentTestId));
+  });
 
   // reset the form to unmount the elements and create new ones
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // wait for delay
   await act(async () => {
-    await sleep(2000);
+    await wait(2000);
   });
 
   // no console errors should be caused

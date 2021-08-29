@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { RadioFieldDisabledUseCase2 } from "../RadioFieldDisabledUseCase2";
 import { testErrorMessage } from "../utils/selectors";
@@ -17,7 +17,7 @@ const submitTestId = "submit";
 
 let expectedConsoleLogCallNumber = 0;
 
-const testWorkflow = (container: HTMLElement) => {
+const testWorkflow = async (container: HTMLElement) => {
   // the radio volume 1 and 3 must be disabled
   expect(screen.getByTestId(radio11TestId)).toBeDisabled();
   expect(screen.getByTestId(radio12TestId)).toBeDisabled();
@@ -27,7 +27,9 @@ const testWorkflow = (container: HTMLElement) => {
   expect(screen.getByTestId(radio32TestId)).toBeDisabled();
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // one error should be shown
   testErrorMessage(container, 1);
@@ -47,7 +49,9 @@ const testWorkflow = (container: HTMLElement) => {
   expect(screen.getByTestId(radio32TestId)).not.toBeDisabled();
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // one error should be shown
   testErrorMessage(container, 1);
@@ -67,7 +71,9 @@ const testWorkflow = (container: HTMLElement) => {
   expect(screen.getByTestId(radio32TestId)).not.toBeDisabled();
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // one error should be shown
   testErrorMessage(container, 1);
@@ -79,7 +85,9 @@ const testWorkflow = (container: HTMLElement) => {
   testErrorMessage(container, 0);
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(expectedConsoleLogCallNumber++ + 1);
@@ -110,7 +118,9 @@ const testWorkflow = (container: HTMLElement) => {
   expect(screen.getByTestId(radio32TestId)).toBeDisabled();
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // one error should be shown
   testErrorMessage(container, 1);
@@ -130,7 +140,9 @@ const testWorkflow = (container: HTMLElement) => {
   fireEvent.click(screen.getByTestId(radio11TestId));
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(expectedConsoleLogCallNumber++ + 1);
@@ -147,18 +159,18 @@ const testWorkflow = (container: HTMLElement) => {
   testErrorMessage(container, 0);
 };
 
-test("RadioFieldDisabledUseCase2", () => {
+test("RadioFieldDisabledUseCase2", async () => {
   const { container } = render(<RadioFieldDisabledUseCase2 />);
 
   // errors should not be shown
   testErrorMessage(container, 0);
 
   // first test
-  testWorkflow(container);
+  await testWorkflow(container);
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // second test
-  testWorkflow(container);
+  await testWorkflow(container);
 });

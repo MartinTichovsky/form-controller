@@ -117,7 +117,9 @@ class MockedInput2 extends React.Component<{
 class MockedButton2 extends React.Component<{
   abcd: string;
   disabled: boolean;
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => Controller<MyForm>;
+  onClick: (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => Promise<Controller<MyForm>>;
 }> {
   render() {
     return <button>ab</button>;

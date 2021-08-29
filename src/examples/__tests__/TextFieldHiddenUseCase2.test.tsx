@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { TextFieldHiddenUseCase2 } from "../TextFieldHiddenUseCase2";
 import { testErrorMessage } from "../utils/selectors";
@@ -12,7 +12,7 @@ const input3TestId = "input-3";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("TextFieldHiddenUseCase2", () => {
+test("TextFieldHiddenUseCase2", async () => {
   const { container } = render(<TextFieldHiddenUseCase2 />);
 
   // the first and the third input must not be in the document
@@ -25,7 +25,9 @@ test("TextFieldHiddenUseCase2", () => {
   testErrorMessage(container, 0);
 
   // submit the form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).lastCalledWith({});
@@ -87,7 +89,9 @@ test("TextFieldHiddenUseCase2", () => {
   testErrorMessage(container, 0);
 
   // submit the form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   expect(console.log).toBeCalledTimes(2);
   expect(console.log).lastCalledWith({
@@ -110,7 +114,9 @@ test("TextFieldHiddenUseCase2", () => {
   testErrorMessage(container, 0);
 
   // submit the form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   expect(console.log).toBeCalledTimes(3);
   expect(console.log).lastCalledWith({
@@ -130,7 +136,9 @@ test("TextFieldHiddenUseCase2", () => {
   expect(screen.getByTestId(submitTestId)).not.toBeDisabled();
 
   // submit the form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // errors should not be shown
   testErrorMessage(container, 0);

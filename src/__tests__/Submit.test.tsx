@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { Submit } from "../components/Submit/Submit";
 import { SubmitComponent } from "../components/Submit/SubmitComponent";
@@ -13,7 +13,7 @@ type Form = {
 const buttonText = "Test text";
 let controller: Controller<Form>;
 
-const defaultFunctionalityTest = (
+const defaultFunctionalityTest = async (
   unmount: () => void,
   disabledByDefault?: boolean
 ) => {
@@ -44,7 +44,9 @@ const defaultFunctionalityTest = (
   expect(useEffectHooks?.getRenderHooks(1, 2)?.unmountAction).not.toBeCalled();
 
   // onSubmit is not provided, click on the button should do nothing
-  fireEvent.click(button);
+  await waitFor(async () => {
+    fireEvent.click(button);
+  });
 
   expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(1);
   expect(useCallbackHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
@@ -103,22 +105,22 @@ describe("Submit Element", () => {
 });
 
 describe("SubmitComponent Element", () => {
-  test("Default functionality", () => {
+  test("Default functionality", async () => {
     const { unmount } = render(
       <SubmitComponent controller={controller}>{buttonText}</SubmitComponent>
     );
 
-    defaultFunctionalityTest(unmount);
+    await defaultFunctionalityTest(unmount);
   });
 
-  test("DisabledByDefault is set to true and disableIfNotValid is false, the behaviour must be the same as default", () => {
+  test("DisabledByDefault is set to true and disableIfNotValid is false, the behaviour must be the same as default", async () => {
     const { unmount } = render(
       <SubmitComponent controller={controller} disabledByDefault>
         {buttonText}
       </SubmitComponent>
     );
 
-    defaultFunctionalityTest(unmount, true);
+    await defaultFunctionalityTest(unmount, true);
   });
 
   test("DisabledByDefault is true and disableIfNotValid is true", () => {
@@ -201,7 +203,7 @@ describe("SubmitComponent Element", () => {
       });
   });
 
-  test("OnSubmit is provided", () => {
+  test("OnSubmit is provided", async () => {
     const onSubmit = jest.fn();
 
     render(
@@ -213,7 +215,10 @@ describe("SubmitComponent Element", () => {
     expect(onSubmit).not.toBeCalled();
 
     const button = screen.getByText(buttonText);
-    fireEvent.click(button);
+
+    await waitFor(async () => {
+      fireEvent.click(button);
+    });
 
     expect(onSubmit).toBeCalledTimes(1);
   });
@@ -232,7 +237,7 @@ describe("SubmitComponent Element", () => {
     expect(button).toBeDisabled();
   });
 
-  test("On disable action triggered from controller should disable the button", () => {
+  test("On disable action triggered from controller should disable the button", async () => {
     const testid = "test-id";
 
     const onSubmit = jest.fn();
@@ -272,7 +277,10 @@ describe("SubmitComponent Element", () => {
     );
 
     // click should not trigger onSubmit
-    fireEvent.click(button);
+    await waitFor(async () => {
+      fireEvent.click(button);
+    });
+
     expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(
       2
     );
@@ -284,7 +292,10 @@ describe("SubmitComponent Element", () => {
     );
 
     // click on the button must call onSubmit
-    fireEvent.click(button);
+    await waitFor(async () => {
+      fireEvent.click(button);
+    });
+
     expect(onSubmit).toBeCalledTimes(1);
   });
 });

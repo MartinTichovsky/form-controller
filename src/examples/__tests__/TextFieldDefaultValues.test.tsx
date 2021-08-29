@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { TextFieldDefaultValues } from "../TextFieldDefaultValues";
 import { testErrorMessage } from "../utils/selectors";
@@ -11,7 +11,7 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("TextFieldDefaultValues", () => {
+test("TextFieldDefaultValues", async () => {
   const { container } = render(<TextFieldDefaultValues />);
 
   // the inputs must have default values
@@ -22,7 +22,11 @@ test("TextFieldDefaultValues", () => {
   testErrorMessage(container, 0);
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
+
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).lastCalledWith({
     givenName: "James",
@@ -46,7 +50,10 @@ test("TextFieldDefaultValues", () => {
   testErrorMessage(container, 2);
 
   // submit the form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
+
   expect(console.log).toBeCalledTimes(1);
 
   // reset the form

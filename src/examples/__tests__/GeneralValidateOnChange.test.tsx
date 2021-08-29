@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { GeneralValidateOnChange } from "../GeneralValidateOnChange";
 import { testErrorMessage } from "../utils/selectors";
@@ -11,7 +11,7 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("GeneralValidateOnChange", () => {
+test("GeneralValidateOnChange", async () => {
   const { container } = render(<GeneralValidateOnChange />);
 
   // errors should not be shown
@@ -50,7 +50,9 @@ test("GeneralValidateOnChange", () => {
   testErrorMessage(container, 0);
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);

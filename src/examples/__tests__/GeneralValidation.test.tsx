@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { GeneralValidationUseCase1 } from "../GeneralValidationUseCase1";
 import { GeneralValidationUseCase2 } from "../GeneralValidationUseCase2";
@@ -12,12 +12,15 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-const testWorkflow = (container: HTMLElement) => {
+const testWorkflow = async (container: HTMLElement) => {
   // errors should not be shown
   testErrorMessage(container, 0);
 
   // submit invalid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
+
   testErrorMessage(container, 2);
 
   // reset the form
@@ -59,7 +62,9 @@ const testWorkflow = (container: HTMLElement) => {
   testErrorMessage(container, 0);
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
@@ -70,14 +75,14 @@ afterEach(() => {
   jest.resetAllMocks();
 });
 
-test("GeneralValidationUseCase1", () => {
+test("GeneralValidationUseCase1", async () => {
   const { container } = render(<GeneralValidationUseCase1 />);
 
-  testWorkflow(container);
+  await testWorkflow(container);
 });
 
-test("GeneralValidationUseCase2", () => {
+test("GeneralValidationUseCase2", async () => {
   const { container } = render(<GeneralValidationUseCase2 />);
 
-  testWorkflow(container);
+  await testWorkflow(container);
 });

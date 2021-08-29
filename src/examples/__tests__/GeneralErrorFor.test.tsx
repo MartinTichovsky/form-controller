@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import {
   GeneralErrorFor,
@@ -25,7 +25,9 @@ test("GeneralErrorFor", async () => {
   expect(screen.queryByText(surnameErrorText)).not.toBeInTheDocument();
 
   // click the submit button
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
 
   expect(screen.queryByText(givenNameErrorText)).toBeInTheDocument();
   expect(screen.queryByText(surnameErrorText)).toBeInTheDocument();
@@ -47,7 +49,11 @@ test("GeneralErrorFor", async () => {
   expect(screen.queryByText(surnameErrorText)).not.toBeInTheDocument();
 
   // submit valid form
-  fireEvent.click(screen.getByTestId(submitTestId));
+  await waitFor(async () => {
+    fireEvent.click(screen.getByTestId(submitTestId));
+  });
+
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
 
