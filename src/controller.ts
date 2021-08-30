@@ -24,14 +24,6 @@ type Fields<T> = {
 type Value = string | boolean | undefined;
 
 export type FormFields<T> = { [K in keyof T]: Value };
-export type OnValidateMessage<T> = {
-  action: OnValidateMessageAction;
-  key: keyof T;
-};
-export type OnValidateMessageAction = (
-  showMessage: boolean,
-  fieldIsValid: boolean
-) => void;
 export type OnDisable<T> = { action: OnDisableAction; key: keyof T };
 export type OnDisableAction = (disable: boolean) => void;
 export type OnChangeAction = (isValid: boolean) => void;
@@ -39,6 +31,11 @@ export type OnSubmit<T extends FormFields<T>> = (
   fields: Partial<T>,
   controller: Controller<T>
 ) => void;
+export type OnValidate<T> = {
+  action: OnValidateAction;
+  key: keyof T;
+};
+export type OnValidateAction = (show: boolean, fieldIsValid: boolean) => void;
 export type Validator = {
   action?: ValidatorResultAction;
   actions?: Set<ValidatorResultAction>;
@@ -102,7 +99,7 @@ export class Controller<T extends FormFields<T>> {
   private onChangeListeners = new Set<OnChangeAction>();
   private onDisableListeners = new Set<OnDisable<T>>();
   private onDisableButtonListeners = new Set<OnDisableAction>();
-  private onValidateMessageListener = new Set<OnValidateMessage<T>>();
+  private onValidateListener = new Set<OnValidate<T>>();
   private registeredKeys: { key: keyof T; type: string }[] = [];
   private validatorListeners = new Map<keyof T, Validator>();
 
@@ -232,19 +229,6 @@ export class Controller<T extends FormFields<T>> {
     this.disableButtons(disable);
   }
 
-  private messageListeners(key?: keyof T) {
-    for (let listener of Array.from(this.onValidateMessageListener.values())) {
-      if (listener.key in this._fields && (!key || key === listener.key)) {
-        listener.action(
-          !this._fields[listener.key].isDisabled &&
-            this._fields[listener.key].isVisible &&
-            (this.validateOnChange || this.isSubmitted),
-          this._fields[listener.key].isValid
-        );
-      }
-    }
-  }
-
   public getDisableCondition(key: keyof T) {
     return this._disableIf && key in this._disableIf
       ? this._disableIf[key]
@@ -277,6 +261,16 @@ export class Controller<T extends FormFields<T>> {
 
   private isSelectedAction(id: string) {
     this.isSelectedListeners?.get(id)?.();
+  }
+
+  private isValidationInProgress() {
+    for (let key in this._fields) {
+      if (this._fields[key].validationInProgress) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   public onChange() {
@@ -482,7 +476,7 @@ export class Controller<T extends FormFields<T>> {
     }
 
     this.onChange();
-    this.messageListeners(key);
+    this.validateListeners(key);
   }
 
   private setInitialValues(initialValues: Partial<T>) {
@@ -612,7 +606,7 @@ export class Controller<T extends FormFields<T>> {
           this.validateAll(key, !(this.validateOnChange || this.isSubmitted));
 
           if (this.validateOnChange || this.isSubmitted) {
-            this.messageListeners(key);
+            this.validateListeners(key);
           }
 
           this.isSelectedAction(this._defaultActiveId[key]!);
@@ -624,7 +618,7 @@ export class Controller<T extends FormFields<T>> {
           this.validateAll(key, !(this.validateOnChange || this.isSubmitted));
 
           if (this.validateOnChange || this.isSubmitted) {
-            this.messageListeners(key);
+            this.validateListeners(key);
           }
         }
       });
@@ -681,8 +675,8 @@ export class Controller<T extends FormFields<T>> {
     this.onDisableButtonListeners.add(action);
   }
 
-  public subscribeOnValidateMessage(listener: OnValidateMessage<T>) {
-    this.onValidateMessageListener.add(listener);
+  public subscribeOnValidate(listener: OnValidate<T>) {
+    this.onValidateListener.add(listener);
   }
 
   public subscribeValidator({
@@ -752,8 +746,8 @@ export class Controller<T extends FormFields<T>> {
     this.onDisableButtonListeners.delete(action);
   }
 
-  public unsubscribeOnValidateMessage(listener: OnValidateMessage<T>) {
-    this.onValidateMessageListener.delete(listener);
+  public unsubscribeOnValidate(listener: OnValidate<T>) {
+    this.onValidateListener.delete(listener);
   }
 
   public unsubscribeValidator(key: keyof T, action: ValidatorResultAction) {
@@ -852,7 +846,7 @@ export class Controller<T extends FormFields<T>> {
     });
 
     this._afterAll.validate.push(() => {
-      this.messageListeners();
+      this.validateListeners();
     });
 
     this.onChange();
@@ -953,13 +947,16 @@ export class Controller<T extends FormFields<T>> {
     }
   }
 
-  private isValidationInProgress() {
-    for (let key in this._fields) {
-      if (this._fields[key].validationInProgress) {
-        return true;
+  private validateListeners(key?: keyof T) {
+    for (let listener of Array.from(this.onValidateListener.values())) {
+      if (listener.key in this._fields && (!key || key === listener.key)) {
+        listener.action(
+          !this._fields[listener.key].isDisabled &&
+            this._fields[listener.key].isVisible &&
+            (this.validateOnChange || this.isSubmitted),
+          this._fields[listener.key].isValid
+        );
       }
     }
-
-    return false;
   }
 }

@@ -70,11 +70,11 @@ describe("MessageFor", () => {
     checkUseEffectActions();
 
     // the controller should have registered one onValidateMessage listener
-    expect(controller["onValidateMessageListener"].size).toBe(1);
+    expect(controller["onValidateListener"].size).toBe(1);
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document
@@ -89,7 +89,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document because form is not submited and validateOnChange is false
@@ -99,7 +99,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should be in the document
@@ -114,7 +114,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document
@@ -129,7 +129,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should be in the document
@@ -144,7 +144,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document
@@ -160,7 +160,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document
@@ -197,11 +197,11 @@ describe("MessageFor", () => {
     checkUseEffectActions();
 
     // the controller should have registered one onValidateMessage listener
-    expect(controller["onValidateMessageListener"].size).toBe(1);
+    expect(controller["onValidateListener"].size).toBe(1);
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document
@@ -216,7 +216,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should be in the document
@@ -231,7 +231,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document
@@ -246,7 +246,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should be in the document
@@ -261,7 +261,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document
@@ -277,7 +277,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document
@@ -293,7 +293,7 @@ describe("MessageFor", () => {
 
     // manually call private method
     act(() => {
-      controller["messageListeners"]("input");
+      controller["validateListeners"]("input");
     });
 
     // the test message should not be in the document

@@ -11,33 +11,33 @@ export const MessageFor = <T extends FormFields<T>, K extends keyof T>({
   isValid?: boolean;
   name: K;
 }>) => {
-  const [showMessage, setShowMessage] = React.useState(false);
-  const refShowMessage = React.useRef(showMessage);
-  refShowMessage.current = showMessage;
+  const [isVisible, setIsVisible] = React.useState(false);
+  const refIsVisible = React.useRef(isVisible);
+  refIsVisible.current = isVisible;
 
   React.useEffect(() => {
-    const onMessage = {
-      action: (showMessage: boolean, fieldIsValid: boolean) => {
+    const onValidate = {
+      action: (show: boolean, fieldIsValid: boolean) => {
         if (
-          showMessage &&
+          show &&
           ((isValid === undefined && !fieldIsValid) ||
             isValid === fieldIsValid) &&
-          !refShowMessage.current
+          !refIsVisible.current
         ) {
-          setShowMessage(true);
-        } else if (refShowMessage.current) {
-          setShowMessage(false);
+          setIsVisible(true);
+        } else if (refIsVisible.current) {
+          setIsVisible(false);
         }
       },
       key: name
     };
 
-    controller.subscribeOnValidateMessage(onMessage);
+    controller.subscribeOnValidate(onValidate);
 
     return () => {
-      controller.unsubscribeOnValidateMessage(onMessage);
+      controller.unsubscribeOnValidate(onValidate);
     };
-  }, [controller, setShowMessage]);
+  }, [controller, setIsVisible]);
 
-  return <>{showMessage && children}</>;
+  return <>{isVisible && children}</>;
 };
