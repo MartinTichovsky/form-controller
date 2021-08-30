@@ -8,7 +8,7 @@ export interface InitialState {
 }
 
 export interface FieldInternalProps {
-  fieldType?: "input" | "select";
+  fieldType: "input" | "select";
 }
 
 export interface FieldInitialProps {

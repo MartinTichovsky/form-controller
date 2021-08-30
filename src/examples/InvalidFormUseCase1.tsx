@@ -18,9 +18,6 @@ export const InvalidFormUseCase1 = () => {
                 controller={controller}
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) =>
-                  !value?.trim() && "Provide a valid given name"
-                }
               />
             </div>
             <div className="field-row">
@@ -28,9 +25,6 @@ export const InvalidFormUseCase1 = () => {
                 controller={controller}
                 name="givenName"
                 placeholder="Input a surname"
-                validate={(value) =>
-                  !value?.trim() && "Provide a valid surname"
-                }
               />
             </div>
             <div className="field-row">

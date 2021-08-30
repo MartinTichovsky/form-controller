@@ -30,7 +30,7 @@ export class ReactHooksCollector {
     [key: string]: ComponentHooks;
   } = {};
 
-  private activeDataTestId?: string;
+  public activeDataTestId?: string;
 
   private createUregisteredComponent(componentName: string, type: HookType) {
     if (!(componentName in this.unregisteredComponents)) {
@@ -185,12 +185,14 @@ export class ReactHooksCollector {
 
   setHook({
     componentName,
+    dataTestId,
     index,
     props,
     renderIndex,
     type
   }: {
     componentName: string | undefined;
+    dataTestId?: string;
     index: number | undefined;
     props: Hook;
     renderIndex: number | undefined;
@@ -221,7 +223,7 @@ export class ReactHooksCollector {
     }
 
     const renders = this.registeredComponents[componentName]?.filter(
-      (render) => render.dataTestId === this.activeDataTestId
+      (render) => render.dataTestId === dataTestId
     );
 
     // check registered integrity
@@ -309,6 +311,8 @@ export const mockReactHooks = (
       "useEffect"
     );
 
+    const dataTestId = hooksCollector.activeDataTestId;
+
     const mockedAction = jest.fn(() => {
       const unmount = action();
 
@@ -316,6 +320,7 @@ export const mockReactHooks = (
         const mockedUnmount = jest.fn(() => unmount());
         hooksCollector.setHook({
           componentName,
+          dataTestId,
           index,
           props: {
             unmountAction: mockedUnmount
@@ -331,6 +336,7 @@ export const mockReactHooks = (
 
     hooksCollector.setHook({
       componentName,
+      dataTestId,
       index,
       props: {
         action: mockedAction,

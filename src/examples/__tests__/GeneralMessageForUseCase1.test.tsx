@@ -2,10 +2,10 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import {
-  GeneralMessageFor,
+  GeneralMessageForUseCase1,
   givenNameErrorText,
   surnameErrorText
-} from "../GeneralMessageFor";
+} from "../GeneralMessageForUseCase1";
 import { testErrorMessage } from "../utils/selectors";
 
 console.log = jest.fn();
@@ -15,14 +15,30 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("GeneralMessagefor", async () => {
-  const { container } = render(<GeneralMessageFor />);
+test("GeneralMessageForUseCase1", async () => {
+  const { container } = render(<GeneralMessageForUseCase1 />);
 
   // errors should not be shown
   testErrorMessage(container, 0);
 
+  // text should be not in the document
   expect(screen.queryByText(givenNameErrorText)).not.toBeInTheDocument();
   expect(screen.queryByText(surnameErrorText)).not.toBeInTheDocument();
+
+  // input a valid text
+  fireEvent.change(screen.getByTestId(input1TestId), {
+    target: { value: " " }
+  });
+  // input a valid text
+  fireEvent.change(screen.getByTestId(input2TestId), {
+    target: { value: " " }
+  });
+
+  // text should be not in the document
+  expect(screen.queryByText(givenNameErrorText)).not.toBeInTheDocument();
+  expect(screen.queryByText(surnameErrorText)).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByTestId(resetTestId));
 
   // click the submit button
   await waitFor(async () => {

@@ -12,16 +12,20 @@ export const MessageFor = <T extends FormFields<T>, K extends keyof T>({
   name: K;
 }>) => {
   const [showMessage, setShowMessage] = React.useState(false);
+  const refShowMessage = React.useRef(showMessage);
+  refShowMessage.current = showMessage;
 
   React.useEffect(() => {
     const onMessage = {
       action: (showMessage: boolean, fieldIsValid: boolean) => {
         if (
           showMessage &&
-          (isValid === undefined || isValid === fieldIsValid)
+          ((isValid === undefined && !fieldIsValid) ||
+            isValid === fieldIsValid) &&
+          !refShowMessage.current
         ) {
           setShowMessage(true);
-        } else {
+        } else if (refShowMessage.current) {
           setShowMessage(false);
         }
       },

@@ -82,6 +82,7 @@ export class Controller<T extends FormFields<T>> {
   private _fields: Fields<T> = {} as Fields<T>;
   private _hideIf?: { [key in keyof T]?: (fields: Partial<T>) => boolean };
   private _initialValues?: Partial<T>;
+  private _isSubmitted = false;
   private _onSubmit?: OnSubmit<T>;
   private _setController: React.Dispatch<
     React.SetStateAction<Controller<T> | undefined>
@@ -102,10 +103,8 @@ export class Controller<T extends FormFields<T>> {
   private onDisableListeners = new Set<OnDisable<T>>();
   private onDisableButtonListeners = new Set<OnDisableAction>();
   private onValidateMessageListener = new Set<OnValidateMessage<T>>();
-  private registeredKeys: (keyof T)[] = [];
+  private registeredKeys: { key: keyof T; type: string }[] = [];
   private validatorListeners = new Map<keyof T, Validator>();
-
-  public isSubmitted = false;
 
   constructor({
     disableIf,
@@ -160,6 +159,10 @@ export class Controller<T extends FormFields<T>> {
     }
 
     return result;
+  }
+
+  get isSubmitted() {
+    return this._isSubmitted;
   }
 
   get isValid() {
@@ -233,9 +236,9 @@ export class Controller<T extends FormFields<T>> {
     for (let listener of Array.from(this.onValidateMessageListener.values())) {
       if (listener.key in this._fields && (!key || key === listener.key)) {
         listener.action(
-          !this._fields[listener.key].isValid &&
-            !this._fields[listener.key].isDisabled &&
-            this._fields[listener.key].isVisible,
+          !this._fields[listener.key].isDisabled &&
+            this._fields[listener.key].isVisible &&
+            (this.validateOnChange || this.isSubmitted),
           this._fields[listener.key].isValid
         );
       }
@@ -285,13 +288,17 @@ export class Controller<T extends FormFields<T>> {
     this.afterAll();
   }
 
-  public registerKey(key: keyof T) {
-    if (this.registeredKeys.includes(key)) {
-      return false;
-    }
+  public registerKey(key: keyof T, type: string) {
+    const existingItems = this.registeredKeys.filter(
+      (item) => item.key === key
+    );
 
-    this.registeredKeys.push(key);
-    return true;
+    this.registeredKeys.push({ key, type });
+    return !existingItems.length
+      ? true
+      : type === "radio"
+      ? !existingItems.some((item) => item.type !== "radio")
+      : false;
   }
 
   private registerQueueId(key: keyof T) {
@@ -314,7 +321,7 @@ export class Controller<T extends FormFields<T>> {
       })
     );
 
-    this.isSubmitted = false;
+    this._isSubmitted = false;
   }
 
   public setDefaultActiveId(key: keyof T, id?: string) {
@@ -638,7 +645,7 @@ export class Controller<T extends FormFields<T>> {
   }
 
   public async submit() {
-    this.isSubmitted = true;
+    this._isSubmitted = true;
     this.validate();
 
     if (this.isValidationInProgress()) {

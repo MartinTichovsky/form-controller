@@ -11,7 +11,7 @@ type MyForm = {
 export const givenNameErrorText = "Provide a valid given name";
 export const surnameErrorText = "Provide a valid surname";
 
-export const GeneralMessageFor = () => {
+export const GeneralMessageForUseCase1 = () => {
   return (
     <Template>
       <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
@@ -61,7 +61,7 @@ export const GeneralMessageFor = () => {
             </div>
             <div className="info">
               * When a text field is not valid, error message outside the Input
-              will be shown
+              will be shown after submit
             </div>
           </>
         )}

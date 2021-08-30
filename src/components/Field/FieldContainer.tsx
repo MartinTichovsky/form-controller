@@ -48,7 +48,7 @@ export const FieldContainer = <
     throw new Error("Controller is not provided");
   }
 
-  if (disableIf && typeof disableIf !== "function") {
+  if (disableIf !== undefined && typeof disableIf !== "function") {
     throw new Error("DisableIf is not a function");
   }
 
@@ -56,15 +56,15 @@ export const FieldContainer = <
     throw new Error("Name must be a string");
   }
 
-  if (onFormChange && typeof onFormChange !== "function") {
+  if (onFormChange !== undefined && typeof onFormChange !== "function") {
     throw new Error("OnFormChange is not a function");
   }
 
-  if (validate && typeof validate !== "function") {
+  if (validate !== undefined && typeof validate !== "function") {
     throw new Error("Validate is not a function");
   }
 
-  if (!controller.registerKey(name)) {
+  if (!controller.registerKey(name, rest.type || "input")) {
     console.warn(`Key '${name}' is already registered in the form`);
   }
 

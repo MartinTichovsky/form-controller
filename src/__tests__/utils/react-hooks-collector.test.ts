@@ -595,6 +595,7 @@ describe("Hooks Collector", () => {
 
     hooksCollector.setHook({
       componentName: registeredComponent,
+      dataTestId: testId,
       index: register.index,
       renderIndex: register.renderIndex,
       type: "useEffect",
@@ -641,6 +642,7 @@ describe("Hooks Collector", () => {
 
     hooksCollector.setHook({
       componentName: registeredComponent,
+      dataTestId: testId,
       index: register.index,
       renderIndex: register.renderIndex,
       type: "useEffect",
@@ -661,6 +663,7 @@ describe("Hooks Collector", () => {
 
     hooksCollector.setHook({
       componentName: registeredComponent,
+      dataTestId: testId,
       index: register.index,
       renderIndex: register.renderIndex,
       type: "useEffect",

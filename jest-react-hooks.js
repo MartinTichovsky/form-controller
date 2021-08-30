@@ -74,6 +74,20 @@ jest.mock("./src/components/Select", () => {
   };
 });
 
+jest.mock("./src/components/SelectOption", () => {
+  const origin = jest.requireActual("./src/components/SelectOption");
+  const { mockComponent } = require("./src/__tests__/utils/clone-function");
+
+  return {
+    ...origin,
+    SelectOption: mockComponent(
+      origin,
+      origin.SelectOption.name,
+      hooksCollector
+    )
+  };
+});
+
 jest.mock("./src/components/Submit/SubmitComponent", () => {
   const origin = jest.requireActual("./src/components/Submit/SubmitComponent");
   const { mockComponent } = require("./src/__tests__/utils/clone-function");

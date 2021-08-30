@@ -311,7 +311,7 @@ export const Field = <
           </select>
         )
       ) : Component && typeof Component === "function" ? (
-        <Component {...restProps} {...props} ref={selectRef}>
+        <Component {...restProps} {...props}>
           {children}
         </Component>
       ) : (

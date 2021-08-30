@@ -1,7 +1,8 @@
 import { GeneralCondition } from "form-controller/lib/examples/GeneralCondition";
 import { GeneralDisableAllOnSubmit } from "form-controller/lib/examples/GeneralDisableAllOnSubmit";
 import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
-import { GeneralMessageFor } from "form-controller/lib/examples/GeneralMessageFor";
+import { GeneralMessageForUseCase1 } from "form-controller/lib/examples/GeneralMessageForUseCase1";
+import { GeneralMessageForUseCase2 } from "form-controller/lib/examples/GeneralMessageForUseCase2";
 import { GeneralValidateOnChange } from "form-controller/lib/examples/GeneralValidateOnChange";
 import { GeneralValidationUseCase1 } from "form-controller/lib/examples/GeneralValidationUseCase1";
 import { GeneralValidationUseCase2 } from "form-controller/lib/examples/GeneralValidationUseCase2";
@@ -181,9 +182,14 @@ export const menuItems: MenuItems = {
       render: () => <GeneralDisableAllOnSubmit />
     },
     {
-      label: "Error Outside the Input",
-      key: "error-outside-the-input",
-      render: () => <GeneralMessageFor />
+      label: "MessageFor - UseCase 1",
+      key: "message-for-usecase-1",
+      render: () => <GeneralMessageForUseCase1 />
+    },
+    {
+      label: "MessageFor - UseCase 2",
+      key: "message-for-usecase-2",
+      render: () => <GeneralMessageForUseCase2 />
     },
     {
       label: "Label",

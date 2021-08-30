@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Controller, FormFields } from "../controller";
 import { selectContext } from "../providers";
 
@@ -42,7 +42,7 @@ export const SelectOption = <T extends FormFields<T>>({
   }
 >) => {
   const context = React.useContext(selectContext);
-  if (!context) {
+  if (!context || !context.name || !context.selectRef) {
     return null;
   }
 
@@ -58,7 +58,7 @@ export const SelectOption = <T extends FormFields<T>>({
 
   refState.current = state;
 
-  useEffect(() => {
+  React.useEffect(() => {
     const action = () => {
       const isDisabled =
         disableIf !== undefined && disableIf(controller.fields);
@@ -94,20 +94,16 @@ export const SelectOption = <T extends FormFields<T>>({
     };
   }, [controller, disableIf, hideIf, refState]);
 
-  let setWasCalled = false;
-
   if (
     (state.isDisabled || !state.isVisible) &&
     field !== undefined &&
-    (field.value === children || field.value === rest.value)
+    (field.value === children || field.value === rest.value) &&
+    selectRef.current !== undefined
   ) {
-    setWasCalled = true;
     setTimeout(() => {
-      controller.setFieldValue(name as keyof T, selectRef.current?.value, id);
+      controller.setFieldValue(name as keyof T, selectRef.current!.value, id);
     }, 10);
-  }
-
-  if (!setWasCalled) {
+  } else {
     runAfterAll(controller);
   }
 
