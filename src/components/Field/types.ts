@@ -15,11 +15,13 @@ export interface FieldInitialProps {
   initialState: InitialState;
 }
 
-export interface FieldPrivateProps {
+export interface FieldPrivateProps<T> {
   defaultValue: string;
   disabled: boolean;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<T>) => void;
+  onKeyDown?: T extends HTMLInputElement
+    ? (event: React.KeyboardEvent<T>) => void
+    : never;
 }
 
 export interface FieldPublicProps<T extends FormFields<T>, K extends keyof T> {
@@ -57,10 +59,11 @@ export interface FieldType<
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
-    React.ComponentProps<IComponent> & FieldPrivateProps
+    React.ComponentProps<IComponent> & FieldPrivateProps<ElementType>
   >,
   MComponent extends React.ElementType,
-  Attributes
+  ElementType,
+  HTMLAttributesType
 > {
   ({
     children,
@@ -83,11 +86,11 @@ export interface FieldType<
         | ({
             Component: undefined;
             MessageComponent: undefined;
-          } & RestProps<Attributes>)
+          } & RestProps<HTMLAttributesType>)
         | ({
             Component: undefined;
             MessageComponent: MComponent;
-          } & RestProps<Attributes>)
+          } & RestProps<HTMLAttributesType>)
         | ({
             Component?: IComponent;
             MessageComponent?: MComponent;

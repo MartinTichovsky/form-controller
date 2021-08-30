@@ -22,10 +22,11 @@ export const FieldContainer = <
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
-    React.ComponentProps<IComponent> & FieldPrivateProps
+    React.ComponentProps<IComponent> & FieldPrivateProps<ElementType>
   >,
   MComponent extends React.ElementType,
-  Attributes
+  ElementType,
+  HTMLAttributesType
 >({
   children,
   controller,
@@ -41,7 +42,9 @@ export const FieldContainer = <
   value,
   ...rest
 }: React.PropsWithChildren<
-  React.ComponentProps<FieldType<T, K, IComponent, MComponent, Attributes>>
+  React.ComponentProps<
+    FieldType<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
+  >
 > &
   FieldInternalProps) => {
   if (!(controller instanceof Controller)) {
@@ -123,7 +126,7 @@ export const FieldContainer = <
   initialState.isValid = field === undefined || field.isValid;
 
   return (
-    <Field<T, K, IComponent, MComponent, Attributes>
+    <Field<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
       {...({
         ...rest,
         children,
@@ -141,7 +144,7 @@ export const FieldContainer = <
         validate,
         value
       } as React.ComponentProps<
-        FieldType<T, K, IComponent, MComponent, Attributes>
+        FieldType<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
       > &
         FieldInternalProps &
         FieldInitialProps)}

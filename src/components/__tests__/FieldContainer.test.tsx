@@ -49,6 +49,7 @@ describe("FieldContainer", () => {
         "input",
         any,
         any,
+        HTMLInputElement,
         React.InputHTMLAttributes<HTMLInputElement>
       >
         controller={controller}
@@ -72,6 +73,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={value}
@@ -94,6 +96,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -117,6 +120,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -139,6 +143,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -162,6 +167,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -185,6 +191,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -196,6 +203,7 @@ describe("FieldContainer", () => {
             "name",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -207,6 +215,7 @@ describe("FieldContainer", () => {
             "radio",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -221,6 +230,7 @@ describe("FieldContainer", () => {
             "radio",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -248,6 +258,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -259,6 +270,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -283,6 +295,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -294,6 +307,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -324,6 +338,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -345,6 +360,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -366,6 +382,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -393,6 +410,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -414,6 +432,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -435,6 +454,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -462,6 +482,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -483,6 +504,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -504,6 +526,7 @@ describe("FieldContainer", () => {
             "input",
             any,
             any,
+            HTMLInputElement,
             React.InputHTMLAttributes<HTMLInputElement>
           >
             controller={controller}
@@ -525,6 +548,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -547,6 +571,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -570,6 +595,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -603,6 +629,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}
@@ -625,6 +652,7 @@ describe("FieldContainer", () => {
           "input",
           any,
           any,
+          HTMLInputElement,
           React.InputHTMLAttributes<HTMLInputElement>
         >
           controller={controller}

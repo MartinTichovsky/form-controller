@@ -23,10 +23,11 @@ export const Field = <
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
-    React.ComponentProps<IComponent> & FieldPrivateProps
+    React.ComponentProps<IComponent> & FieldPrivateProps<ElementType>
   >,
   MComponent extends React.ElementType,
-  Attributes
+  ElementType,
+  HTMLAttributesType
 >({
   children,
   controller,
@@ -42,7 +43,9 @@ export const Field = <
   value,
   ...rest
 }: React.PropsWithChildren<
-  React.ComponentProps<FieldType<T, K, IComponent, MComponent, Attributes>>
+  React.ComponentProps<
+    FieldType<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
+  >
 > &
   FieldInternalProps &
   FieldInitialProps) => {
@@ -289,7 +292,7 @@ export const Field = <
   const ComponentElement = React.useCallback(
     (props: React.ComponentProps<React.ElementType>) =>
       fieldType === "select" ? (
-        Component && typeof Component === "function" ? (
+        Component ? (
           <Component {...restProps} {...props} ref={selectRef}>
             <SelectProvider
               id={rest.id}
@@ -310,7 +313,7 @@ export const Field = <
             </SelectProvider>
           </select>
         )
-      ) : Component && typeof Component === "function" ? (
+      ) : Component ? (
         <Component {...restProps} {...props}>
           {children}
         </Component>
@@ -326,7 +329,7 @@ export const Field = <
       children,
       ...props
     }: React.PropsWithChildren<React.HTMLProps<HTMLElement>>) =>
-      MessageComponent && typeof MessageComponent === "function" ? (
+      MessageComponent ? (
         <MessageComponent
           {...({
             ...restProps,

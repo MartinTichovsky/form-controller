@@ -7,7 +7,7 @@ export const Input = <
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
-    React.ComponentProps<IComponent> & FieldPrivateProps
+    React.ComponentProps<IComponent> & FieldPrivateProps<HTMLInputElement>
   >,
   MComponent extends React.ElementType
 >(
@@ -17,7 +17,20 @@ export const Input = <
       K,
       IComponent,
       MComponent,
+      HTMLInputElement,
       React.InputHTMLAttributes<HTMLInputElement>
     >
   >
-) => <FieldContainer {...props} fieldType="input" />;
+) => (
+  <FieldContainer<
+    T,
+    K,
+    IComponent,
+    MComponent,
+    HTMLInputElement,
+    React.InputHTMLAttributes<HTMLInputElement>
+  >
+    {...props}
+    fieldType="input"
+  />
+);

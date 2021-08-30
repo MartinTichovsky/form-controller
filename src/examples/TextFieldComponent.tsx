@@ -7,40 +7,6 @@ type MyForm = {
   surname: string;
 };
 
-const FunctionalInputComponent = ({
-  defaultValue,
-  disabled,
-  labelText,
-  onChange,
-  onKeyDown,
-  placeholder,
-  ...rest
-}: {
-  defaultValue: string; // required
-  disabled: boolean; // required
-  labelText: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // required
-  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void; // required
-  placeholder: string;
-}) => {
-  return (
-    <span>
-      <label htmlFor="functional-input" style={{ marginRight: 10 }}>
-        {labelText}
-      </label>
-      <input
-        {...rest}
-        defaultValue={defaultValue}
-        disabled={disabled}
-        id="functional-input"
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        placeholder={placeholder}
-      />
-    </span>
-  );
-};
-
 class ClassInputComponent extends React.Component<{
   defaultValue: string; // required
   disabled: boolean; // required
@@ -79,6 +45,40 @@ class ClassInputComponent extends React.Component<{
   }
 }
 
+const FunctionalInputComponent = ({
+  defaultValue,
+  disabled,
+  labelText,
+  onChange,
+  onKeyDown,
+  placeholder,
+  ...rest
+}: {
+  defaultValue: string; // required
+  disabled: boolean; // required
+  labelText: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // required
+  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void; // required
+  placeholder: string;
+}) => {
+  return (
+    <span>
+      <label htmlFor="functional-input" style={{ marginRight: 10 }}>
+        {labelText}
+      </label>
+      <input
+        {...rest}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        id="functional-input"
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        placeholder={placeholder}
+      />
+    </span>
+  );
+};
+
 export const TextFieldComponent = () => {
   return (
     <Template>
@@ -89,8 +89,8 @@ export const TextFieldComponent = () => {
               <Input
                 controller={controller}
                 data-testid="input-1"
-                Component={FunctionalInputComponent}
-                labelText="Functional component"
+                Component={ClassInputComponent}
+                labelText="Class component"
                 name="givenName"
                 placeholder="Input a given name"
                 validate={(value) =>
@@ -102,8 +102,8 @@ export const TextFieldComponent = () => {
               <Input
                 controller={controller}
                 data-testid="input-2"
-                Component={ClassInputComponent}
-                labelText="Class component"
+                Component={FunctionalInputComponent}
+                labelText="Functional component"
                 name="surname"
                 placeholder="Input a surname"
                 validate={(value) =>
@@ -124,8 +124,8 @@ export const TextFieldComponent = () => {
               </button>
             </div>
             <div className="info">
-              * The first text field is created with a functional input
-              component. The second text field is created with a class input
+              * The first text field is created with a class input component.
+              The second text field is created with a functional input
               component.
             </div>
           </>

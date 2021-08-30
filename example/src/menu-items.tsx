@@ -16,6 +16,7 @@ import { RadioFieldHiddenUseCase1 } from "form-controller/lib/examples/RadioFiel
 import { RadioFieldHiddenUseCase2 } from "form-controller/lib/examples/RadioFieldHiddenUseCase2";
 import { RadioFieldHiddenUseCase3 } from "form-controller/lib/examples/RadioFieldHiddenUseCase3";
 import { SelectField } from "form-controller/lib/examples/SelectField";
+import { SelectFieldComponent } from "form-controller/lib/examples/SelectFieldComponent";
 import { SelectFieldOptionDisabled } from "form-controller/lib/examples/SelectFieldOptionDisabled";
 import { SelectFieldOptionHidden } from "form-controller/lib/examples/SelectFieldOptionHidden";
 import { SubmitComponent } from "form-controller/lib/examples/SubmitComponent";
@@ -45,7 +46,7 @@ export const menuItems: MenuItems = {
   "Text Fields": [
     {
       label: "Basic Text Fields",
-      key: "text-field",
+      key: "text-fields",
       render: () => <TextField />
     },
     {
@@ -60,12 +61,12 @@ export const menuItems: MenuItems = {
     },
     {
       label: "Default Values",
-      key: "text-fields-default-values",
+      key: "text-field-default-values",
       render: () => <TextFieldDefaultValues />
     },
     {
       label: "Message Component",
-      key: "text-fields-message-component",
+      key: "text-field-message-component",
       render: () => <TextFieldMessageComponent />
     },
     {
@@ -80,24 +81,24 @@ export const menuItems: MenuItems = {
     },
     {
       label: "Input Component",
-      key: "text-fields-input-component",
+      key: "text-field-input-component",
       render: () => <TextFieldComponent />
     }
   ],
   "Radio Fields": [
     {
       label: "Basic Radio Fields",
-      key: "radio-field",
+      key: "radio-fields",
       render: () => <RadioField />
     },
     {
       label: "Default Values - UseCase 1",
-      key: "radio-fields-default-values-usecase-1",
+      key: "radio-field-default-values-usecase-1",
       render: () => <RadioFieldDefaultValuesUseCase1 />
     },
     {
       label: "Default Values - UseCase 2",
-      key: "radio-fields-default-values-usecase-2",
+      key: "radio-field-default-values-usecase-2",
       render: () => <RadioFieldDefaultValuesUseCase2 />
     },
     {
@@ -133,9 +134,14 @@ export const menuItems: MenuItems = {
   ],
   "Select Fields": [
     {
-      label: "Select Field",
-      key: "select-field",
+      label: "Basic Select Field",
+      key: "select-fields",
       render: () => <SelectField />
+    },
+    {
+      label: "Select Component",
+      key: "select-field-component",
+      render: () => <SelectFieldComponent />
     },
     {
       label: "Select Field Option - Disabled",

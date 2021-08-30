@@ -84,7 +84,7 @@ test("SelectField", async () => {
   // errors should not be shown
   testErrorMessage(container, 0);
 
-  // select an option
+  // select an empty option
   fireEvent.change(screen.getByTestId(selectTestId), {
     target: { value: "" }
   });

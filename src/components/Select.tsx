@@ -7,7 +7,7 @@ export const Select = <
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
-    React.ComponentProps<IComponent> & FieldPrivateProps
+    React.ComponentProps<IComponent> & FieldPrivateProps<HTMLSelectElement>
   >,
   MComponent extends React.ElementType
 >(
@@ -18,8 +18,21 @@ export const Select = <
         K,
         IComponent,
         MComponent,
+        HTMLSelectElement,
         React.SelectHTMLAttributes<HTMLSelectElement>
       >
     >
   >
-) => <FieldContainer {...props} fieldType="select" />;
+) => (
+  <FieldContainer<
+    T,
+    K,
+    IComponent,
+    MComponent,
+    HTMLSelectElement,
+    React.SelectHTMLAttributes<HTMLSelectElement>
+  >
+    {...props}
+    fieldType="select"
+  />
+);
