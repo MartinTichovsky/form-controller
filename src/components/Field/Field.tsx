@@ -9,6 +9,7 @@ import { SelectProvider } from "../../providers";
 import {
   FieldInitialProps,
   FieldInternalProps,
+  FieldPrivateInputProps,
   FieldPrivateProps,
   FieldType,
   InitialState
@@ -19,11 +20,14 @@ interface State extends InitialState {
   isSelected: boolean;
 }
 
-export const Field = <
+export function Field<
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
-    React.ComponentProps<IComponent> & FieldPrivateProps<ElementType>
+    React.ComponentProps<IComponent> &
+      (ElementType extends HTMLInputElement
+        ? FieldPrivateInputProps<ElementType>
+        : FieldPrivateProps<ElementType>)
   >,
   MComponent extends React.ElementType,
   ElementType,
@@ -45,10 +49,10 @@ export const Field = <
 }: React.PropsWithChildren<
   React.ComponentProps<
     FieldType<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
-  >
-> &
-  FieldInternalProps &
-  FieldInitialProps) => {
+  > &
+    FieldInternalProps &
+    FieldInitialProps
+>) {
   const { initialState, fieldType, ...restProps } = rest;
   const [state, setState] = React.useState<State>({
     ...initialState!,
@@ -403,4 +407,4 @@ export const Field = <
       )}
     </>
   );
-};
+}

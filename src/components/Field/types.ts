@@ -19,9 +19,10 @@ export interface FieldPrivateProps<T> {
   defaultValue: string;
   disabled: boolean;
   onChange: (event: React.ChangeEvent<T>) => void;
-  onKeyDown?: T extends HTMLInputElement
-    ? (event: React.KeyboardEvent<T>) => void
-    : never;
+}
+
+export interface FieldPrivateInputProps<T> extends FieldPrivateProps<T> {
+  onKeyDown: (event: React.KeyboardEvent<T>) => void;
 }
 
 export interface FieldPublicProps<T extends FormFields<T>, K extends keyof T> {
@@ -59,7 +60,10 @@ export interface FieldType<
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
-    React.ComponentProps<IComponent> & FieldPrivateProps<ElementType>
+    React.ComponentProps<IComponent> &
+      (ElementType extends HTMLInputElement
+        ? FieldPrivateInputProps<ElementType>
+        : FieldPrivateProps<ElementType>)
   >,
   MComponent extends React.ElementType,
   ElementType,
@@ -96,24 +100,34 @@ export interface FieldType<
             MessageComponent?: MComponent;
           } & RestProps<React.ComponentPropsWithoutRef<IComponent>>)
       ) &
-      (
-        | {
-            type?: undefined | "text" | "email" | "number";
+      (ElementType extends HTMLInputElement
+        ?
+            | {
+                label?: string | JSX.Element;
+                placeholder?: string;
+                type?: undefined | "text" | "email" | "number";
+                validate?: (
+                  value: T[K] | undefined,
+                  props: typeof rest
+                ) => ValidationResult;
+                value?: undefined;
+              }
+            | {
+                label: string | JSX.Element;
+                placeholder?: undefined;
+                type: "radio";
+                validate?: undefined;
+                value: string;
+              }
+        : {
             label?: string | JSX.Element;
-            placeholder?: string;
+            placeholder?: undefined;
+            type?: undefined;
             validate?: (
               value: T[K] | undefined,
               props: typeof rest
             ) => ValidationResult;
             value?: undefined;
-          }
-        | {
-            label: string | JSX.Element;
-            placeholder?: undefined;
-            type: "radio";
-            validate?: undefined;
-            value: string;
-          }
-      )
+          })
   >): JSX.Element | null;
 }

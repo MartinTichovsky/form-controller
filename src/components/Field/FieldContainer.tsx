@@ -7,8 +7,8 @@ import {
 } from "../../providers";
 import { Field } from "./Field";
 import {
-  FieldInitialProps,
   FieldInternalProps,
+  FieldPrivateInputProps,
   FieldPrivateProps,
   FieldType,
   InitialState
@@ -18,11 +18,14 @@ let idCounter = 0;
 
 const getRandomId = () => `input-${++idCounter}`;
 
-export const FieldContainer = <
+export function FieldContainer<
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
-    React.ComponentProps<IComponent> & FieldPrivateProps<ElementType>
+    React.ComponentProps<IComponent> &
+      (ElementType extends HTMLInputElement
+        ? FieldPrivateInputProps<ElementType>
+        : FieldPrivateProps<ElementType>)
   >,
   MComponent extends React.ElementType,
   ElementType,
@@ -46,7 +49,7 @@ export const FieldContainer = <
     FieldType<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
   >
 > &
-  FieldInternalProps) => {
+  FieldInternalProps) {
   if (!(controller instanceof Controller)) {
     throw new Error("Controller is not provided");
   }
@@ -127,27 +130,29 @@ export const FieldContainer = <
 
   return (
     <Field<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
-      {...({
-        ...rest,
-        children,
-        controller,
-        disableIf,
-        hideMessage,
-        hideIf,
-        id,
-        initialState,
-        Component,
-        label,
-        MessageComponent,
-        name,
-        onFormChange,
-        validate,
-        value
-      } as React.ComponentProps<
+      {
+        ...({
+          ...rest,
+          children,
+          controller,
+          disableIf,
+          hideMessage,
+          hideIf,
+          id,
+          initialState,
+          Component,
+          label,
+          MessageComponent,
+          name,
+          onFormChange,
+          validate,
+          value
+        } as any) /*React.ComponentProps<
         FieldType<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
       > &
         FieldInternalProps &
-        FieldInitialProps)}
+        FieldInitialProps*/
+      }
     />
   );
-};
+}
