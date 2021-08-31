@@ -1,5 +1,6 @@
 import React from "react";
-import { Controller, FormFields } from "../controller";
+import { Controller } from "../controller";
+import { FormFields, Value } from "../controller.types";
 import { selectContext } from "../providers";
 
 interface State {
@@ -7,12 +8,18 @@ interface State {
   isVisible: boolean;
 }
 
+type FormType = {
+  [key: string]: Value;
+};
+
 const afterAll = new Map<
-  Controller<any>,
+  Controller<FormFields<FormType>>,
   { action: () => void; queueId: number }
 >();
 
-const runAfterAll = <T extends FormFields<T>>(controller: Controller<T>) => {
+const executeAfterAll = <T extends FormFields<T>>(
+  controller: Controller<FormFields<FormType>>
+) => {
   if (!afterAll.has(controller)) {
     return;
   }
@@ -25,6 +32,22 @@ const runAfterAll = <T extends FormFields<T>>(controller: Controller<T>) => {
       stack.action();
       afterAll.delete(controller);
     }, 10);
+  }
+};
+
+const registerAfterAll = (
+  name: string,
+  controller: Controller<FormFields<FormType>>
+) => {
+  if (!afterAll.has(controller)) {
+    afterAll.set(controller, {
+      action: () => {
+        controller.validateAll(name);
+      },
+      queueId: 1
+    });
+  } else {
+    afterAll.get(controller)!.queueId++;
   }
 };
 
@@ -47,7 +70,6 @@ export const SelectOption = <T extends FormFields<T>>({
   }
 
   const { id, name, selectRef } = context;
-
   const field = controller.getField(name as keyof T);
   const [state, setState] = React.useState<State>({
     isDisabled: disableIf !== undefined && disableIf(controller.fields),
@@ -68,16 +90,7 @@ export const SelectOption = <T extends FormFields<T>>({
         refState.current.isDisabled !== isDisabled ||
         refState.current.isVisible !== isVisible
       ) {
-        if (!afterAll.has(controller)) {
-          afterAll.set(controller, {
-            action: () => {
-              controller.validateAll(name as keyof T);
-            },
-            queueId: 1
-          });
-        } else {
-          afterAll.get(controller)!.queueId++;
-        }
+        registerAfterAll(name, controller as Controller<FormFields<unknown>>);
 
         key.current++;
         setState({
@@ -104,7 +117,7 @@ export const SelectOption = <T extends FormFields<T>>({
       controller.setFieldValue(name as keyof T, selectRef.current!.value, id);
     }, 10);
   } else {
-    runAfterAll(controller);
+    executeAfterAll(controller as Controller<FormFields<unknown>>);
   }
 
   if (!state.isVisible) {

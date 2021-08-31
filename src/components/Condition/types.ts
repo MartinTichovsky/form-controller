@@ -1,4 +1,5 @@
-import { Controller, FormFields } from "../../controller";
+import { Controller } from "../../controller";
+import { FormFields } from "../../controller.types";
 
 export type ConditionProps<T extends FormFields<T>> = React.PropsWithChildren<{
   controller: Controller<T>;

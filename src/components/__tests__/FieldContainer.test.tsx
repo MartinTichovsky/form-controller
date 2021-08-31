@@ -5,7 +5,12 @@ import { Controller } from "../../controller";
 import { ValidationProvider } from "../../providers";
 import { getGeneratedValues } from "../../__tests__/utils/value-generator";
 import { FieldContainer } from "../Field/FieldContainer";
-import { InitialState } from "../Field/types";
+import {
+  FieldInternalProps,
+  FieldPrivateInputProps,
+  FieldType,
+  InitialState
+} from "../Field/types";
 
 type Form = {
   input: string;
@@ -35,6 +40,33 @@ jest.mock("../Field/Field", () => {
 
 console.error = jest.fn();
 
+const FieldContainerComponent = <K extends keyof Form>(
+  props: React.PropsWithChildren<
+    React.ComponentProps<
+      FieldType<
+        Form,
+        K,
+        React.ComponentType<FieldPrivateInputProps<HTMLInputElement>>,
+        React.ElementType,
+        HTMLInputElement,
+        React.InputHTMLAttributes<HTMLInputElement>
+      >
+    > &
+      FieldInternalProps
+  >
+) => (
+  <FieldContainer<
+    Form,
+    K,
+    React.ComponentType<FieldPrivateInputProps<HTMLInputElement>>,
+    React.ElementType,
+    HTMLInputElement,
+    React.InputHTMLAttributes<HTMLInputElement>
+  >
+    {...props}
+  />
+);
+
 beforeEach(() => {
   passedValues = {};
   const setController = jest.fn();
@@ -44,14 +76,7 @@ beforeEach(() => {
 describe("FieldContainer", () => {
   test("Default functionality", () => {
     render(
-      <FieldContainer<
-        Form,
-        "input",
-        any,
-        any,
-        HTMLInputElement,
-        React.InputHTMLAttributes<HTMLInputElement>
-      >
+      <FieldContainerComponent
         controller={controller}
         data-testid={testId}
         fieldType="input"
@@ -68,14 +93,7 @@ describe("FieldContainer", () => {
     values.forEach((value) => {
       expect(() => {
         render(
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={value}
             fieldType="input"
             name="input"
@@ -91,14 +109,7 @@ describe("FieldContainer", () => {
     values.forEach((value) => {
       expect(() => {
         render(
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             disableIf={value}
             fieldType="input"
@@ -115,14 +126,7 @@ describe("FieldContainer", () => {
     values.forEach((value) => {
       expect(() => {
         render(
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name={value}
@@ -138,14 +142,7 @@ describe("FieldContainer", () => {
     values.forEach((value) => {
       expect(() => {
         render(
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="input"
@@ -162,14 +159,7 @@ describe("FieldContainer", () => {
     values.forEach((value) => {
       expect(() => {
         render(
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="input"
@@ -186,38 +176,17 @@ describe("FieldContainer", () => {
 
       render(
         <>
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="input"
           />
-          <FieldContainer<
-            Form,
-            "name",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="name"
           />
-          <FieldContainer<
-            Form,
-            "radio",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             label="radio 1"
@@ -225,14 +194,7 @@ describe("FieldContainer", () => {
             type="radio"
             value="radio-1"
           />
-          <FieldContainer<
-            Form,
-            "radio",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             label="radio 2"
@@ -253,26 +215,12 @@ describe("FieldContainer", () => {
 
       render(
         <>
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="input"
           />
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="input"
@@ -290,26 +238,12 @@ describe("FieldContainer", () => {
 
       render(
         <>
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="input"
           />
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             label="radio 2"
@@ -333,14 +267,7 @@ describe("FieldContainer", () => {
       controller["_disableIf"] = { input: disableIfController };
 
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           disableIf={disableIfPassed}
           fieldType="input"
@@ -355,14 +282,7 @@ describe("FieldContainer", () => {
       controller["_disableIf"] = { input: disableIfController };
 
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           fieldType="input"
           name="input"
@@ -377,14 +297,7 @@ describe("FieldContainer", () => {
 
       render(
         <ValidationProvider disableIf={disableIfProvider}>
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="input"
@@ -405,14 +318,7 @@ describe("FieldContainer", () => {
       controller["_hideIf"] = { input: hideIfController };
 
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           fieldType="input"
           hideIf={hideIfPassed}
@@ -427,14 +333,7 @@ describe("FieldContainer", () => {
       controller["_hideIf"] = { input: hideIfController };
 
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           fieldType="input"
           name="input"
@@ -449,14 +348,7 @@ describe("FieldContainer", () => {
 
       render(
         <ValidationProvider hideIf={hideIfProvider}>
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="input"
@@ -477,14 +369,7 @@ describe("FieldContainer", () => {
       controller["_validation"] = { input: validateController };
 
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           fieldType="input"
           name="input"
@@ -499,14 +384,7 @@ describe("FieldContainer", () => {
       controller["_validation"] = { input: validateController };
 
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           fieldType="input"
           name="input"
@@ -521,14 +399,7 @@ describe("FieldContainer", () => {
 
       render(
         <ValidationProvider validate={validateProvider}>
-          <FieldContainer<
-            Form,
-            "input",
-            any,
-            any,
-            HTMLInputElement,
-            React.InputHTMLAttributes<HTMLInputElement>
-          >
+          <FieldContainerComponent
             controller={controller}
             fieldType="input"
             name="input"
@@ -543,14 +414,7 @@ describe("FieldContainer", () => {
   describe("initialState", () => {
     test("Default", () => {
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           fieldType="input"
           name="input"
@@ -566,14 +430,7 @@ describe("FieldContainer", () => {
 
     test("IsDisabled", () => {
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           disableIf={() => true}
           fieldType="input"
@@ -590,14 +447,7 @@ describe("FieldContainer", () => {
 
     test("IsValid - from validate", () => {
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           fieldType="input"
           name="input"
@@ -624,14 +474,7 @@ describe("FieldContainer", () => {
       };
 
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           fieldType="input"
           name="input"
@@ -647,14 +490,7 @@ describe("FieldContainer", () => {
 
     test("IsVisible", () => {
       render(
-        <FieldContainer<
-          Form,
-          "input",
-          any,
-          any,
-          HTMLInputElement,
-          React.InputHTMLAttributes<HTMLInputElement>
-        >
+        <FieldContainerComponent
           controller={controller}
           fieldType="input"
           hideIf={() => true}

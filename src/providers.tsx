@@ -1,5 +1,5 @@
 import React from "react";
-import { FormFields, ValidationResult } from "./controller";
+import { FormFields, ValidationResult } from "./controller.types";
 
 type SelectProviderProps = {
   id?: string;

@@ -4,7 +4,7 @@ import {
   messageClassName,
   validClassName
 } from "../../constants";
-import { FormFields, ValidationResult } from "../../controller";
+import { FormFields, ValidationResult } from "../../controller.types";
 import { SelectProvider } from "../../providers";
 import {
   FieldInitialProps,

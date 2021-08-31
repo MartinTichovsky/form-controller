@@ -1,4 +1,5 @@
-import { Controller, FormFields, OnSubmit } from "../../controller";
+import { Controller } from "../../controller";
+import { FormFields, OnSubmit } from "../../controller.types";
 
 type RestProps<T> = Omit<
   T,

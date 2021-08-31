@@ -1,5 +1,6 @@
 import React from "react";
-import { Controller, FormFields } from "../controller";
+import { Controller } from "../controller";
+import { FormFields } from "../controller.types";
 
 export const MessageFor = <T extends FormFields<T>, K extends keyof T>({
   children,

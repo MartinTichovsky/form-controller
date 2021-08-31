@@ -1,5 +1,5 @@
 import React from "react";
-import { FormFields } from "../../controller";
+import { FormFields } from "../../controller.types";
 import { FormControllerComponent } from "./FormControllerComponent";
 import { FormControllerComponentProps } from "./types";
 

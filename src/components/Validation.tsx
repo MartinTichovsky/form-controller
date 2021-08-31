@@ -1,5 +1,5 @@
 import React from "react";
-import { FormFields, ValidationResult } from "../controller";
+import { FormFields, ValidationResult } from "../controller.types";
 import { ValidationProvider } from "../providers";
 
 export const Validation = <T extends FormFields<T>>({

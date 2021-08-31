@@ -85,7 +85,7 @@ describe("MessageFor", () => {
 
     checkUseEffectActions();
 
-    controller["_fields"].input.isValid = false;
+    controller["_fields"].input!.isValid = false;
 
     // manually call private method
     act(() => {
@@ -140,7 +140,7 @@ describe("MessageFor", () => {
 
     checkUseEffectActions();
 
-    controller["_fields"].input.isDisabled = true;
+    controller["_fields"].input!.isDisabled = true;
 
     // manually call private method
     act(() => {
@@ -155,8 +155,8 @@ describe("MessageFor", () => {
 
     checkUseEffectActions();
 
-    controller["_fields"].input.isDisabled = false;
-    controller["_fields"].input.isVisible = false;
+    controller["_fields"].input!.isDisabled = false;
+    controller["_fields"].input!.isVisible = false;
 
     // manually call private method
     act(() => {
@@ -257,7 +257,7 @@ describe("MessageFor", () => {
 
     checkUseEffectActions();
 
-    controller["_fields"].input.isValid = false;
+    controller["_fields"].input!.isValid = false;
 
     // manually call private method
     act(() => {
@@ -272,8 +272,8 @@ describe("MessageFor", () => {
 
     checkUseEffectActions();
 
-    controller["_fields"].input.isValid = true;
-    controller["_fields"].input.isDisabled = true;
+    controller["_fields"].input!.isValid = true;
+    controller["_fields"].input!.isDisabled = true;
 
     // manually call private method
     act(() => {
@@ -288,8 +288,8 @@ describe("MessageFor", () => {
 
     checkUseEffectActions();
 
-    controller["_fields"].input.isDisabled = false;
-    controller["_fields"].input.isVisible = false;
+    controller["_fields"].input!.isDisabled = false;
+    controller["_fields"].input!.isVisible = false;
 
     // manually call private method
     act(() => {

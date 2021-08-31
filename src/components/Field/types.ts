@@ -1,5 +1,6 @@
 import React from "react";
-import { Controller, FormFields, ValidationResult } from "../../controller";
+import { Controller } from "../../controller";
+import { FormFields, ValidationResult } from "../../controller.types";
 
 export interface InitialState {
   isDisabled: boolean;

@@ -1,5 +1,6 @@
 import React from "react";
-import { Controller, FormFields } from "../../controller";
+import { Controller } from "../../controller";
+import { FormFields } from "../../controller.types";
 import { SubmitComponent } from "./SubmitComponent";
 import { SubmitComponentType, SubmitPrivateProps } from "./types";
 

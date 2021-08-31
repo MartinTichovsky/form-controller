@@ -1,5 +1,6 @@
 import React from "react";
-import { Controller, FormFields } from "../../controller";
+import { Controller } from "../../controller";
+import { FormFields } from "../../controller.types";
 import {
   disableIfContext,
   hideIfContext,
@@ -74,7 +75,7 @@ export function FieldContainer<
     throw new Error("Validate is not a function");
   }
 
-  if (!controller.registerKey(name, rest.type || "input")) {
+  if (!controller.registerKey(name, rest.type || "text")) {
     console.warn(`Key '${name}' is already registered in the form`);
   }
 
