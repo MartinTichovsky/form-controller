@@ -20,12 +20,14 @@ export const MessageFor = <T extends FormFields<T>, K extends keyof T>({
       action: (show: boolean, fieldIsValid: boolean) => {
         if (
           show &&
-          ((isValid === undefined && !fieldIsValid) ||
-            isValid === fieldIsValid) &&
+          ((isValid && fieldIsValid) || (!isValid && !fieldIsValid)) &&
           !refIsVisible.current
         ) {
           setIsVisible(true);
-        } else if (refIsVisible.current) {
+        } else if (
+          (!show || (isValid && !fieldIsValid) || (!isValid && fieldIsValid)) &&
+          refIsVisible.current
+        ) {
           setIsVisible(false);
         }
       },

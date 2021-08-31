@@ -50,6 +50,14 @@ test("GeneralMessageForUseCase2", async () => {
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
 
+  // input a valid text
+  fireEvent.change(screen.getByTestId(input1TestId), {
+    target: { value: "James Junior" }
+  });
+
+  expect(screen.queryByText(givenNameValidText)).toBeInTheDocument();
+  expect(screen.queryByText(surnameValidText)).toBeInTheDocument();
+
   // input an invalid text
   fireEvent.change(screen.getByTestId(input1TestId), {
     target: { value: " " }

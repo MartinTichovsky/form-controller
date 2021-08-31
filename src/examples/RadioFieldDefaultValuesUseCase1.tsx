@@ -89,7 +89,16 @@ export const RadioFieldDefaultValuesUseCase1 = () => {
                   value="Option 2-2"
                 />
               </div>
-
+              <div className="field-row">
+                <Input
+                  controller={controller}
+                  data-testid="radio-2-3"
+                  label="Option 2-3"
+                  name="radioVolume2"
+                  type="radio"
+                  value="Option 2-3"
+                />
+              </div>
               <div className="field-row">
                 <b>Radio Volume 3</b>
               </div>

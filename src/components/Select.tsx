@@ -3,7 +3,7 @@ import { FormFields } from "../controller";
 import { FieldContainer } from "./Field/FieldContainer";
 import { FieldPrivateProps, FieldType } from "./Field/types";
 
-export const Select = <
+export function Select<
   T extends FormFields<T>,
   K extends keyof T,
   IComponent extends React.ComponentType<
@@ -23,16 +23,18 @@ export const Select = <
       >
     >
   >
-) => (
-  <FieldContainer<
-    T,
-    K,
-    IComponent,
-    MComponent,
-    HTMLSelectElement,
-    React.SelectHTMLAttributes<HTMLSelectElement>
-  >
-    {...props}
-    fieldType="select"
-  />
-);
+) {
+  return (
+    <FieldContainer<
+      T,
+      K,
+      IComponent,
+      MComponent,
+      HTMLSelectElement,
+      React.SelectHTMLAttributes<HTMLSelectElement>
+    >
+      {...props}
+      fieldType="select"
+    />
+  );
+}

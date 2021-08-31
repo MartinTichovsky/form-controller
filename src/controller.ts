@@ -71,10 +71,17 @@ export class Controller<T extends FormFields<T>> {
   private _afterAll: {
     disable: Map<keyof T, Action>;
     validate: Action[];
+    validateAll: Map<keyof T, Action>;
     visible: Map<keyof T, Action>;
-  } = { disable: new Map(), validate: [], visible: new Map() };
+  } = {
+    disable: new Map(),
+    validate: [],
+    validateAll: new Map(),
+    visible: new Map()
+  };
   private _onChangeCounter = 0;
-  private _defaultActiveId: { [key in keyof T]?: string } = {};
+  private _defaultActiveRadioId: { [key in keyof T]?: string } = {};
+  private _defaultDisabledRadioId: { [key in keyof T]?: string[] } = {};
   private _disableIf?: { [key in keyof T]?: (fields: Partial<T>) => boolean };
   private _fields: Fields<T> = {} as Fields<T>;
   private _hideIf?: { [key in keyof T]?: (fields: Partial<T>) => boolean };
@@ -152,7 +159,9 @@ export class Controller<T extends FormFields<T>> {
     const result: Partial<T> = {};
 
     for (let key in this._fields) {
-      (result[key] as Value) = this._fields[key].value;
+      if (this._fields[key].isVisible) {
+        (result[key] as Value) = this._fields[key].value;
+      }
     }
 
     return result;
@@ -186,6 +195,7 @@ export class Controller<T extends FormFields<T>> {
       this._afterAll = {
         disable: new Map(),
         validate: [],
+        validateAll: new Map(),
         visible: new Map()
       };
     }
@@ -229,6 +239,25 @@ export class Controller<T extends FormFields<T>> {
     this.disableButtons(disable);
   }
 
+  private disabledRadiosExceptDefault(key: keyof T) {
+    if (!this._defaultActiveRadioId[key]) {
+      return false;
+    }
+
+    const entries = Object.fromEntries(this._fields[key]!.options!.entries());
+
+    for (let id in entries) {
+      if (id === this._defaultActiveRadioId[key]) {
+        continue;
+      }
+      if (!entries[id].isDisabled) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   public getDisableCondition(key: keyof T) {
     return this._disableIf && key in this._disableIf
       ? this._disableIf[key]
@@ -259,8 +288,10 @@ export class Controller<T extends FormFields<T>> {
       : undefined;
   }
 
-  private isSelectedAction(id: string) {
-    this.isSelectedListeners?.get(id)?.();
+  private isSelectedAction(id?: string) {
+    if (id) {
+      this.isSelectedListeners?.get(id)?.();
+    }
   }
 
   private isValidationInProgress() {
@@ -318,12 +349,12 @@ export class Controller<T extends FormFields<T>> {
     this._isSubmitted = false;
   }
 
-  public setDefaultActiveId(key: keyof T, id?: string) {
+  public setDefaultActiveRadioId(key: keyof T, id?: string) {
     if (key in this._fields) {
       this._fields[key].activeId = id;
     }
 
-    this._defaultActiveId[key] = id;
+    this._defaultActiveRadioId[key] = id;
   }
 
   public setDefaultIsDisabled({
@@ -367,9 +398,15 @@ export class Controller<T extends FormFields<T>> {
       this._fields[key].options!.set(id, { isDisabled: true, isVisible: true });
     }
 
-    this._fields[key].isVisible = Array.from(
+    this._fields[key].isDisabled = Array.from(
       this._fields[key].options!.values()
     ).every((item) => item.isDisabled);
+
+    if (!(key in this._defaultDisabledRadioId)) {
+      this._defaultDisabledRadioId[key] = [];
+    }
+
+    this._defaultDisabledRadioId[key]!.push(id);
   }
 
   public setDefaultIsInvalid({ key, type }: { key: keyof T; type?: string }) {
@@ -398,12 +435,25 @@ export class Controller<T extends FormFields<T>> {
   public setDefaultIsNotVisible({
     id,
     key,
-    type
+    type,
+    value
   }: {
     id?: string;
     key: keyof T;
     type?: string;
+    value?: string | React.ReactNode;
   }) {
+    if (
+      key in this._fields &&
+      this._fields[key].value !== undefined &&
+      this._fields[key].value === value
+    ) {
+      this._afterAll.validate.push(() => {
+        this._fields[key].value = undefined;
+        this.validateAll(key, true);
+      });
+    }
+
     if (key in this._fields) {
       this._fields[key] = {
         ...this._fields[key],
@@ -518,28 +568,40 @@ export class Controller<T extends FormFields<T>> {
       disable = Array.from(this._fields[key]!.options!.values()).every(
         (item) => item.isDisabled
       );
+      this._afterAll.disable.set(key, () => {
+        if (this.disabledRadiosExceptDefault(key)) {
+          this._fields[key] = {
+            ...this._fields[key],
+            activeId: this._defaultActiveRadioId[key],
+            value: this._initialValues?.[key]
+          };
+          this.validateAll(key, true);
+          this.isSelectedAction(this._defaultActiveRadioId[key]);
+        }
+      });
     }
 
-    const value =
-      (((disable || this._fields[key] === undefined) &&
-        !this._fields[key].isDisabled) ||
-        isDisabled) &&
-      this._fields[key].activeId === id &&
-      (!this._initialValues ||
-        !(key in this._initialValues) ||
-        this._initialValues[key] !== this._fields[key].value)
+    let value =
+      disable ||
+      this._fields[key] === undefined ||
+      this._fields[key].options === undefined
         ? this._initialValues?.[key]
+        : isDisabled &&
+          this._fields[key].activeId === id &&
+          id !== this._defaultActiveRadioId[key]
+        ? undefined
         : this._fields[key].value;
 
     if (
-      this._defaultActiveId[key] &&
-      value === this._initialValues?.[key] &&
-      this._defaultActiveId[key] !== this._fields[key].activeId
+      isDisabled &&
+      this._fields[key].activeId === id &&
+      this._defaultActiveRadioId[key] &&
+      this._defaultDisabledRadioId[key]?.includes(
+        this._defaultActiveRadioId[key]!
+      )
     ) {
-      this._fields[key].activeId = this._defaultActiveId[key];
-      this._afterAll.disable.set(key, () => {
-        this.isSelectedAction(this._defaultActiveId[key]!);
-      });
+      value = this._initialValues?.[key];
+      this.isSelectedAction(this._defaultActiveRadioId[key]);
     }
 
     this._fields[key] = {
@@ -549,7 +611,13 @@ export class Controller<T extends FormFields<T>> {
       value
     };
 
-    this.validateAll(key, true);
+    if (type === "radio") {
+      this._afterAll.validateAll.set(key, () => {
+        this.validateAll(key, true);
+      });
+    } else {
+      this.validateAll(key, true);
+    }
 
     this.onChange();
   }
@@ -590,17 +658,21 @@ export class Controller<T extends FormFields<T>> {
       this._fields[key].isValidated = false;
     }
 
-    if (!this._afterAll.visible.has(key)) {
+    if (type !== "radio" && visible && this._fields[key].value === undefined) {
+      this._fields[key].value = this._initialValues?.[key];
+    }
+
+    if (type === "radio" && !this._afterAll.visible.has(key)) {
       this._afterAll.visible.set(key, () => {
         if (
           this._fields[key].value === undefined &&
-          this._fields[key]?.options?.get(this._defaultActiveId?.[key]!)
+          this._fields[key]?.options?.get(this._defaultActiveRadioId?.[key]!)
             ?.isVisible === true
         ) {
           this._fields[key].value = this._initialValues?.[key];
           this._fields[key] = {
             ...this._fields[key],
-            activeId: this._defaultActiveId?.[key]
+            activeId: this._defaultActiveRadioId?.[key]
           };
 
           this.validateAll(key, !(this.validateOnChange || this.isSubmitted));
@@ -609,10 +681,10 @@ export class Controller<T extends FormFields<T>> {
             this.validateListeners(key);
           }
 
-          this.isSelectedAction(this._defaultActiveId[key]!);
+          this.isSelectedAction(this._defaultActiveRadioId[key]!);
         } else if (
           this._fields[key].value === undefined &&
-          this._fields[key]?.options?.get(this._defaultActiveId?.[key]!)
+          this._fields[key]?.options?.get(this._defaultActiveRadioId?.[key]!)
             ?.isVisible === false
         ) {
           this.validateAll(key, !(this.validateOnChange || this.isSubmitted));
@@ -624,16 +696,24 @@ export class Controller<T extends FormFields<T>> {
       });
     }
 
-    if (visible) {
-      this.validateAll(key, true);
-    } else {
-      this._fields[key].isValid = true;
-    }
-
     this._fields[key] = {
       ...this._fields[key],
       isVisible: visible
     };
+
+    if (
+      type !== "radio" &&
+      visible &&
+      (this._validateOnChange || this.isSubmitted) &&
+      (!this._fields[key].isValid ||
+        this._fields[key].validationResult !== undefined)
+    ) {
+      this.validateAll(key);
+    } else if (visible) {
+      this.validateAll(key, true);
+    } else if (type !== "radio") {
+      this._fields[key].isValid = true;
+    }
 
     this.onChange();
   }

@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { TextFieldDefaultValues } from "../TextFieldDefaultValues";
+import { TextFieldDefaultValuesUseCase1 } from "../TextFieldDefaultValuesUseCase1";
 import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
@@ -11,8 +11,8 @@ const input2TestId = "input-2";
 const resetTestId = "reset";
 const submitTestId = "submit";
 
-test("TextFieldDefaultValues", async () => {
-  const { container } = render(<TextFieldDefaultValues />);
+test("TextFieldDefaultValuesUseCase1", async () => {
+  const { container } = render(<TextFieldDefaultValuesUseCase1 />);
 
   // the inputs must have default values
   expect(screen.getByTestId(input1TestId)).toHaveValue("James");

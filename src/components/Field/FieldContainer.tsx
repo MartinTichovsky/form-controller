@@ -30,26 +30,30 @@ export function FieldContainer<
   MComponent extends React.ElementType,
   ElementType,
   HTMLAttributesType
->({
-  children,
-  controller,
-  disableIf,
-  hideMessage,
-  hideIf,
-  Component,
-  label,
-  MessageComponent,
-  name,
-  onFormChange,
-  validate,
-  value,
-  ...rest
-}: React.PropsWithChildren<
-  React.ComponentProps<
-    FieldType<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
+>(
+  props: React.PropsWithChildren<
+    React.ComponentProps<
+      FieldType<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
+    > &
+      FieldInternalProps
   >
-> &
-  FieldInternalProps) {
+) {
+  const {
+    children,
+    controller,
+    disableIf,
+    hideMessage,
+    hideIf,
+    Component,
+    label,
+    MessageComponent,
+    name,
+    onFormChange,
+    validate,
+    value,
+    ...rest
+  } = props;
+
   if (!(controller instanceof Controller)) {
     throw new Error("Controller is not provided");
   }
@@ -74,36 +78,43 @@ export function FieldContainer<
     console.warn(`Key '${name}' is already registered in the form`);
   }
 
-  if (!disableIf) {
-    disableIf = React.useContext(disableIfContext);
+  let _disableIf = disableIf;
+
+  if (!_disableIf) {
+    _disableIf = React.useContext(disableIfContext);
   }
 
-  if (!disableIf) {
-    disableIf = controller.getDisableCondition(name);
+  if (!_disableIf) {
+    _disableIf = controller.getDisableCondition(name);
   }
 
-  if (!hideIf) {
-    hideIf = React.useContext(hideIfContext);
+  let _hideIf = hideIf;
+
+  if (!_hideIf) {
+    _hideIf = React.useContext(hideIfContext);
   }
 
-  if (!hideIf) {
-    hideIf = controller.getHideCondition(name);
+  if (!_hideIf) {
+    _hideIf = controller.getHideCondition(name);
   }
 
-  if (!validate) {
-    validate = React.useContext(validateContext);
+  let _validate = validate;
+
+  if (!_validate) {
+    _validate = React.useContext(validateContext);
   }
 
-  if (!validate) {
-    validate = controller.getValidateCondition(name);
+  if (!_validate) {
+    _validate = controller.getValidateCondition(name);
   }
 
   let id: string | undefined = rest.id;
+
   id = (label && !id) || rest.type === "radio" ? getRandomId() : id;
 
   const initialState: InitialState = {
-    isDisabled: disableIf ? disableIf(controller.fields) : false,
-    isVisible: hideIf ? !hideIf(controller.fields) : true
+    isDisabled: _disableIf ? _disableIf(controller.fields) : false,
+    isVisible: _hideIf ? !_hideIf(controller.fields) : true
   };
 
   if (initialState.isDisabled) {
@@ -116,9 +127,10 @@ export function FieldContainer<
     controller.setDefaultIsNotVisible({
       id,
       key: name,
-      type: rest.type
+      type: rest.type,
+      value: value || children
     });
-  } else if (validate && !validate(controller.getFieldValue(name), rest)) {
+  } else if (_validate && !_validate(controller.getFieldValue(name), rest)) {
     controller.setDefaultIsInvalid({
       key: name,
       type: rest.type
@@ -128,31 +140,18 @@ export function FieldContainer<
   const field = controller.getField(name);
   initialState.isValid = field === undefined || field.isValid;
 
+  const fieldProps = {
+    ...props,
+    disableIf: _disableIf,
+    hideIf: _hideIf,
+    id,
+    initialState,
+    validate: _validate
+  };
+
   return (
     <Field<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
-      {
-        ...({
-          ...rest,
-          children,
-          controller,
-          disableIf,
-          hideMessage,
-          hideIf,
-          id,
-          initialState,
-          Component,
-          label,
-          MessageComponent,
-          name,
-          onFormChange,
-          validate,
-          value
-        } as any) /*React.ComponentProps<
-        FieldType<T, K, IComponent, MComponent, ElementType, HTMLAttributesType>
-      > &
-        FieldInternalProps &
-        FieldInitialProps*/
-      }
+      {...fieldProps}
     />
   );
 }

@@ -12,7 +12,7 @@ const initialValues: MyForm = {
   surname: "Bond"
 };
 
-export const TextFieldDefaultValues = () => {
+export const TextFieldDefaultValuesUseCase1 = () => {
   return (
     <Template>
       <FormController<MyForm>
@@ -28,7 +28,8 @@ export const TextFieldDefaultValues = () => {
                 name="givenName"
                 placeholder="Input a given name"
                 validate={(value) =>
-                  !value!.trim() && "Provide a valid given name"
+                  (value === undefined || !value.trim()) &&
+                  "Provide a valid given name"
                 }
               />
             </div>
@@ -39,7 +40,8 @@ export const TextFieldDefaultValues = () => {
                 name="surname"
                 placeholder="Input a surname"
                 validate={(value) =>
-                  !value!.trim() && "Provide a valid surname"
+                  (value === undefined || !value.trim()) &&
+                  "Provide a valid surname"
                 }
               />
             </div>

@@ -1,3 +1,7 @@
+import { CheckboxField } from "form-controller/lib/examples/CheckboxField";
+import { CheckboxFieldDefaultValues } from "form-controller/lib/examples/CheckboxFieldDefaultValues";
+import { CheckboxFieldDisabled } from "form-controller/lib/examples/CheckboxFieldDisabled";
+import { CheckboxFieldHidden } from "form-controller/lib/examples/CheckboxFieldHidden";
 import { GeneralAsynchronousValidation } from "form-controller/lib/examples/GeneralAsynchronousValidation";
 import { GeneralCondition } from "form-controller/lib/examples/GeneralCondition";
 import { GeneralDisableAllOnSubmit } from "form-controller/lib/examples/GeneralDisableAllOnSubmit";
@@ -26,7 +30,8 @@ import { SubmitDefaultDisabled } from "form-controller/lib/examples/SubmitDefaul
 import { SubmitDisabledOnSubmit } from "form-controller/lib/examples/SubmitDisabledOnSubmit";
 import { TextField } from "form-controller/lib/examples/TextField";
 import { TextFieldComponent } from "form-controller/lib/examples/TextFieldComponent";
-import { TextFieldDefaultValues } from "form-controller/lib/examples/TextFieldDefaultValues";
+import { TextFieldDefaultValuesUseCase1 } from "form-controller/lib/examples/TextFieldDefaultValuesUseCase1";
+import { TextFieldDefaultValuesUseCase2 } from "form-controller/lib/examples/TextFieldDefaultValuesUseCase2";
 import { TextFieldDisabledUseCase1 } from "form-controller/lib/examples/TextFieldDisabledUseCase1";
 import { TextFieldDisabledUseCase2 } from "form-controller/lib/examples/TextFieldDisabledUseCase2";
 import { TextFieldHiddenUseCase1 } from "form-controller/lib/examples/TextFieldHiddenUseCase1";
@@ -44,46 +49,26 @@ interface MenuItems {
 }
 
 export const menuItems: MenuItems = {
-  "Text Fields": [
+  "Checkbox Fields": [
     {
-      label: "Basic Text Fields",
-      key: "text-fields",
-      render: () => <TextField />
+      label: "Basic Checkbox Field",
+      key: "checkbox-fields",
+      render: () => <CheckboxField />
     },
     {
-      label: "Disabled Text Field - UseCase 1",
-      key: "disabled-text-field-usecase-1",
-      render: () => <TextFieldDisabledUseCase1 />
-    },
-    {
-      label: "Disabled Text Field - UseCase 2",
-      key: "disabled-text-field-usecase-2",
-      render: () => <TextFieldDisabledUseCase2 />
+      label: "Disabled",
+      key: "checkbox-field-disabled",
+      render: () => <CheckboxFieldDisabled />
     },
     {
       label: "Default Values",
-      key: "text-field-default-values",
-      render: () => <TextFieldDefaultValues />
+      key: "checkbox-field-default-values",
+      render: () => <CheckboxFieldDefaultValues />
     },
     {
-      label: "Message Component",
-      key: "text-field-message-component",
-      render: () => <TextFieldMessageComponent />
-    },
-    {
-      label: "Hidden Text Field - UseCase 1",
-      key: "hidden-text-field-usecase-1",
-      render: () => <TextFieldHiddenUseCase1 />
-    },
-    {
-      label: "Hidden Text Field - UseCase 2",
-      key: "hidden-text-field-usecase-2",
-      render: () => <TextFieldHiddenUseCase2 />
-    },
-    {
-      label: "Input Component",
-      key: "text-field-input-component",
-      render: () => <TextFieldComponent />
+      label: "Hidden",
+      key: "checkbox-field-hidden",
+      render: () => <CheckboxFieldHidden />
     }
   ],
   "Radio Fields": [
@@ -103,34 +88,81 @@ export const menuItems: MenuItems = {
       render: () => <RadioFieldDefaultValuesUseCase2 />
     },
     {
-      label: "Disabled Radio Field - UseCase 1",
+      label: "Disabled - UseCase 1",
       key: "disabled-radio-field-usecase-1",
       render: () => <RadioFieldDisabledUseCase1 />
     },
     {
-      label: "Disabled Radio Field - UseCase 2",
+      label: "Disabled - UseCase 2",
       key: "disabled-radio-field-usecase-2",
       render: () => <RadioFieldDisabledUseCase2 />
     },
     {
-      label: "Disabled Radio Field - UseCase 3",
+      label: "Disabled - UseCase 3",
       key: "disabled-radio-field-usecase-3",
       render: () => <RadioFieldDisabledUseCase3 />
     },
     {
-      label: "Hidden Radio Field - UseCase 1",
+      label: "Hidden - UseCase 1",
       key: "hidden-radio-field-usecase-1",
       render: () => <RadioFieldHiddenUseCase1 />
     },
     {
-      label: "Hidden Radio Field - UseCase 2",
+      label: "Hidden - UseCase 2",
       key: "hidden-radio-field-usecase-2",
       render: () => <RadioFieldHiddenUseCase2 />
     },
     {
-      label: "Hidden Radio Field - UseCase 3",
+      label: "Hidden - UseCase 3",
       key: "hidden-radio-field-usecase-3",
       render: () => <RadioFieldHiddenUseCase3 />
+    }
+  ],
+  "Text Fields": [
+    {
+      label: "Basic Text Fields",
+      key: "text-fields",
+      render: () => <TextField />
+    },
+    {
+      label: "Disabled - UseCase 1",
+      key: "disabled-text-field-usecase-1",
+      render: () => <TextFieldDisabledUseCase1 />
+    },
+    {
+      label: "Disabled - UseCase 2",
+      key: "disabled-text-field-usecase-2",
+      render: () => <TextFieldDisabledUseCase2 />
+    },
+    {
+      label: "Default Values - UseCase 1",
+      key: "text-field-default-values-usecase-1",
+      render: () => <TextFieldDefaultValuesUseCase1 />
+    },
+    {
+      label: "Default Values - UseCase 2",
+      key: "text-field-default-values-usecase2",
+      render: () => <TextFieldDefaultValuesUseCase2 />
+    },
+    {
+      label: "Message Component",
+      key: "text-field-message-component",
+      render: () => <TextFieldMessageComponent />
+    },
+    {
+      label: "Hidden - UseCase 1",
+      key: "hidden-text-field-usecase-1",
+      render: () => <TextFieldHiddenUseCase1 />
+    },
+    {
+      label: "Hidden - UseCase 2",
+      key: "hidden-text-field-usecase-2",
+      render: () => <TextFieldHiddenUseCase2 />
+    },
+    {
+      label: "Input Component",
+      key: "text-field-input-component",
+      render: () => <TextFieldComponent />
     }
   ],
   "Select Fields": [
@@ -143,14 +175,16 @@ export const menuItems: MenuItems = {
       label: "Select Component",
       key: "select-field-component",
       render: () => <SelectFieldComponent />
-    },
+    }
+  ],
+  "Select Field Options": [
     {
-      label: "Select Field Option - Disabled",
+      label: "Disabled",
       key: "select-field-option-disabled",
       render: () => <SelectFieldOptionDisabled />
     },
     {
-      label: "Select Field Option - Hidden",
+      label: "Hidden",
       key: "select-field-option-hidden",
       render: () => <SelectFieldOptionHidden />
     }

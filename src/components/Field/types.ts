@@ -105,7 +105,24 @@ export interface FieldType<
             | {
                 label?: string | JSX.Element;
                 placeholder?: string;
-                type?: undefined | "text" | "email" | "number";
+                type?:
+                  | undefined
+                  | "color"
+                  | "date"
+                  | "datetime-local"
+                  | "email"
+                  | "file"
+                  | "image"
+                  | "month"
+                  | "number"
+                  | "password"
+                  | "range"
+                  | "search"
+                  | "tel"
+                  | "text"
+                  | "time"
+                  | "url"
+                  | "week";
                 validate?: (
                   value: T[K] | undefined,
                   props: typeof rest
@@ -118,6 +135,16 @@ export interface FieldType<
                 type: "radio";
                 validate?: undefined;
                 value: string;
+              }
+            | {
+                label: string | JSX.Element;
+                placeholder?: undefined;
+                type: "checkbox";
+                validate?: (
+                  value: T[K] | undefined,
+                  props: typeof rest
+                ) => ValidationResult;
+                value?: undefined;
               }
         : {
             label?: string | JSX.Element;

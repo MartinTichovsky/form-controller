@@ -57,7 +57,10 @@ export function Field<
   const [state, setState] = React.useState<State>({
     ...initialState!,
     message: undefined,
-    isSelected: controller.getFieldValue(name) === value
+    isSelected:
+      rest.type === "checkbox"
+        ? controller.getFieldValue(name) === true
+        : controller.getFieldValue(name) === value
   });
   const refState = React.useRef(state);
   const selectRef = React.useRef<HTMLSelectElement>();
@@ -77,7 +80,7 @@ export function Field<
         rest.id &&
         controller.getFieldValue(name) === value
       ) {
-        controller.setDefaultActiveId(name, rest.id);
+        controller.setDefaultActiveRadioId(name, rest.id);
       }
 
       return () => {
@@ -185,7 +188,10 @@ export function Field<
             ...prevState,
             message: undefined,
             isDisabled: true,
-            isSelected: controller.getFieldValue(name) === value,
+            isSelected:
+              (rest.type === "checkbox" &&
+                controller.getFieldValue(name) === true) ||
+              controller.getFieldValue(name) === value,
             isValid: undefined
           }));
         } else if (!isDisabled && refState.current.isDisabled) {
@@ -244,7 +250,10 @@ export function Field<
 
             setState((prevState) => ({
               ...prevState,
-              isSelected: controller.getFieldValue(name) === value,
+              isSelected:
+                (rest.type === "checkbox" &&
+                  controller.getFieldValue(name) === true) ||
+                controller.getFieldValue(name) === value,
               isVisible: true
             }));
           }
@@ -360,13 +369,14 @@ export function Field<
     defaultValue: value || (defaultValue.current as string)
   };
 
-  if (rest.type === "radio" && state.isSelected) {
+  if ((rest.type === "checkbox" || rest.type === "radio") && state.isSelected) {
     props.defaultChecked = true;
   }
 
   return (
     <>
-      {rest.type !== "radio" &&
+      {rest.type !== "checkbox" &&
+        rest.type !== "radio" &&
         (typeof label === "string" ? (
           <>
             <label htmlFor={rest.id}>{label}</label>{" "}
@@ -380,8 +390,16 @@ export function Field<
         disabled={state.isDisabled}
         key={key.current}
         name={name as string}
-        onChange={(event: React.ChangeEvent<{ value: string }>) =>
-          controller.setFieldValue(name, event.currentTarget.value, rest.id)
+        onChange={(
+          event: React.ChangeEvent<{ checked: boolean; value: string }>
+        ) =>
+          controller.setFieldValue(
+            name,
+            rest.type === "checkbox"
+              ? event.currentTarget.checked
+              : event.currentTarget.value,
+            rest.id
+          )
         }
         onKeyDown={(event: React.KeyboardEvent) => {
           if (event.key === "Enter") {
@@ -389,7 +407,7 @@ export function Field<
           }
         }}
       />
-      {rest.type === "radio" &&
+      {(rest.type === "checkbox" || rest.type === "radio") &&
         (typeof label === "string" ? (
           <>
             {" "}
