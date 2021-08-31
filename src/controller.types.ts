@@ -1,5 +1,4 @@
 import { Controller } from "./controller";
-/* @internal */
 
 export type Action = () => void;
 export type AfterAll<T> = {
