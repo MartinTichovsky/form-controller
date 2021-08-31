@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { SelectFieldOptionHidden } from "../SelectFieldOptionHidden";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -15,7 +15,7 @@ test("SelectFieldOptionHidden", async () => {
   const { container } = render(<SelectFieldOptionHidden />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // options should be hidden
   expect(
@@ -28,7 +28,7 @@ test("SelectFieldOptionHidden", async () => {
   });
 
   // one error must be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // select an option
   fireEvent.change(screen.getByTestId(select2TestId), {
@@ -37,7 +37,7 @@ test("SelectFieldOptionHidden", async () => {
 
   await waitFor(async () => {
     // one error must be shown
-    testErrorMessage(container, 1);
+    testInvalidMessage(container, 1);
   });
 
   // submit invalid form
@@ -79,7 +79,7 @@ test("SelectFieldOptionHidden", async () => {
   });
 
   // one error must be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // select previous option
   fireEvent.change(screen.getByTestId(select1TestId), {
@@ -87,7 +87,7 @@ test("SelectFieldOptionHidden", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // select an option
   fireEvent.change(screen.getByTestId(select2TestId), {
@@ -104,7 +104,7 @@ test("SelectFieldOptionHidden", async () => {
 
   // one error must be shown
   await waitFor(async () => {
-    testErrorMessage(container, 1);
+    testInvalidMessage(container, 1);
   });
 
   // submit valid form
@@ -121,7 +121,7 @@ test("SelectFieldOptionHidden", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -141,7 +141,7 @@ test("SelectFieldOptionHidden", async () => {
   });
 
   // one error must be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // options should be hidden
   expect(
@@ -170,5 +170,5 @@ test("SelectFieldOptionHidden", async () => {
   ).toBe(1);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 });

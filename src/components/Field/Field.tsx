@@ -100,7 +100,9 @@ export function Field<
           if (validationResult) {
             setState((prevState) => ({
               ...prevState,
-              isValid: field === undefined || field.isValid,
+              isValid:
+                field === undefined ||
+                (field.validationInProgress ? undefined : field.isValid),
               message: validationResult
             }));
           } else {
@@ -398,9 +400,13 @@ export function Field<
         ))}
       {state.message && state.message !== true && (
         <MessageElement
-          className={`${messageClassName} ${
-            state.isValid === false ? invalidClassName : validClassName
-          }`}
+          className={
+            state.isValid === undefined
+              ? messageClassName
+              : `${messageClassName} ${
+                  state.isValid === false ? invalidClassName : validClassName
+                }`
+          }
         >
           {state.message}
         </MessageElement>

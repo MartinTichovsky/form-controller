@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { SubmitDisabledOnSubmit } from "../SubmitDisabledOnSubmit";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -16,7 +16,7 @@ test("SubmitDisabledOnSubmit", async () => {
   const { container } = render(<SubmitDisabledOnSubmit />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
@@ -32,13 +32,13 @@ test("SubmitDisabledOnSubmit", async () => {
   expect(screen.getByTestId(submitTopTestId)).toBeDisabled();
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
@@ -50,7 +50,7 @@ test("SubmitDisabledOnSubmit", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
@@ -62,7 +62,7 @@ test("SubmitDisabledOnSubmit", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
@@ -78,7 +78,7 @@ test("SubmitDisabledOnSubmit", async () => {
   expect(screen.getByTestId(submitTopTestId)).toBeDisabled();
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -86,7 +86,7 @@ test("SubmitDisabledOnSubmit", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // the buttons must be disabled
   expect(screen.getByTestId(submitBottomTestId)).toBeDisabled();
@@ -98,7 +98,7 @@ test("SubmitDisabledOnSubmit", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the buttons must not be disabled
   expect(screen.getByTestId(submitBottomTestId)).not.toBeDisabled();
@@ -110,7 +110,7 @@ test("SubmitDisabledOnSubmit", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
@@ -122,7 +122,7 @@ test("SubmitDisabledOnSubmit", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(2);

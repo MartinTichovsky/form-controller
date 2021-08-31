@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { SelectFieldComponent } from "../SelectFieldComponent";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -21,7 +21,7 @@ test("SelectFieldComponent", async () => {
   expect(container.querySelector(`#${functionalSelectId}`)).toBeTruthy();
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit invalid form
   await waitFor(async () => {
@@ -29,7 +29,7 @@ test("SelectFieldComponent", async () => {
   });
 
   // two errors must be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // select an option without a value property
   fireEvent.change(screen.getByTestId(select1TestId), {
@@ -37,7 +37,7 @@ test("SelectFieldComponent", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // select an option without a value property
   fireEvent.change(screen.getByTestId(select2TestId), {
@@ -45,7 +45,7 @@ test("SelectFieldComponent", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -65,7 +65,7 @@ test("SelectFieldComponent", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // select an option with a value property
   fireEvent.change(screen.getByTestId(select2TestId), {
@@ -73,7 +73,7 @@ test("SelectFieldComponent", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -91,7 +91,7 @@ test("SelectFieldComponent", async () => {
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // select an option
   fireEvent.change(screen.getByTestId(select1TestId), {
@@ -99,7 +99,7 @@ test("SelectFieldComponent", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // select an option
   fireEvent.change(screen.getByTestId(select2TestId), {
@@ -107,7 +107,7 @@ test("SelectFieldComponent", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -115,7 +115,7 @@ test("SelectFieldComponent", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // select an empty option
   fireEvent.change(screen.getByTestId(select1TestId), {
@@ -123,7 +123,7 @@ test("SelectFieldComponent", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // select an empty option
   fireEvent.change(screen.getByTestId(select2TestId), {
@@ -131,5 +131,5 @@ test("SelectFieldComponent", async () => {
   });
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 });

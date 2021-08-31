@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { GeneralValidationUseCase1 } from "../GeneralValidationUseCase1";
 import { GeneralValidationUseCase2 } from "../GeneralValidationUseCase2";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -14,20 +14,20 @@ const submitTestId = "submit";
 
 const testWorkflow = async (container: HTMLElement) => {
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit invalid form
   await waitFor(async () => {
     fireEvent.click(screen.getByTestId(submitTestId));
   });
 
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -35,7 +35,7 @@ const testWorkflow = async (container: HTMLElement) => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -43,7 +43,7 @@ const testWorkflow = async (container: HTMLElement) => {
   });
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -51,7 +51,7 @@ const testWorkflow = async (container: HTMLElement) => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -59,7 +59,7 @@ const testWorkflow = async (container: HTMLElement) => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {

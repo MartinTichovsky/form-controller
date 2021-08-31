@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { RadioFieldDefaultValuesUseCase2 } from "../RadioFieldDefaultValuesUseCase2";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -21,7 +21,7 @@ test("RadioFieldDefaultValuesUseCase2", async () => {
   const { container } = render(<RadioFieldDefaultValuesUseCase2 />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the option 1 and 2 of radio volume 1 and 3 should be hidden
   expect(() => screen.getByTestId(radio11TestId)).toThrowError();
@@ -42,13 +42,13 @@ test("RadioFieldDefaultValuesUseCase2", async () => {
   });
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // click on the first option of radio volume 2
   fireEvent.click(screen.getByTestId(radio21TestId));
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // the option 1 and 2 of radio volume 1 and option 2 of radio volume 3 should be hidden
   expect(() => screen.getByTestId(radio11TestId)).toThrowError();
@@ -64,7 +64,7 @@ test("RadioFieldDefaultValuesUseCase2", async () => {
   fireEvent.click(screen.getByTestId(radio31TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the second option of radio volume 1 and 3 should be hidden
   expect(screen.getByTestId(radio11TestId)).toBeTruthy();
@@ -93,7 +93,7 @@ test("RadioFieldDefaultValuesUseCase2", async () => {
   fireEvent.click(screen.getByTestId(radio22TestId));
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // the option 1 and 2 of radio volume 1 and option 1 of radio volume 3 should be hidden
   expect(() => screen.getByTestId(radio11TestId)).toThrowError();
@@ -112,7 +112,7 @@ test("RadioFieldDefaultValuesUseCase2", async () => {
   fireEvent.click(screen.getByTestId(radio13TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -165,7 +165,7 @@ test("RadioFieldDefaultValuesUseCase2", async () => {
   fireEvent.click(screen.getByTestId(radio21TestId));
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // check selected options
   expect(screen.getByTestId(radio21TestId)).toBeChecked();
@@ -183,7 +183,7 @@ test("RadioFieldDefaultValuesUseCase2", async () => {
   fireEvent.click(screen.getByTestId(radio13TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the first and the second option of radio volume 1 and the second option of radio volume 3 should be hidden
   expect(() => screen.getByTestId(radio11TestId)).toThrowError();

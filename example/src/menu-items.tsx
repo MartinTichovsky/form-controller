@@ -1,3 +1,4 @@
+import { GeneralAsynchronousValidation } from "form-controller/lib/examples/GeneralAsynchronousValidation";
 import { GeneralCondition } from "form-controller/lib/examples/GeneralCondition";
 import { GeneralDisableAllOnSubmit } from "form-controller/lib/examples/GeneralDisableAllOnSubmit";
 import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
@@ -177,6 +178,11 @@ export const menuItems: MenuItems = {
     }
   ],
   General: [
+    {
+      label: "Asynchronous Validation",
+      key: "asynchronous-validation",
+      render: () => <GeneralAsynchronousValidation />
+    },
     {
       label: "Condition",
       key: "condition",

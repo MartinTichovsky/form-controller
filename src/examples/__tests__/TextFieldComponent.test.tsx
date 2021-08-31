@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { TextFieldComponent } from "../TextFieldComponent";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -21,7 +21,7 @@ test("TextFieldComponent", async () => {
   expect(container.querySelector(`#${functionalInputId}`)).toBeTruthy();
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit invalid form
   await waitFor(async () => {
@@ -29,7 +29,7 @@ test("TextFieldComponent", async () => {
   });
 
   // two errors must be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -37,7 +37,7 @@ test("TextFieldComponent", async () => {
   });
 
   // one error must be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -45,7 +45,7 @@ test("TextFieldComponent", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {

@@ -1,5 +1,6 @@
 import React from "react";
 import { FormController, Input, Submit } from "..";
+import { wait } from "../utils/utils";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -8,7 +9,7 @@ type MyForm = {
   surname: string;
 };
 
-export const TextField = () => {
+export const GeneralAsynchronousValidation = () => {
   return (
     <Template>
       <FormController<MyForm>
@@ -25,12 +26,20 @@ export const TextField = () => {
                 name="givenName"
                 placeholder="Input a given name"
                 validate={(value) => ({
-                  content: "loading",
+                  content: "pending...",
                   promise: async function () {
-                    await new Promise((executor) => setTimeout(executor, 3000));
+                    await wait(2000);
                     return {
                       isValid: !!value?.trim(),
-                      content: !value?.trim() ? "error" : "ok"
+                      content: !value?.trim() ? (
+                        <span style={{ color: "red" }}>
+                          Provide a valid given name
+                        </span>
+                      ) : (
+                        <span style={{ color: "green" }}>
+                          Given name is valid
+                        </span>
+                      )
                     };
                   }
                 })}
@@ -43,15 +52,20 @@ export const TextField = () => {
                 name="surname"
                 placeholder="Input a surname"
                 validate={(value) => ({
-                  isValid: !!value?.trim(),
-                  content: !value?.trim() ? "error" : "ok",
-                  promise: () =>
-                    new Promise((resolve) => {
-                      resolve({
-                        isValid: !!value?.trim(),
-                        content: !value?.trim() ? "error" : "ok"
-                      });
-                    })
+                  content: "pending...",
+                  promise: async function () {
+                    await wait(2000);
+                    return {
+                      isValid: !!value?.trim(),
+                      content: !value?.trim() ? (
+                        <span style={{ color: "red" }}>
+                          Provide a valid surname
+                        </span>
+                      ) : (
+                        <span style={{ color: "green" }}>Surname is valid</span>
+                      )
+                    };
+                  }
                 })}
               />
             </div>
@@ -68,7 +82,13 @@ export const TextField = () => {
               </button>
             </div>
             <div className="info">
-              * Basic text field functionality, text fields must be not empty
+              * The both input fields are validated using asynchronous action.
+              This simulate calling API for a validation. After input a value
+              the promise action is called. Input an empty text to show invalid
+              result message, pending is set to 2s. When click on the submit
+              button during the pending, the submit button is disabled until all
+              pending actions are done. The pending text can be also replaced
+              with HTML element, such as a loading icon.
             </div>
           </>
         )}

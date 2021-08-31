@@ -777,6 +777,9 @@ export class Controller<T extends FormFields<T>> {
 
       if (this._fields[key].isValidated && !this._fields[key].isValid) {
         this.validateActions(key, this._fields[key].validationResult);
+      }
+
+      if (this._fields[key].isValidated) {
         return;
       }
 
@@ -808,12 +811,13 @@ export class Controller<T extends FormFields<T>> {
               ...this._fields[key],
               validationResult: result.content,
               isValid: result.isValid,
-              isValidated: true
+              isValidated: true,
+              validationInProgress: false
             };
 
             this.validateActions(key, result.content);
           })
-          .finally(() => {
+          .catch(() => {
             if (queueId !== this.getQueueId(key)) {
               return;
             }
@@ -898,7 +902,8 @@ export class Controller<T extends FormFields<T>> {
             ...this._fields[key],
             validationResult: result.content,
             isValid: result.isValid,
-            isValidated: true
+            isValidated: true,
+            validationInProgress: false
           };
 
           if (
@@ -909,7 +914,7 @@ export class Controller<T extends FormFields<T>> {
             this.validateActions(key, result.content);
           }
         })
-        .finally(() => {
+        .catch(() => {
           if (queueId !== this.getQueueId(key)) {
             return;
           }

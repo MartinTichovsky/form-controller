@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { RadioField } from "../RadioField";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -16,7 +16,7 @@ test("RadioField", async () => {
   const { container } = render(<RadioField />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit invalid form
   await waitFor(async () => {
@@ -24,13 +24,13 @@ test("RadioField", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // click on the first option
   fireEvent.click(screen.getByTestId(radio1TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -45,7 +45,7 @@ test("RadioField", async () => {
   fireEvent.click(screen.getByTestId(radio2TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -60,7 +60,7 @@ test("RadioField", async () => {
   fireEvent.click(screen.getByTestId(radio3TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {

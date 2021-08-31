@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { GeneralValidateOnChange } from "../GeneralValidateOnChange";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -15,7 +15,7 @@ test("GeneralValidateOnChange", async () => {
   const { container } = render(<GeneralValidateOnChange />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -23,7 +23,7 @@ test("GeneralValidateOnChange", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -31,7 +31,7 @@ test("GeneralValidateOnChange", async () => {
   });
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // input valid text
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -39,7 +39,7 @@ test("GeneralValidateOnChange", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -47,7 +47,7 @@ test("GeneralValidateOnChange", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {

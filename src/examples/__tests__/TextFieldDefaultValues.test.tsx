@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { TextFieldDefaultValues } from "../TextFieldDefaultValues";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -19,7 +19,7 @@ test("TextFieldDefaultValues", async () => {
   expect(screen.getByTestId(input2TestId)).toHaveValue("Bond");
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -39,7 +39,7 @@ test("TextFieldDefaultValues", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -47,7 +47,7 @@ test("TextFieldDefaultValues", async () => {
   });
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // submit the form
   await waitFor(async () => {

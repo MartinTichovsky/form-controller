@@ -6,7 +6,7 @@ import {
   givenNameValidText,
   surnameValidText
 } from "../GeneralMessageForUseCase2";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -19,7 +19,7 @@ test("GeneralMessageForUseCase2", async () => {
   const { container } = render(<GeneralMessageForUseCase2 />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // text should be not in the document
   expect(screen.queryByText(givenNameValidText)).not.toBeInTheDocument();

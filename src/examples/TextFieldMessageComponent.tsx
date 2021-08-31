@@ -77,8 +77,8 @@ export const TextFieldMessageComponent = () => {
             <div className="info">
               * The first text field is created with a functional error
               component (blue color on error). The second text field is created
-              with a class error component (red color on error). Type empty text
-              to show an error.
+              with a class error component (red color on error). Type an empty
+              text to show an error.
             </div>
           </>
         )}

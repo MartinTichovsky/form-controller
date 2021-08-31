@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { SelectField } from "../SelectField";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -14,7 +14,7 @@ test("SelectField", async () => {
   const { container } = render(<SelectField />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit invalid form
   await waitFor(async () => {
@@ -22,7 +22,7 @@ test("SelectField", async () => {
   });
 
   // one error must be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // select an option without a value property
   fireEvent.change(screen.getByTestId(selectTestId), {
@@ -30,7 +30,7 @@ test("SelectField", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -49,7 +49,7 @@ test("SelectField", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -66,7 +66,7 @@ test("SelectField", async () => {
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // select an option
   fireEvent.change(screen.getByTestId(selectTestId), {
@@ -74,7 +74,7 @@ test("SelectField", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -82,7 +82,7 @@ test("SelectField", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // select an empty option
   fireEvent.change(screen.getByTestId(selectTestId), {
@@ -90,5 +90,5 @@ test("SelectField", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 });

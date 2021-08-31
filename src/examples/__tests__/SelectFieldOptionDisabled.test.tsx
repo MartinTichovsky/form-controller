@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { SelectFieldOptionDisabled } from "../SelectFieldOptionDisabled";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -15,7 +15,7 @@ test("SelectFieldOptionDisabled", async () => {
   const { container } = render(<SelectFieldOptionDisabled />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // options should be disabled
   expect(
@@ -34,7 +34,7 @@ test("SelectFieldOptionDisabled", async () => {
   });
 
   // one error must be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // select an option
   fireEvent.change(screen.getByTestId(select2TestId), {
@@ -43,7 +43,7 @@ test("SelectFieldOptionDisabled", async () => {
 
   await waitFor(async () => {
     // one error must be shown
-    testErrorMessage(container, 1);
+    testInvalidMessage(container, 1);
   });
 
   // submit invalid form
@@ -88,7 +88,7 @@ test("SelectFieldOptionDisabled", async () => {
   });
 
   // one error must be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // select previous option
   fireEvent.change(screen.getByTestId(select1TestId), {
@@ -96,7 +96,7 @@ test("SelectFieldOptionDisabled", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // select an option
   fireEvent.change(screen.getByTestId(select2TestId), {
@@ -116,7 +116,7 @@ test("SelectFieldOptionDisabled", async () => {
 
   // one error must be shown
   await waitFor(async () => {
-    testErrorMessage(container, 1);
+    testInvalidMessage(container, 1);
   });
 
   // submit valid form
@@ -133,7 +133,7 @@ test("SelectFieldOptionDisabled", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -153,7 +153,7 @@ test("SelectFieldOptionDisabled", async () => {
   });
 
   // one error must be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // options should be disabled
   expect(
@@ -197,5 +197,5 @@ test("SelectFieldOptionDisabled", async () => {
   ).toBeDisabled();
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 });

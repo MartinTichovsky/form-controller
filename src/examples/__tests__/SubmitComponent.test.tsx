@@ -9,7 +9,7 @@ import {
 import React from "react";
 import { wait } from "../../utils/utils";
 import { SubmitComponent } from "../SubmitComponent";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.error = jest.fn();
 console.log = jest.fn();
@@ -26,7 +26,7 @@ test("SubmitComponent", async () => {
   const { container } = render(<SubmitComponent />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the buttons must not have the pending text
   expect(screen.getByTestId(submitClassComponentTestId)).not.toHaveTextContent(
@@ -42,13 +42,13 @@ test("SubmitComponent", async () => {
   });
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // click on the functional submit component
   await waitFor(async () => {
@@ -56,7 +56,7 @@ test("SubmitComponent", async () => {
   });
 
   // two errors must be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -64,7 +64,7 @@ test("SubmitComponent", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input valid text
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -72,7 +72,7 @@ test("SubmitComponent", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // click on the class submit component
   await waitFor(async () => {

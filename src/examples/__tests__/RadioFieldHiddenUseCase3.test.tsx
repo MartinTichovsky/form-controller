@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { RadioFieldHiddenUseCase3 } from "../RadioFieldHiddenUseCase3";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -21,7 +21,7 @@ test("RadioFieldHiddenUseCase3", async () => {
   const { container } = render(<RadioFieldHiddenUseCase3 />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the first and the second option of radio volume 1 and 3 must be hidden
   expect(() => screen.getByTestId(radio11TestId)).toThrowError();
@@ -39,7 +39,7 @@ test("RadioFieldHiddenUseCase3", async () => {
   });
 
   // three errors should be shown
-  testErrorMessage(container, 3);
+  testInvalidMessage(container, 3);
 
   // select all needed options
   fireEvent.click(screen.getByTestId(radio13TestId));
@@ -47,7 +47,7 @@ test("RadioFieldHiddenUseCase3", async () => {
   fireEvent.click(screen.getByTestId(radio33TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -163,7 +163,7 @@ test("RadioFieldHiddenUseCase3", async () => {
   expect(screen.getByTestId(radio33TestId)).not.toBeChecked();
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit invalid form
   await waitFor(async () => {
@@ -171,7 +171,7 @@ test("RadioFieldHiddenUseCase3", async () => {
   });
 
   // two errros should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   expect(console.log).toBeCalledTimes(4);
 
@@ -179,7 +179,7 @@ test("RadioFieldHiddenUseCase3", async () => {
   fireEvent.click(screen.getByTestId(radio31TestId));
 
   // one errro should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // select the first option of radio volume 1
   fireEvent.click(screen.getByTestId(radio11TestId));

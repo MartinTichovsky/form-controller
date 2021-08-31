@@ -5,7 +5,7 @@ import { Field } from "../../components/Field/Field";
 import { FormControllerComponent } from "../../components/FormController/FormControllerComponent";
 import { SubmitComponent } from "../../components/Submit/SubmitComponent";
 import { TextField } from "../TextField";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -35,7 +35,7 @@ test("TextField", async () => {
   ).toBe(1);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // error messages should be visible after click
   await waitFor(async () => {
@@ -43,7 +43,7 @@ test("TextField", async () => {
   });
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   expect(hooksCollector.getComponentRenderCount(Field.name, input1TestId)).toBe(
     2
@@ -76,7 +76,7 @@ test("TextField", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // submit the form
   await waitFor(async () => {
@@ -84,7 +84,7 @@ test("TextField", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input a text to the second input, after change should be visible no errors
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -92,7 +92,7 @@ test("TextField", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -100,7 +100,7 @@ test("TextField", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
@@ -192,7 +192,7 @@ describe("Re-render", () => {
     ).toBe(1);
 
     // two errors should be shown
-    testErrorMessage(container, 2);
+    testInvalidMessage(container, 2);
 
     fireEvent.click(screen.getByTestId(reRenderTestId));
   });
@@ -301,7 +301,7 @@ describe("Reset", () => {
     ).toBe(2);
 
     // no errors must be shown
-    testErrorMessage(container, 0);
+    testInvalidMessage(container, 0);
   });
 
   test("With values", () => {

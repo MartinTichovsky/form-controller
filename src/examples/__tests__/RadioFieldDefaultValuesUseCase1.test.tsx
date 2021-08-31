@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { RadioFieldDefaultValuesUseCase1 } from "../RadioFieldDefaultValuesUseCase1";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -21,7 +21,7 @@ test("RadioFieldDefaultValuesUseCase1", async () => {
   const { container } = render(<RadioFieldDefaultValuesUseCase1 />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the option 1 and 2 of radio volume 1 and 3 should be disabled
   expect(screen.getByTestId(radio11TestId)).toBeDisabled();
@@ -43,7 +43,7 @@ test("RadioFieldDefaultValuesUseCase1", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // click on the first option of radio volume 2
   fireEvent.click(screen.getByTestId(radio21TestId));
@@ -119,7 +119,7 @@ test("RadioFieldDefaultValuesUseCase1", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // click on the second option of radio volume 2
   fireEvent.click(screen.getByTestId(radio22TestId));
@@ -303,5 +303,5 @@ test("RadioFieldDefaultValuesUseCase1", async () => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 });

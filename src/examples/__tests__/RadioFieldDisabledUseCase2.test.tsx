@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { RadioFieldDisabledUseCase2 } from "../RadioFieldDisabledUseCase2";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -32,13 +32,13 @@ const testWorkflow = async (container: HTMLElement) => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // click on the second option of the radio volume 2
   fireEvent.click(screen.getByTestId(radio22TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the second option of the radio volume 3 should not be disabled
   expect(screen.getByTestId(radio11TestId)).toBeDisabled();
@@ -54,13 +54,13 @@ const testWorkflow = async (container: HTMLElement) => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // click on the second option of the radio volume 3
   fireEvent.click(screen.getByTestId(radio32TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the second option of the radio volume 1 should not be disabled
   expect(screen.getByTestId(radio11TestId)).toBeDisabled();
@@ -76,13 +76,13 @@ const testWorkflow = async (container: HTMLElement) => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // click on the second option of the radio volume 1
   fireEvent.click(screen.getByTestId(radio12TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
@@ -107,7 +107,7 @@ const testWorkflow = async (container: HTMLElement) => {
   expect(screen.getByTestId(radio32TestId)).not.toBeChecked();
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the first option of the radio volume 3 should not be disabled
   expect(screen.getByTestId(radio11TestId)).toBeDisabled();
@@ -123,7 +123,7 @@ const testWorkflow = async (container: HTMLElement) => {
   });
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // click on the first option of the radio volume 3
   fireEvent.click(screen.getByTestId(radio31TestId));
@@ -156,14 +156,14 @@ const testWorkflow = async (container: HTMLElement) => {
   fireEvent.click(screen.getByTestId(radio22TestId));
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 };
 
 test("RadioFieldDisabledUseCase2", async () => {
   const { container } = render(<RadioFieldDisabledUseCase2 />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // first test
   await testWorkflow(container);

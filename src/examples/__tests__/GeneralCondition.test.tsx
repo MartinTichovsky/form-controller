@@ -6,7 +6,7 @@ import {
   GeneralCondition,
   submitConditionText
 } from "../GeneralCondition";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -19,7 +19,7 @@ test("GeneralCondition", async () => {
   const { container } = render(<GeneralCondition />);
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // the condition text must not be in the document
   expect(screen.queryByText(formIsValidText)).not.toBeInTheDocument();
@@ -35,7 +35,7 @@ test("GeneralCondition", async () => {
   expect(screen.queryByText(submitConditionText)).toBeInTheDocument();
 
   // two errors should be shown
-  testErrorMessage(container, 2);
+  testInvalidMessage(container, 2);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -47,7 +47,7 @@ test("GeneralCondition", async () => {
   expect(screen.queryByText(submitConditionText)).toBeInTheDocument();
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -59,14 +59,14 @@ test("GeneralCondition", async () => {
   expect(screen.queryByText(submitConditionText)).toBeInTheDocument();
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // submit valid form
   await waitFor(async () => {
     fireEvent.click(screen.getByTestId(submitTestId));
   });
 
-  //check the onSubmit action
+  // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
   expect(console.log).lastCalledWith({ givenName: "James", surname: "Bond" });
 

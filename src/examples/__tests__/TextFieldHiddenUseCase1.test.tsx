@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { TextFieldHiddenUseCase1 } from "../TextFieldHiddenUseCase1";
-import { testErrorMessage } from "../utils/selectors";
+import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
 
@@ -22,7 +22,7 @@ test("TextFieldHiddenUseCase1", async () => {
   expect(screen.getByTestId(submitTestId)).toBeDisabled();
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -36,7 +36,7 @@ test("TextFieldHiddenUseCase1", async () => {
   expect(screen.getByTestId(submitTestId)).toBeDisabled();
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -50,7 +50,7 @@ test("TextFieldHiddenUseCase1", async () => {
   expect(screen.getByTestId(submitTestId)).toBeDisabled();
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input3TestId), {
@@ -64,7 +64,7 @@ test("TextFieldHiddenUseCase1", async () => {
   expect(screen.getByTestId(submitTestId)).toBeDisabled();
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input a valid text
   fireEvent.change(screen.getByTestId(input3TestId), {
@@ -78,7 +78,7 @@ test("TextFieldHiddenUseCase1", async () => {
   expect(screen.getByTestId(submitTestId)).toBeDisabled();
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // input an empty value should show an error
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -92,7 +92,7 @@ test("TextFieldHiddenUseCase1", async () => {
   expect(screen.getByTestId(submitTestId)).toBeDisabled();
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // input an empty value should disable all other inputs
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -106,7 +106,7 @@ test("TextFieldHiddenUseCase1", async () => {
   expect(screen.getByTestId(submitTestId)).toBeDisabled();
 
   // one error should be shown
-  testErrorMessage(container, 1);
+  testInvalidMessage(container, 1);
 
   // fill all inputs
   fireEvent.change(screen.getByTestId(input2TestId), {
@@ -128,7 +128,7 @@ test("TextFieldHiddenUseCase1", async () => {
   });
 
   // errors should not be shown
-  testErrorMessage(container, 0);
+  testInvalidMessage(container, 0);
 
   // check the onSubmit action
   expect(console.log).toBeCalledTimes(1);
