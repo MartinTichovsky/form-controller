@@ -39,13 +39,14 @@ export const GeneralMessageForUseCase1 = () => {
                 hideMessage
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) => !value?.trim()}
+                validate={(value) => ({
+                  content: surnameErrorText,
+                  isValid: !!value?.trim()
+                })}
               />
             </div>
             <div className="field-row">
-              <MessageFor controller={controller} name="surname">
-                {surnameErrorText}
-              </MessageFor>
+              <MessageFor controller={controller} name="surname" />
             </div>
             <div className="field-row">
               <Submit controller={controller} data-testid="submit">
@@ -61,7 +62,9 @@ export const GeneralMessageForUseCase1 = () => {
             </div>
             <div className="info">
               * When a text field is not valid, error message outside the Input
-              will be shown after submit
+              will be shown after submit. The both inputs have different using.
+              The first text is taken from context of MessageFor component, the
+              second text is taken from validation.
             </div>
           </>
         )}

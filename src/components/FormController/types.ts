@@ -14,6 +14,7 @@ export type FormControllerProps<T extends FormFields<T>> =
     hideIf?: {
       [key in keyof T]?: (fields: Partial<T>) => boolean;
     };
+    initialValidation?: boolean;
     initialValues?: Partial<T>;
     onSubmit?: OnSubmit<T>;
     validateOnChange?: boolean;

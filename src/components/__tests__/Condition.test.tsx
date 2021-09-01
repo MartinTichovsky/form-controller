@@ -1,3 +1,4 @@
+import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 import { Controller } from "../../controller";
@@ -101,7 +102,7 @@ describe("Condition", () => {
       });
     });
 
-    test("Providing wrong customCondition should throw an error", () => {
+    test("Providing wrong showIf should throw an error", () => {
       const values = getGeneratedValues(false, "function", "undefined");
 
       values.forEach((value) => {
@@ -111,7 +112,17 @@ describe("Condition", () => {
       });
     });
 
-    test("IfFormValid is undefined and customCondition is undefined", () => {
+    test("Providing wrong dynamicContent should throw an error", () => {
+      const values = getGeneratedValues(false, "function", "undefined");
+
+      values.forEach((value) => {
+        expect(() => {
+          render(<Condition controller={controller} dynamicContent={value} />);
+        }).toThrowError();
+      });
+    });
+
+    test("IfFormValid is undefined and showIf is undefined", () => {
       render(
         <Condition controller={controller}>
           <div data-testid={testid}></div>
@@ -147,7 +158,51 @@ describe("Condition", () => {
       expect(() => screen.getByTestId(testid)).toThrowError();
     });
 
-    test("IfFormValid is true and customCondition is undefined", () => {
+    test("dynamicRender", () => {
+      let num = 0;
+      const TestComponent = () => <div data-testid={testid}>{++num}</div>;
+      render(
+        <ConditionComponent controller={controller} dynamicRender>
+          <TestComponent />
+        </ConditionComponent>
+      );
+
+      controller.onChange();
+
+      expect(screen.getByTestId(testid)).toHaveTextContent("1");
+
+      controller.onChange();
+
+      expect(screen.getByTestId(testid)).toHaveTextContent("2");
+
+      controller.onChange();
+
+      expect(screen.getByTestId(testid)).toHaveTextContent("3");
+    });
+
+    test("dynamicContent", () => {
+      let num = 0;
+      render(
+        <ConditionComponent
+          controller={controller}
+          dynamicContent={() => <div data-testid={testid}>{++num}</div>}
+        />
+      );
+
+      controller.onChange();
+
+      expect(screen.getByTestId(testid)).toHaveTextContent("1");
+
+      controller.onChange();
+
+      expect(screen.getByTestId(testid)).toHaveTextContent("2");
+
+      controller.onChange();
+
+      expect(screen.getByTestId(testid)).toHaveTextContent("3");
+    });
+
+    test("IfFormValid is true and showIf is undefined", () => {
       const { unmount } = render(
         <ConditionComponent controller={controller} ifFormValid>
           <div data-testid={testid}></div>
@@ -157,13 +212,13 @@ describe("Condition", () => {
       testValidForm(unmount);
     });
 
-    test("IfFormValid is undefined and customCondition is set", () => {
-      const customCondition = jest.fn(() => {
+    test("IfFormValid is undefined and showIf is set", () => {
+      const showIf = jest.fn(() => {
         return controller.isValid;
       });
 
       const { unmount } = render(
-        <ConditionComponent controller={controller} showIf={customCondition}>
+        <ConditionComponent controller={controller} showIf={showIf}>
           <div data-testid={testid}></div>
         </ConditionComponent>
       );
@@ -171,17 +226,13 @@ describe("Condition", () => {
       testValidForm(unmount);
     });
 
-    test("IfFormValid is true and customCondition is set - default", () => {
-      const customCondition = jest.fn(() => {
+    test("IfFormValid is true and showIf is set - default", () => {
+      const showIf = jest.fn(() => {
         return controller.isValid;
       });
 
       const { unmount } = render(
-        <ConditionComponent
-          controller={controller}
-          ifFormValid
-          showIf={customCondition}
-        >
+        <ConditionComponent controller={controller} ifFormValid showIf={showIf}>
           <div data-testid={testid}></div>
         </ConditionComponent>
       );
@@ -189,17 +240,13 @@ describe("Condition", () => {
       testValidForm(unmount);
     });
 
-    test("IfFormValid is true and customCondition is set - custom", () => {
-      const customCondition = jest.fn(() => {
+    test("IfFormValid is true and showIf is set - custom", () => {
+      const showIf = jest.fn(() => {
         return false;
       });
 
       render(
-        <ConditionComponent
-          controller={controller}
-          ifFormValid
-          showIf={customCondition}
-        >
+        <ConditionComponent controller={controller} ifFormValid showIf={showIf}>
           <div data-testid={testid}></div>
         </ConditionComponent>
       );

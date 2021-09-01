@@ -25,7 +25,12 @@ describe("Field", () => {
       <Field
         controller={controller}
         fieldType="input"
-        initialState={{ isDisabled: false, isValid: true, isVisible: true }}
+        initialState={{
+          isDisabled: false,
+          isValid: true,
+          isVisible: true,
+          message: undefined
+        }}
         name="input"
       />
     );

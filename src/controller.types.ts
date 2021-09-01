@@ -7,13 +7,14 @@ export type AfterAll<T> = {
   validateAll: Map<keyof T, Action>;
   visible: Map<keyof T, Action>;
 };
-export type ControllerType<T extends FormFields<T>> = {
+export interface ControllerProps<T extends FormFields<T>> {
   disableIf?: {
     [key in keyof T]?: (fields: Partial<T>) => boolean;
   };
   hideIf?: {
     [key in keyof T]?: (fields: Partial<T>) => boolean;
   };
+  initialValidation?: boolean;
   initialValues?: Partial<T>;
   onSubmit?: OnSubmit<T>;
   setController: React.Dispatch<
@@ -27,14 +28,18 @@ export type ControllerType<T extends FormFields<T>> = {
           props: unknown
         ) => ValidationResult;
       };
-};
+}
 export type DefaultActiveRadioId<T> = { [key in keyof T]?: string };
 export type DefaultDisabledRadioId<T> = { [key in keyof T]?: string[] };
 export type DisableIf<T> = {
   [key in keyof T]?: (fields: Partial<T>) => boolean;
 };
+export interface FieldAdditionalProperties {
+  initialValidation?: boolean;
+  validateOnChange?: boolean;
+}
 export type Fields<T> = {
-  [K in keyof T]?: {
+  [K in keyof T]?: FieldAdditionalProperties & {
     activeId?: string;
     isDisabled: boolean;
     isValid: boolean;
@@ -73,49 +78,70 @@ export type FieldTypes =
   | "week";
 export type FormFields<T> = { [K in keyof T]: Value };
 export type HideIf<T> = { [key in keyof T]?: (fields: Partial<T>) => boolean };
-export type KeyType<T> = { key: keyof T; type?: FieldTypes };
-export type OnDisable<T> = { action: OnDisableAction; key: keyof T };
+export interface KeyType<T> {
+  key: keyof T;
+  type?: FieldTypes;
+}
+export interface OnDisable<T> {
+  action: OnDisableAction;
+  key: keyof T;
+}
 export type OnDisableAction = (disable: boolean) => void;
 export type OnChangeAction = (isValid: boolean) => void;
 export type OnSubmit<T extends FormFields<T>> = (
   fields: Partial<T>,
   controller: Controller<T>
 ) => void;
-export type OnValidate<T> = {
+export interface OnValidate<T> {
   action: OnValidateAction;
   key: keyof T;
-};
-export type OnValidateAction = (show: boolean, fieldIsValid: boolean) => void;
-export type SetDefaultIsDisabled<T> = {
+}
+export type OnValidateAction = (
+  show: boolean,
+  fieldIsValid: boolean,
+  validationResult: ValidationContentResult
+) => void;
+export interface SetDefaultIsDisabled<T> {
   id?: string;
+  isValidated: boolean;
   key: keyof T;
   type?: FieldTypes;
-};
-export type SetDefaultIsNotVisible<T> = {
-  id?: string;
+  validationResult: ValidationResult;
+}
+export interface SetDefaultIsInvalid<T> {
+  initialValidation?: boolean;
+  isValidated: boolean;
   key: keyof T;
   type?: FieldTypes;
+  validationResult: ValidationResult;
+}
+export interface SetDefaultIsNotVisible<T> {
+  id?: string;
+  isValidated: boolean;
+  key: keyof T;
+  type?: FieldTypes;
+  validationResult: ValidationResult;
   value?: string | React.ReactNode;
-};
-export type SetIsDisabled<T> = {
+}
+export interface SetIsDisabled<T> {
   id?: string;
   isDisabled: boolean;
   key: keyof T;
   type?: FieldTypes;
-};
-export type SetIsVisible<T> = {
+}
+export interface SetIsVisible<T> {
   id?: string;
   isVisible: boolean;
   key: keyof T;
   type?: string;
-};
-export type SubscribeValidator<T> = {
+}
+export interface SubscribeValidator<T> {
   action: ValidatorResultAction;
   id?: string;
   key: keyof T;
   type?: string;
   validate: ValidatorAction;
-};
+}
 export type Validation<T> = {
   [key in keyof T]?: (
     value: T[key] | undefined,
@@ -130,10 +156,10 @@ export type ValidationContentResult =
   | JSX.Element;
 export type ValidationPromise = () => Promise<ValidationPromiseResult>;
 export type ValidationPromiseCounter<T> = { [key in keyof T]?: number };
-export type ValidationPromiseResult = {
+export interface ValidationPromiseResult {
   isValid: boolean;
   content?: string | JSX.Element;
-};
+}
 export type ValidationResult =
   | ValidationContentResult
   | {
@@ -144,11 +170,11 @@ export type ValidationResult =
       content: string | JSX.Element;
       promise: ValidationPromise;
     };
-export type Validator = {
+export interface Validator {
   action?: ValidatorResultAction;
   actions?: Set<ValidatorResultAction>;
   validate: ValidatorAction;
-};
+}
 export type ValidatorAction = () => ValidationResult;
 export type ValidatorResultAction = (
   validationResult: ValidationResult

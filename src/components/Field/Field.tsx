@@ -11,14 +11,9 @@ import {
   FieldInternalProps,
   FieldPrivateInputProps,
   FieldPrivateProps,
-  FieldType,
-  InitialState
+  FieldState,
+  FieldType
 } from "./types";
-
-interface State extends InitialState {
-  message: ValidationResult;
-  isSelected: boolean;
-}
 
 export function Field<
   T extends FormFields<T>,
@@ -34,16 +29,18 @@ export function Field<
   HTMLAttributesType
 >({
   children,
+  Component,
   controller,
   disableIf,
   hideMessage,
   hideIf,
-  Component,
+  initialValidation,
   label,
   MessageComponent,
   name,
   onFormChange,
   validate,
+  validateOnChange,
   value,
   ...rest
 }: React.PropsWithChildren<
@@ -54,20 +51,19 @@ export function Field<
     FieldInitialProps
 >) {
   const { initialState, fieldType, ...restProps } = rest;
-  const [state, setState] = React.useState<State>({
+  const [state, setState] = React.useState<FieldState>({
     ...initialState!,
-    message: undefined,
     isSelected:
       rest.type === "checkbox"
         ? controller.getFieldValue(name) === true
         : controller.getFieldValue(name) === value
   });
-  const refState = React.useRef(state);
+  const refState = React.useRef<FieldState>();
+  refState.current = state;
+
   const selectRef = React.useRef<HTMLSelectElement>();
   const defaultValue = React.useRef(controller.getFieldValue(name) || "");
   const key = React.useRef(0);
-
-  refState.current = state;
 
   if (rest.type === "radio" && hideMessage === undefined) {
     hideMessage = true;
@@ -99,16 +95,24 @@ export function Field<
           }
 
           const field = controller.getField(name);
+          const isValid =
+            field === undefined ||
+            (field.validationInProgress ? undefined : field.isValid);
 
-          if (validationResult) {
+          if (
+            validationResult &&
+            (refState.current!.message !== validationResult ||
+              refState.current!.isValid !== isValid)
+          ) {
             setState((prevState) => ({
               ...prevState,
-              isValid:
-                field === undefined ||
-                (field.validationInProgress ? undefined : field.isValid),
+              isValid,
               message: validationResult
             }));
-          } else {
+          } else if (
+            !validationResult &&
+            refState.current!.message !== undefined
+          ) {
             setState((prevState) => ({
               ...prevState,
               isValid: undefined,
@@ -125,7 +129,12 @@ export function Field<
           validate: () => {
             let proceedValidation = true;
 
-            if (selectRef && selectRef.current && selectRef.current.options) {
+            if (
+              fieldType === "select" &&
+              selectRef &&
+              selectRef.current &&
+              selectRef.current.options
+            ) {
               proceedValidation =
                 Array.prototype.filter.call(
                   selectRef.current.options,
@@ -152,10 +161,12 @@ export function Field<
     () => {
       const action = {
         action: (disable: boolean) => {
-          setState((prevState) => ({
-            ...prevState,
-            isDisabled: disable
-          }));
+          if (disable !== refState.current!.isDisabled) {
+            setState((prevState) => ({
+              ...prevState,
+              isDisabled: disable
+            }));
+          }
         },
         key: name
       };
@@ -181,20 +192,20 @@ export function Field<
           type: rest.type
         });
 
-        if (isDisabled && !refState.current.isDisabled) {
+        if (isDisabled && !refState.current!.isDisabled) {
           key.current++;
 
           setState((prevState) => ({
             ...prevState,
-            message: undefined,
             isDisabled: true,
             isSelected:
               (rest.type === "checkbox" &&
                 controller.getFieldValue(name) === true) ||
               controller.getFieldValue(name) === value,
-            isValid: undefined
+            isValid: undefined,
+            message: undefined
           }));
-        } else if (!isDisabled && refState.current.isDisabled) {
+        } else if (!isDisabled && refState.current!.isDisabled) {
           setState((prevState) => ({
             ...prevState,
             isDisabled: false
@@ -240,12 +251,12 @@ export function Field<
             type: rest.type
           });
 
-          if (!isVisible && refState.current.isVisible) {
+          if (!isVisible && refState.current!.isVisible) {
             setState((prevState) => ({
               ...prevState,
               isVisible: false
             }));
-          } else if (isVisible && !refState.current.isVisible) {
+          } else if (isVisible && !refState.current!.isVisible) {
             key.current++;
 
             setState((prevState) => ({
@@ -278,12 +289,12 @@ export function Field<
 
           setState((prevState) => ({
             ...prevState,
+            isSelected: true,
+            isValid: field === undefined || field.isValid,
             message:
               prevState.message && validate
                 ? validate(field?.value as T[K], rest)
-                : undefined,
-            isSelected: true,
-            isValid: field === undefined || field.isValid
+                : undefined
           }));
         });
 
@@ -308,7 +319,12 @@ export function Field<
     (props: React.ComponentProps<React.ElementType>) =>
       fieldType === "select" ? (
         Component ? (
-          <Component {...restProps} {...props} ref={selectRef}>
+          <Component
+            {...restProps}
+            {...props}
+            controller={controller}
+            ref={selectRef}
+          >
             <SelectProvider
               id={rest.id}
               name={name as string}
@@ -329,11 +345,13 @@ export function Field<
           </select>
         )
       ) : Component ? (
-        <Component {...restProps} {...props}>
+        <Component {...restProps} {...props} controller={controller}>
           {children}
         </Component>
+      ) : fieldType === "textarea" ? (
+        <textarea {...restProps} {...props} />
       ) : (
-        <input {...props} />
+        <input {...restProps} {...props} />
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [Component, fieldType]
@@ -348,7 +366,8 @@ export function Field<
         <MessageComponent
           {...({
             ...restProps,
-            ...props
+            ...props,
+            controller
           } as React.ComponentProps<React.ElementType>)}
         >
           {children}

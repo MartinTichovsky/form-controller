@@ -1,16 +1,12 @@
 import React from "react";
 import { Controller } from "../controller";
-import { FormFields, Value } from "../controller.types";
+import { FormFields } from "../controller.types";
 import { selectContext } from "../providers";
-
-interface State {
-  isDisabled: boolean;
-  isVisible: boolean;
-}
-
-type FormType = {
-  [key: string]: Value;
-};
+import {
+  FormType,
+  SelectOptionProps,
+  SelectOptionState
+} from "./SelectOption.types";
 
 const afterAll = new Map<
   Controller<FormFields<FormType>>,
@@ -57,13 +53,7 @@ export const SelectOption = <T extends FormFields<T>>({
   disableIf,
   hideIf,
   ...rest
-}: React.PropsWithChildren<
-  React.OptionHTMLAttributes<HTMLOptionElement> & {
-    controller: Controller<T>;
-    disableIf?: (fields: Partial<T>) => boolean;
-    hideIf?: (fields: Partial<T>) => boolean;
-  }
->) => {
+}: SelectOptionProps<T>) => {
   const context = React.useContext(selectContext);
   if (!context || !context.name || !context.selectRef) {
     return null;
@@ -71,14 +61,14 @@ export const SelectOption = <T extends FormFields<T>>({
 
   const { id, name, selectRef } = context;
   const field = controller.getField(name as keyof T);
-  const [state, setState] = React.useState<State>({
+  const [state, setState] = React.useState<SelectOptionState>({
     isDisabled: disableIf !== undefined && disableIf(controller.fields),
     isVisible: hideIf === undefined || !hideIf(controller.fields)
   });
-  const refState = React.useRef(state);
-  const key = React.useRef(0);
-
+  const refState = React.useRef<SelectOptionState>();
   refState.current = state;
+
+  const key = React.useRef(0);
 
   React.useEffect(() => {
     const action = () => {
@@ -87,8 +77,8 @@ export const SelectOption = <T extends FormFields<T>>({
       const isVisible = hideIf === undefined || !hideIf(controller.fields);
 
       if (
-        refState.current.isDisabled !== isDisabled ||
-        refState.current.isVisible !== isVisible
+        refState.current!.isDisabled !== isDisabled ||
+        refState.current!.isVisible !== isVisible
       ) {
         registerAfterAll(name, controller as Controller<FormFields<unknown>>);
 

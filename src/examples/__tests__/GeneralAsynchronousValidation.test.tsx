@@ -150,7 +150,7 @@ describe("GeneralAsynchronousValidation", () => {
     expect(console.log).not.toBeCalled();
 
     await act(async () => {
-      await wait(2100);
+      await wait(2500);
     });
 
     // check the onSubmit action

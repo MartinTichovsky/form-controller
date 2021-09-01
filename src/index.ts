@@ -5,4 +5,4 @@ export { MessageFor } from "./components/MessageFor";
 export { Select } from "./components/Select";
 export { Submit } from "./components/Submit/Submit";
 export { Validation } from "./components/Validation";
-export * from "./controller";
+export { Controller } from "./controller";

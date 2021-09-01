@@ -1,35 +1,39 @@
 import React from "react";
-import { Controller } from "../controller";
-import { FormFields } from "../controller.types";
+import { FormFields, ValidationContentResult } from "../controller.types";
+import { MessageForProps, MessageForState } from "./MessageFor.types";
 
 export const MessageFor = <T extends FormFields<T>, K extends keyof T>({
   children,
   controller,
   isValid,
   name
-}: React.PropsWithChildren<{
-  controller: Controller<T>;
-  isValid?: boolean;
-  name: K;
-}>) => {
-  const [isVisible, setIsVisible] = React.useState(false);
-  const refIsVisible = React.useRef(isVisible);
-  refIsVisible.current = isVisible;
+}: MessageForProps<T, K>) => {
+  const [state, setState] = React.useState<MessageForState>({
+    message: undefined,
+    isVisible: false
+  });
+  const refState = React.useRef<MessageForState>();
+  refState.current = state;
 
   React.useEffect(() => {
     const onValidate = {
-      action: (show: boolean, fieldIsValid: boolean) => {
+      action: (
+        show: boolean,
+        fieldIsValid: boolean,
+        validationResult: ValidationContentResult
+      ) => {
         if (
           show &&
           ((isValid && fieldIsValid) || (!isValid && !fieldIsValid)) &&
-          !refIsVisible.current
+          (!refState.current!.isVisible ||
+            (!children && refState.current!.message !== validationResult))
         ) {
-          setIsVisible(true);
+          setState({ isVisible: true, message: validationResult });
         } else if (
           (!show || (isValid && !fieldIsValid) || (!isValid && fieldIsValid)) &&
-          refIsVisible.current
+          refState.current!.isVisible
         ) {
-          setIsVisible(false);
+          setState({ isVisible: false, message: undefined });
         }
       },
       key: name
@@ -40,7 +44,7 @@ export const MessageFor = <T extends FormFields<T>, K extends keyof T>({
     return () => {
       controller.unsubscribeOnValidate(onValidate);
     };
-  }, [controller, setIsVisible]);
+  }, [controller, refState, setState]);
 
-  return <>{isVisible && children}</>;
+  return <>{state.isVisible && (children ? children : state.message)}</>;
 };

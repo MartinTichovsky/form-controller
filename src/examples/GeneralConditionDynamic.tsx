@@ -1,6 +1,6 @@
 import React from "react";
-import { FormController, Input, Submit } from "..";
-import { MessageFor } from "../components/MessageFor";
+import { Condition, FormController, Input, Submit } from "..";
+import { Controller } from "../controller";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -8,10 +8,23 @@ type MyForm = {
   surname: string;
 };
 
-export const givenNameValidText = "Given name is valid";
-export const surnameValidText = "Surname is valid";
+const dynamicContent = (controller: Controller<MyForm>) => {
+  return (
+    <div className="field-row" data-testid="dynamic-content">
+      Your given name is: {controller.getFieldValue("givenName")}
+    </div>
+  );
+};
 
-export const GeneralMessageForUseCase2 = () => {
+const DynamicContext = ({ controller }: { controller: Controller<MyForm> }) => {
+  return (
+    <div className="field-row" data-testid="dynamic-context">
+      Your surname is: {controller.getFieldValue("surname")}
+    </div>
+  );
+};
+
+export const GeneralConditionDynamic = () => {
   return (
     <Template>
       <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
@@ -21,41 +34,25 @@ export const GeneralMessageForUseCase2 = () => {
               <Input
                 controller={controller}
                 data-testid="input-1"
-                hideMessage
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) => !value?.trim()}
               />
             </div>
-            <div className="field-row">
-              <MessageFor
-                controller={controller}
-                isValid={true}
-                name="givenName"
-              >
-                {givenNameValidText}
-              </MessageFor>
-            </div>
+            <Condition
+              controller={controller}
+              dynamicContent={dynamicContent}
+            />
             <div className="field-row">
               <Input
                 controller={controller}
                 data-testid="input-2"
-                hideMessage
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) => ({
-                  content: surnameValidText,
-                  isValid: !!value?.trim()
-                })}
               />
             </div>
-            <div className="field-row">
-              <MessageFor
-                controller={controller}
-                isValid={true}
-                name="surname"
-              />
-            </div>
+            <Condition controller={controller} dynamicRender>
+              <DynamicContext controller={controller} />
+            </Condition>
             <div className="field-row">
               <Submit controller={controller} data-testid="submit">
                 Submit
@@ -69,10 +66,9 @@ export const GeneralMessageForUseCase2 = () => {
               </button>
             </div>
             <div className="info">
-              * When a text field is valid, message outside the Input will be
-              shown after submit. The both inputs have different using. The
-              first text is taken from context of MessageFor component, the
-              second text is taken from validation.
+              * Text in conditions is filled based on typing in the inputs. Both
+              condition are different. The first condition is consuming a
+              function and the second is consuming a react component.
             </div>
           </>
         )}

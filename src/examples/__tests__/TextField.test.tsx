@@ -23,6 +23,15 @@ beforeEach(() => {
 test("TextField", async () => {
   const { container } = render(<TextField />);
 
+  expect(screen.getByTestId(input1TestId)).toHaveAttribute(
+    "placeholder",
+    "Input a given name"
+  );
+  expect(screen.getByTestId(input2TestId)).toHaveAttribute(
+    "placeholder",
+    "Input a surname"
+  );
+
   // render count check
   expect(hooksCollector.getComponentRenderCount(Field.name, input1TestId)).toBe(
     1
@@ -61,10 +70,10 @@ test("TextField", async () => {
   });
 
   expect(hooksCollector.getComponentRenderCount(Field.name, input1TestId)).toBe(
-    3
+    2
   );
   expect(hooksCollector.getComponentRenderCount(Field.name, input2TestId)).toBe(
-    3
+    2
   );
   expect(
     hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
@@ -236,6 +245,15 @@ describe("Reset", () => {
     render(<TextField />);
 
     fireEvent.click(screen.getByTestId(resetTestId));
+
+    expect(screen.getByTestId(input1TestId)).toHaveAttribute(
+      "placeholder",
+      "Input a given name"
+    );
+    expect(screen.getByTestId(input2TestId)).toHaveAttribute(
+      "placeholder",
+      "Input a surname"
+    );
 
     // render count check
     expect(

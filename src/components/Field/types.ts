@@ -6,14 +6,19 @@ export interface InitialState {
   isDisabled: boolean;
   isValid?: boolean;
   isVisible: boolean;
-}
-
-export interface FieldInternalProps {
-  fieldType: "input" | "select";
+  message: ValidationResult;
 }
 
 export interface FieldInitialProps {
   initialState: InitialState;
+}
+
+export interface FieldInternalProps {
+  fieldType: "input" | "select" | "textarea";
+}
+
+export interface FieldPrivateInputProps<T> extends FieldPrivateProps<T> {
+  onKeyDown: (event: React.KeyboardEvent<T>) => void;
 }
 
 export interface FieldPrivateProps<T> {
@@ -22,40 +27,20 @@ export interface FieldPrivateProps<T> {
   onChange: (event: React.ChangeEvent<T>) => void;
 }
 
-export interface FieldPrivateInputProps<T> extends FieldPrivateProps<T> {
-  onKeyDown: (event: React.KeyboardEvent<T>) => void;
-}
-
 export interface FieldPublicProps<T extends FormFields<T>, K extends keyof T> {
   controller: Controller<T>;
   disableIf?: (fields: Partial<T>) => boolean;
   hideIf?: (fields: Partial<T>) => boolean;
   hideMessage?: boolean;
   id?: string;
+  initialValidation?: boolean;
   name: K;
+  validateOnChange?: boolean;
 }
 
-type RestProps<T> = Omit<
-  T,
-  | "children"
-  | "Component"
-  | "controller"
-  | "disableIf"
-  | "hideMessage"
-  | "hideIf"
-  | "label"
-  | "MessageComponent"
-  | "name"
-  | "onChange"
-  | "onFormChange"
-  | "validate"
-  | "value"
-  // private props
-  | "defaultValue"
-  | "disabled"
-  | "onChange"
-  | "onKeyDown"
->;
+export interface FieldState extends InitialState {
+  isSelected: boolean;
+}
 
 export interface FieldType<
   T extends FormFields<T>,
@@ -72,16 +57,18 @@ export interface FieldType<
 > {
   ({
     children,
+    Component,
     controller,
     disableIf,
     hideMessage,
     hideIf,
-    Component,
+    initialValidation,
     label,
     MessageComponent,
     name,
     onFormChange,
     validate,
+    validateOnChange,
     value,
     ...rest
   }: React.PropsWithChildren<
@@ -147,6 +134,17 @@ export interface FieldType<
                 ) => ValidationResult;
                 value?: undefined;
               }
+        : ElementType extends HTMLTextAreaElement
+        ? {
+            label?: string | JSX.Element;
+            placeholder?: string;
+            type?: undefined;
+            validate?: (
+              value: T[K] | undefined,
+              props: typeof rest
+            ) => ValidationResult;
+            value?: undefined;
+          }
         : {
             label?: string | JSX.Element;
             placeholder?: undefined;
@@ -159,3 +157,27 @@ export interface FieldType<
           })
   >): JSX.Element | null;
 }
+
+type RestProps<T> = Omit<
+  T,
+  | "children"
+  | "Component"
+  | "controller"
+  | "disableIf"
+  | "hideMessage"
+  | "hideIf"
+  | "initialValidation"
+  | "label"
+  | "MessageComponent"
+  | "name"
+  | "onChange"
+  | "onFormChange"
+  | "validate"
+  | "validateOnChange"
+  | "value"
+  // private props
+  | "defaultValue"
+  | "disabled"
+  | "onChange"
+  | "onKeyDown"
+>;

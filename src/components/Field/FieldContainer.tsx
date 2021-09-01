@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller } from "../../controller";
-import { FormFields } from "../../controller.types";
+import { FormFields, ValidationResult } from "../../controller.types";
 import {
   disableIfContext,
   hideIfContext,
@@ -41,16 +41,18 @@ export function FieldContainer<
 ) {
   const {
     children,
+    Component,
     controller,
     disableIf,
     hideMessage,
     hideIf,
-    Component,
+    initialValidation,
     label,
     MessageComponent,
     name,
     onFormChange,
     validate,
+    validateOnChange,
     value,
     ...rest
   } = props;
@@ -109,37 +111,61 @@ export function FieldContainer<
     _validate = controller.getValidateCondition(name);
   }
 
-  let id: string | undefined = rest.id;
+  if (initialValidation !== undefined || validateOnChange !== undefined) {
+    controller.setFieldProperties(name, {
+      initialValidation,
+      validateOnChange
+    });
+  }
 
+  let id: string | undefined = rest.id;
   id = (label && !id) || rest.type === "radio" ? getRandomId() : id;
+
+  let validationResult: ValidationResult;
+
+  if (initialValidation && _validate) {
+    validationResult = _validate(controller.getFieldValue(name), rest);
+  }
 
   const initialState: InitialState = {
     isDisabled: _disableIf ? _disableIf(controller.fields) : false,
-    isVisible: _hideIf ? !_hideIf(controller.fields) : true
+    isVisible: _hideIf ? !_hideIf(controller.fields) : true,
+    message: controller.getValidationResultContent(validationResult)
   };
 
   if (initialState.isDisabled) {
     controller.setDefaultIsDisabled({
       id,
+      isValidated: rest.type !== "radio" && !!(initialValidation && _validate),
       key: name,
-      type: rest.type
+      type: rest.type,
+      validationResult
     });
   } else if (!initialState.isVisible) {
     controller.setDefaultIsNotVisible({
       id,
+      isValidated: rest.type !== "radio" && !!(initialValidation && _validate),
       key: name,
       type: rest.type,
+      validationResult,
       value: value || children
     });
-  } else if (_validate && !_validate(controller.getFieldValue(name), rest)) {
-    controller.setDefaultIsInvalid({
+  } else if (_validate) {
+    controller.setDefaultIsValid({
+      initialValidation,
+      isValidated: rest.type !== "radio",
       key: name,
-      type: rest.type
+      type: rest.type,
+      validationResult:
+        validationResult === undefined
+          ? _validate(controller.getFieldValue(name), rest)
+          : validationResult
     });
   }
 
   const field = controller.getField(name);
-  initialState.isValid = field === undefined || field.isValid;
+  initialState.isValid =
+    !validationResult && (field === undefined || field.isValid);
 
   const fieldProps = {
     ...props,

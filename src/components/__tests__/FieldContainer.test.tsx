@@ -457,8 +457,9 @@ describe("FieldContainer", () => {
 
       expect(passedValues.initialState).toEqual({
         isDisabled: false,
-        isValid: false,
-        isVisible: true
+        isValid: true,
+        isVisible: true,
+        message: undefined
       });
     });
 

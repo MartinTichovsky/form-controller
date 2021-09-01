@@ -12,5 +12,12 @@ export const Condition: ConditionComponentType = (props) => {
     throw new Error("CustomCondition is not a function");
   }
 
+  if (
+    props.dynamicContent !== undefined &&
+    typeof props.dynamicContent !== "function"
+  ) {
+    throw new Error("DynamicContent is not a function");
+  }
+
   return <ConditionComponent {...props} />;
 };
