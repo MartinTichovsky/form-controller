@@ -1,21 +1,54 @@
-type HookType =
-  | "useCallback"
-  | "useContext"
-  | "useEffect"
-  | "useMemo"
-  | "useReducer"
-  | "useRef"
-  | "useState";
+type HookCallbackType = "useCallback";
 
-type Hook = {
+type HookEffectType = "useEffect";
+
+type HoookReducerType = "useReducer";
+
+type HookResultType = "useContext" | "useRef" | "useMemo";
+
+type HookStateType = "useState";
+
+type HookType =
+  | HookCallbackType
+  | HookEffectType
+  | HoookReducerType
+  | HookResultType
+  | HookStateType;
+
+interface HookCallback {
+  action?: jest.Mock;
+  deps?: any[];
+}
+
+interface HookEffect {
   action?: jest.Mock;
   deps?: any[];
   unmountAction?: jest.Mock;
-};
+}
+
+interface HookResult {
+  args?: any;
+  result?: any;
+}
+
+interface HookState {
+  mockedSetState?: jest.Mock;
+  setState?: Function;
+  state?: any;
+}
 
 type ComponentHooks = {
-  [key in HookType]?: Hook[];
-};
+  [key in HookCallbackType]?: HookCallback[];
+} &
+  {
+    [key in HookEffectType]?: HookEffect[];
+  } &
+  {
+    [key in HookResultType]?: HookResult[];
+  } &
+  {
+    [key in HookStateType]?: HookState[];
+  };
 
 declare global {
   var hooksCollector: ReactHooksCollector;
@@ -32,7 +65,11 @@ export class ReactHooksCollector {
 
   public activeDataTestId?: string;
 
-  private createUregisteredComponent(componentName: string, type: HookType) {
+  private createUnregisteredComponent(
+    componentName: string,
+    type: HookType,
+    props?: HookCallback | HookEffect | HookResult | HookState
+  ) {
     if (!(componentName in this.unregisteredComponents)) {
       this.unregisteredComponents[componentName] = {};
     }
@@ -41,7 +78,7 @@ export class ReactHooksCollector {
       this.unregisteredComponents[componentName][type] = [];
     }
 
-    this.unregisteredComponents[componentName][type]!.push({});
+    this.unregisteredComponents[componentName][type]!.push(props || {});
 
     return {
       index: this.unregisteredComponents[componentName][type]!.length - 1,
@@ -73,6 +110,34 @@ export class ReactHooksCollector {
         (render) => render.dataTestId === dataTestId
       )?.length || 0
     );
+  }
+
+  getExistingSetStateMockedAction(
+    componentName: string,
+    type: HookStateType,
+    setState: Function
+  ) {
+    const renders = this.registeredComponents[componentName]?.filter(
+      (render) => render.dataTestId === this.activeDataTestId
+    );
+
+    if (!renders) {
+      return;
+    }
+
+    for (let render of renders) {
+      if (!render?.hooks?.[type]) {
+        continue;
+      }
+
+      const existingItem = render.hooks[type]?.find(
+        (item) => item.setState === setState
+      );
+
+      if (existingItem) {
+        return existingItem.mockedSetState;
+      }
+    }
   }
 
   getRegisteredComponentRenders(componentName: string, dataTestId?: string) {
@@ -157,9 +222,13 @@ export class ReactHooksCollector {
     };
   }
 
-  registerHook(componentName: string, type: HookType) {
+  registerHook(
+    componentName: string,
+    type: HookType,
+    props?: HookState | HookEffect
+  ) {
     if (!(componentName in this.registeredComponents)) {
-      return this.createUregisteredComponent(componentName, type);
+      return this.createUnregisteredComponent(componentName, type, props);
     }
 
     const renders = this.registeredComponents[componentName].filter(
@@ -170,7 +239,7 @@ export class ReactHooksCollector {
       renders[renders.length - 1].hooks[type] = [];
     }
 
-    renders[renders.length - 1].hooks[type]!.push({});
+    renders[renders.length - 1].hooks[type]!.push(props || {});
 
     return {
       index: renders[renders.length - 1].hooks[type]!.length - 1,
@@ -194,9 +263,9 @@ export class ReactHooksCollector {
     componentName: string | undefined;
     dataTestId?: string;
     index: number | undefined;
-    props: Hook;
+    props: HookEffect | HookState;
     renderIndex: number | undefined;
-    type: HookType;
+    type: HookEffectType;
   }) {
     if (componentName === undefined || index === undefined) {
       return;
@@ -260,7 +329,7 @@ export const mockReactHooks = (
     // get caller function name from error stack since Funcion.caller is deprecated
     try {
       throw new Error();
-    } catch (ex) {
+    } catch (ex: any) {
       const functionsMatches = ex.stack.match(
         /(\w+)@|at (Function\.)?(\w+) \(/g
       );
@@ -270,22 +339,11 @@ export const mockReactHooks = (
       componentName = parentFunctionMatches[1] || parentFunctionMatches[3];
     }
 
-    const { index, renderIndex } = hooksCollector.registerHook(
-      componentName,
-      "useCallback"
-    );
-
     const mockedAction = jest.fn((...props) => action(...props));
 
-    hooksCollector.setHook({
-      componentName,
-      index,
-      props: {
-        action: mockedAction,
-        deps
-      },
-      renderIndex,
-      type: "useCallback"
+    hooksCollector.registerHook(componentName, "useCallback", {
+      action: mockedAction,
+      deps
     });
 
     return origin.useCallback(mockedAction, ...deps);
@@ -296,7 +354,7 @@ export const mockReactHooks = (
     // get caller function name from error stack since Funcion.caller is deprecated
     try {
       throw new Error();
-    } catch (ex) {
+    } catch (ex: any) {
       const functionsMatches = ex.stack.match(
         /(\w+)@|at (Function\.)?(\w+) \(/g
       );
@@ -356,7 +414,7 @@ export const mockReactHooks = (
     // get caller function name from error stack since Funcion.caller is deprecated
     try {
       throw new Error();
-    } catch (ex) {
+    } catch (ex: any) {
       const functionsMatches = ex.stack.match(
         /(\w+)@|at (Function\.)?(\w+) \(/g
       );
@@ -366,33 +424,36 @@ export const mockReactHooks = (
       componentName = parentFunctionMatches[1] || parentFunctionMatches[3];
     }
 
-    const { index, renderIndex } = hooksCollector.registerHook(
-      componentName,
-      "useState"
-    );
+    const existingMockedSetState =
+      hooksCollector.getExistingSetStateMockedAction(
+        componentName,
+        "useState",
+        result[1]
+      );
 
-    const dataTestId = hooksCollector.activeDataTestId;
+    if (existingMockedSetState) {
+      hooksCollector.registerHook(componentName, "useState", {
+        state: result[0]
+      });
 
-    const mockedAction = jest.fn((...props) => {
+      return [result[0], existingMockedSetState];
+    }
+
+    const mockedSetState = jest.fn((...props) => {
       result[1](...props);
     });
 
     Object.defineProperties(
-      mockedAction,
+      mockedSetState,
       Object.getOwnPropertyDescriptors(result[1])
     );
 
-    hooksCollector.setHook({
-      componentName,
-      dataTestId,
-      index,
-      props: {
-        action: mockedAction
-      },
-      renderIndex,
-      type: "useState"
+    hooksCollector.registerHook(componentName, "useState", {
+      mockedSetState,
+      setState: result[1],
+      state: result[0]
     });
 
-    return result;
+    return [result[0], mockedSetState];
   }
 });
