@@ -25,6 +25,7 @@ import {
   SubscribeValidator,
   Validation,
   ValidationContentResult,
+  ValidationDependencies,
   ValidationPromise,
   ValidationPromiseCounter,
   ValidationPromiseResult,
@@ -49,6 +50,7 @@ export class Controller<T extends FormFields<T>> {
   private _disableIf?: DisableIf<T>;
   private _fields: Fields<T> = {};
   private _hideIf?: HideIf<T>;
+  private _initialRender = true;
   private _initialValidation?: boolean;
   private _initialValues?: Partial<T>;
   private _isSubmitted = false;
@@ -68,6 +70,7 @@ export class Controller<T extends FormFields<T>> {
   private onDisableButtonListeners = new Set<OnDisableAction>();
   private onValidateListener = new Set<OnValidate<T>>();
   private registeredKeys: KeyType<T>[] = [];
+  private validationDependencies: ValidationDependencies<T> = {};
   private validatorListeners = new Map<keyof T, Validator>();
 
   constructor({
@@ -244,6 +247,20 @@ export class Controller<T extends FormFields<T>> {
       });
   }
 
+  private getDependencyList(key: keyof T, dependencyList: (keyof T)[] = [key]) {
+    for (let _key in this.validationDependencies) {
+      if (
+        this.validationDependencies[_key]?.has(key) &&
+        !dependencyList.includes(_key)
+      ) {
+        dependencyList.push(_key);
+        this.getDependencyList(_key, dependencyList);
+      }
+    }
+
+    return dependencyList.slice(1);
+  }
+
   public getDisableCondition(key: keyof T) {
     return this._disableIf && key in this._disableIf
       ? this._disableIf[key]
@@ -260,6 +277,29 @@ export class Controller<T extends FormFields<T>> {
 
   public getHideCondition(key: keyof T) {
     return this._hideIf && key in this._hideIf ? this._hideIf[key] : undefined;
+  }
+
+  public getObservedFields(key: keyof T) {
+    return this._initialRender && Proxy !== undefined
+      ? new Proxy<Partial<T>>(
+          {},
+          {
+            get: (_, prop) => {
+              if (!(key in this.validationDependencies)) {
+                this.validationDependencies[key] = new Set();
+              }
+
+              if (prop !== key) {
+                this.validationDependencies[key]?.add(prop as keyof T);
+              }
+
+              return this._fields[prop]?.isVisible
+                ? this._fields[prop]?.value
+                : undefined;
+            }
+          }
+        )
+      : this.fields;
   }
 
   private getQueueId(key: keyof T) {
@@ -296,13 +336,18 @@ export class Controller<T extends FormFields<T>> {
     if (
       validationResult !== undefined &&
       typeof validationResult === "object" &&
-      validationResult !== null
+      validationResult !== null &&
+      ("isValid" in validationResult || "promise" in validationResult)
     ) {
       return "isValid" in validationResult
         ? validationResult.content
         : undefined;
     }
     return validationResult;
+  }
+
+  public initialRenderDone() {
+    this._initialRender = false;
   }
 
   private isSelectedAction(id?: string) {
@@ -350,6 +395,21 @@ export class Controller<T extends FormFields<T>> {
     }
 
     return ++this._validationPromiseCounter[key]!;
+  }
+
+  public registerValidationDependencies(
+    key: keyof T,
+    dependencies: (keyof T)[]
+  ) {
+    if (!(key in this.validationDependencies)) {
+      this.validationDependencies[key] = new Set();
+    }
+
+    for (let _key of dependencies) {
+      if (key !== _key) {
+        this.validationDependencies[key]?.add(_key);
+      }
+    }
   }
 
   public resetForm() {
@@ -582,8 +642,10 @@ export class Controller<T extends FormFields<T>> {
       this._fields[key]!.isVisible
     ) {
       this.validateAll(key);
+      this.validateAllDependencies(key);
     } else if (!this._fields[key]!.isDisabled && this._fields[key]!.isVisible) {
       this.validateAll(key, true);
+      this.validateAllDependencies(key, true);
     }
 
     this.onChange();
@@ -1020,6 +1082,14 @@ export class Controller<T extends FormFields<T>> {
       this._fields[key]!.isVisible
     ) {
       this.validateActions(key, validationContent);
+    }
+  }
+
+  private validateAllDependencies(key: keyof T, silent?: boolean) {
+    const dependencies = this.getDependencyList(key);
+
+    for (let _key of dependencies) {
+      this.validateAll(_key, silent);
     }
   }
 

@@ -69,6 +69,7 @@ export interface FieldType<
     onFormChange,
     validate,
     validateOnChange,
+    validationDependencies,
     value,
     ...rest
   }: React.PropsWithChildren<
@@ -113,8 +114,10 @@ export interface FieldType<
                   | "week";
                 validate?: (
                   value: T[K] | undefined,
+                  fields: Partial<T>,
                   props: typeof rest
                 ) => ValidationResult;
+                validationDependencies?: (keyof T)[];
                 value?: undefined;
               }
             | {
@@ -122,6 +125,7 @@ export interface FieldType<
                 placeholder?: undefined;
                 type: "radio";
                 validate?: undefined;
+                validationDependencies?: undefined;
                 value: string;
               }
             | {
@@ -130,8 +134,10 @@ export interface FieldType<
                 type: "checkbox";
                 validate?: (
                   value: T[K] | undefined,
+                  fields: Partial<T>,
                   props: typeof rest
                 ) => ValidationResult;
+                validationDependencies?: (keyof T)[];
                 value?: undefined;
               }
         : ElementType extends HTMLTextAreaElement
@@ -141,8 +147,10 @@ export interface FieldType<
             type?: undefined;
             validate?: (
               value: T[K] | undefined,
+              fields: Partial<T>,
               props: typeof rest
             ) => ValidationResult;
+            validationDependencies?: (keyof T)[];
             value?: undefined;
           }
         : {
@@ -151,8 +159,10 @@ export interface FieldType<
             type?: undefined;
             validate?: (
               value: T[K] | undefined,
+              fields: Partial<T>,
               props: typeof rest
             ) => ValidationResult;
+            validationDependencies?: (keyof T)[];
             value?: undefined;
           })
   >): JSX.Element | null;
@@ -174,6 +184,7 @@ type RestProps<T> = Omit<
   | "onFormChange"
   | "validate"
   | "validateOnChange"
+  | "validationDependencies"
   | "value"
   // private props
   | "defaultValue"

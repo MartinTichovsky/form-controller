@@ -4,15 +4,21 @@ import { Template } from "./utils/Template";
 
 type MyForm = {
   givenName: string;
+  middleName: string;
   surname: string;
 };
 
-export const TextField = () => {
+export const TextFieldValidationDependencies = ({
+  validateOnChange = false
+}: {
+  validateOnChange?: boolean;
+}) => {
   return (
     <Template>
       <FormController<MyForm>
         data-testid="form-controller"
         onSubmit={(fields) => console.log(fields)}
+        validateOnChange={validateOnChange}
       >
         {(controller) => (
           <>
@@ -22,8 +28,12 @@ export const TextField = () => {
                 data-testid="input-1"
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) =>
-                  !value?.trim() && "Provide a valid given name"
+                validate={(_, fields) =>
+                  !fields.middleName?.trim() && (
+                    <span data-testid="error-1">
+                      Provide a valid middle name
+                    </span>
+                  )
                 }
               />
             </div>
@@ -31,10 +41,33 @@ export const TextField = () => {
               <Input
                 controller={controller}
                 data-testid="input-2"
+                name="middleName"
+                placeholder="Input a middle name"
+                validate={(_, fields) => {
+                  const surname = fields.surname;
+                  const givenName = fields.givenName;
+                  return (
+                    (!surname?.trim() || !givenName?.trim()) && (
+                      <span data-testid="error-2">
+                        Provide a valid given name and surname
+                      </span>
+                    )
+                  );
+                }}
+              />
+            </div>
+            <div className="field-row">
+              <Input
+                controller={controller}
+                data-testid="input-3"
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) =>
-                  !value?.trim() && "Provide a valid surname"
+                validate={(_, fields) =>
+                  !fields.givenName?.trim() && (
+                    <span data-testid="error-3">
+                      Provide a valid given name
+                    </span>
+                  )
                 }
               />
             </div>
@@ -51,7 +84,7 @@ export const TextField = () => {
               </button>
             </div>
             <div className="info">
-              * Basic text field functionality, text fields must be not empty
+              * The inputs are validated based on other fields
             </div>
           </>
         )}

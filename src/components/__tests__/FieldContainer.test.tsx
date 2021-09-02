@@ -120,6 +120,23 @@ describe("FieldContainer", () => {
     });
   });
 
+  test("Providing wrong validationDependencies should throw an error", () => {
+    const values = getGeneratedValues(false, "array", "undefined");
+
+    values.forEach((value) => {
+      expect(() => {
+        render(
+          <FieldContainerComponent
+            controller={controller}
+            fieldType="input"
+            name="input"
+            validationDependencies={value}
+          />
+        );
+      }).toThrowError();
+    });
+  });
+
   test("Providing wrong name should throw an error", () => {
     const values = getGeneratedValues(false, "string");
 

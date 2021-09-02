@@ -33,6 +33,7 @@ export const FormControllerComponent = <T extends FormFields<T>>({
 
   React.useEffect(() => {
     if (controller) {
+      controller.initialRenderDone();
       controller.onChange();
     }
   }, [controller]);

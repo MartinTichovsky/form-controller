@@ -154,6 +154,7 @@ export type ValidationContentResult =
   | null
   | undefined
   | JSX.Element;
+export type ValidationDependencies<T> = { [key in keyof T]?: Set<keyof T> };
 export type ValidationPromise = () => Promise<ValidationPromiseResult>;
 export type ValidationPromiseCounter<T> = { [key in keyof T]?: number };
 export interface ValidationPromiseResult {

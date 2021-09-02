@@ -39,6 +39,7 @@ import { TextFieldDisabledUseCase2 } from "form-controller/lib/examples/TextFiel
 import { TextFieldHiddenUseCase1 } from "form-controller/lib/examples/TextFieldHiddenUseCase1";
 import { TextFieldHiddenUseCase2 } from "form-controller/lib/examples/TextFieldHiddenUseCase2";
 import { TextFieldMessageComponent } from "form-controller/lib/examples/TextFieldMessageComponent";
+import { TextFieldValidationDependencies } from "form-controller/lib/examples/TextFieldValidationDependencies";
 
 interface MenuIitem {
   label: string;
@@ -211,6 +212,11 @@ export const menuItems: MenuItems = {
       label: "Input Component",
       key: "text-field-input-component",
       render: () => <TextFieldComponent />
+    },
+    {
+      label: "Validation Dependencies",
+      key: "text-field-validation-dependencies",
+      render: () => <TextFieldValidationDependencies />
     }
   ],
   "Textarea Fields": [

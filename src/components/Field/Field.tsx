@@ -41,6 +41,7 @@ export function Field<
   onFormChange,
   validate,
   validateOnChange,
+  validationDependencies,
   value,
   ...rest
 }: React.PropsWithChildren<
@@ -144,7 +145,11 @@ export function Field<
 
             return (
               proceedValidation &&
-              validate(controller.getFieldValue(name), rest)
+              validate(
+                controller.getFieldValue(name),
+                controller.getObservedFields(name),
+                rest
+              )
             );
           }
         });
@@ -293,7 +298,11 @@ export function Field<
             isValid: field === undefined || field.isValid,
             message:
               prevState.message && validate
-                ? validate(field?.value as T[K], rest)
+                ? validate(
+                    field?.value as T[K],
+                    controller.getObservedFields(name),
+                    rest
+                  )
                 : undefined
           }));
         });

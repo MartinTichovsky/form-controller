@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller } from "../../controller";
-import { FormFields, ValidationResult } from "../../controller.types";
+import { FormFields } from "../../controller.types";
 import {
   disableIfContext,
   hideIfContext,
@@ -53,6 +53,7 @@ export function FieldContainer<
     onFormChange,
     validate,
     validateOnChange,
+    validationDependencies,
     value,
     ...rest
   } = props;
@@ -77,8 +78,19 @@ export function FieldContainer<
     throw new Error("Validate is not a function");
   }
 
+  if (
+    validationDependencies !== undefined &&
+    !Array.isArray(validationDependencies)
+  ) {
+    throw new Error("ValidationDependencies must be an array");
+  }
+
   if (!controller.registerKey(name, rest.type || "text")) {
     console.warn(`Key '${name}' is already registered in the form`);
+  }
+
+  if (validationDependencies) {
+    controller.registerValidationDependencies(name, validationDependencies);
   }
 
   let _disableIf = disableIf;
@@ -121,16 +133,20 @@ export function FieldContainer<
   let id: string | undefined = rest.id;
   id = (label && !id) || rest.type === "radio" ? getRandomId() : id;
 
-  let validationResult: ValidationResult;
-
-  if (initialValidation && _validate) {
-    validationResult = _validate(controller.getFieldValue(name), rest);
-  }
+  let validationResult =
+    _validate &&
+    _validate(
+      controller.getFieldValue(name),
+      controller.getObservedFields(name),
+      rest
+    );
 
   const initialState: InitialState = {
     isDisabled: _disableIf ? _disableIf(controller.fields) : false,
     isVisible: _hideIf ? !_hideIf(controller.fields) : true,
-    message: controller.getValidationResultContent(validationResult)
+    message: initialValidation
+      ? controller.getValidationResultContent(validationResult)
+      : undefined
   };
 
   if (initialState.isDisabled) {
@@ -139,7 +155,7 @@ export function FieldContainer<
       isValidated: rest.type !== "radio" && !!(initialValidation && _validate),
       key: name,
       type: rest.type,
-      validationResult
+      validationResult: initialValidation ? validationResult : undefined
     });
   } else if (!initialState.isVisible) {
     controller.setDefaultIsNotVisible({
@@ -147,7 +163,7 @@ export function FieldContainer<
       isValidated: rest.type !== "radio" && !!(initialValidation && _validate),
       key: name,
       type: rest.type,
-      validationResult,
+      validationResult: initialValidation ? validationResult : undefined,
       value: value || children
     });
   } else if (_validate) {
@@ -156,10 +172,7 @@ export function FieldContainer<
       isValidated: rest.type !== "radio",
       key: name,
       type: rest.type,
-      validationResult:
-        validationResult === undefined
-          ? _validate(controller.getFieldValue(name), rest)
-          : validationResult
+      validationResult
     });
   }
 
