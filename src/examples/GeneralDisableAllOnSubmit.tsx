@@ -1,5 +1,6 @@
 import React from "react";
 import { FormController, Input, Submit } from "../";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -8,10 +9,12 @@ type MyForm = {
   radio: string;
 };
 
-export const GeneralDisableAllOnSubmit = () => {
+export const GeneralDisableAllOnSubmit = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
-      <FormController<MyForm>>
+      <FormController<MyForm> {...props}>
         {(controller) => (
           <>
             <div className="field-row">

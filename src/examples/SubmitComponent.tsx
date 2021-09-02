@@ -1,5 +1,6 @@
 import React from "react";
 import { Controller, FormController, Input, Submit } from "../";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -101,10 +102,12 @@ class ClassSubmitComponent extends React.Component<ClassSubmitComponentProps> {
   }
 }
 
-export const SubmitComponent = () => {
+export const SubmitComponent = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
-      <FormController<MyForm> style={{ marginTop: 15 }} validateOnChange>
+      <FormController<MyForm> {...props} validateOnChange>
         {(controller) => (
           <>
             <div className="field-row">

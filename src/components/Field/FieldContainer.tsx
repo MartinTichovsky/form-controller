@@ -4,9 +4,11 @@ import { FormFields } from "../../controller.types";
 import {
   disableIfContext,
   hideIfContext,
+  sharedPropsContext,
   validateContext
 } from "../../providers";
 import { ValidationAction } from "../../providers.types";
+import { SharedProps } from "../Validation.types";
 import { Field } from "./Field";
 import {
   FieldInternalProps,
@@ -47,6 +49,7 @@ export function FieldContainer<
     disableIf,
     hideMessage,
     hideIf,
+    hideRequiredStar,
     initialValidation,
     label,
     MessageComponent,
@@ -95,56 +98,103 @@ export function FieldContainer<
     controller.registerValidationDependencies(name, validationDependencies);
   }
 
-  let _disableIf = disableIf;
+  const providedProps = {
+    disableIf,
+    hideIf,
+    hideRequiredStar,
+    hideMessage,
+    id: rest.id,
+    required: rest.required,
+    requiredComponent,
+    validate
+  };
 
-  if (!_disableIf) {
-    _disableIf = React.useContext(disableIfContext);
+  if (!providedProps.disableIf) {
+    providedProps.disableIf = React.useContext(disableIfContext);
   }
 
-  if (!_disableIf) {
-    _disableIf = controller.getDisableCondition(name);
+  if (!providedProps.disableIf) {
+    providedProps.disableIf = controller.getDisableCondition(name);
   }
 
-  let _hideIf = hideIf;
-
-  if (!_hideIf) {
-    _hideIf = React.useContext(hideIfContext);
+  if (!providedProps.hideIf) {
+    providedProps.hideIf = React.useContext(hideIfContext);
   }
 
-  if (!_hideIf) {
-    _hideIf = controller.getHideCondition(name);
+  if (!providedProps.hideIf) {
+    providedProps.hideIf = controller.getHideCondition(name);
   }
 
-  let _validate = validate;
-
-  if (!_validate) {
-    _validate = React.useContext(validateContext);
+  if (!providedProps.validate) {
+    providedProps.validate = React.useContext(validateContext);
   }
 
-  if (!_validate) {
-    _validate = controller.getValidateCondition(name);
+  if (!providedProps.validate) {
+    providedProps.validate = controller.getValidateCondition(name);
+  }
+
+  const sharedProps: SharedProps = React.useContext(sharedPropsContext);
+
+  if (providedProps.hideRequiredStar === undefined) {
+    providedProps.hideRequiredStar = sharedProps.hideRequiredStar;
+  }
+
+  if (providedProps.hideMessage === undefined) {
+    providedProps.hideMessage = sharedProps.hideMessage;
+  }
+
+  if (providedProps.required === undefined) {
+    providedProps.required = sharedProps.required as typeof rest.required;
+  }
+
+  if (providedProps.requiredComponent === undefined) {
+    providedProps.requiredComponent = sharedProps.requiredComponent;
   }
 
   let validation:
     | ValidationAction<T[K] | undefined, T, typeof rest>
-    | undefined = _validate;
+    | undefined = providedProps.validate;
 
-  if (rest.required && _validate) {
+  if (providedProps.required && providedProps.validate) {
     validation = (
       value: T[K] | undefined,
       fields: Partial<T>,
       props: typeof rest
-    ) =>
-      (
-        value !== undefined && typeof value === "string"
+    ) => {
+      if (
+        rest.type === "checkbox" ||
+        rest.type === "radio" ||
+        rest.fieldType === "select"
+      ) {
+        const validationResult = providedProps.validate!(value, fields, props);
+
+        return (
+          validationResult ||
+          (typeof value === "string"
+            ? !value.trim()
+            : rest.type === "checkbox"
+            ? !value
+            : value === undefined)
+        );
+      }
+
+      return (
+        typeof value === "string"
           ? !value.trim()
+          : rest.type === "checkbox"
+          ? !value
           : value === undefined
       )
         ? true
-        : _validate!(value, fields, props);
-  } else if (rest.required) {
+        : providedProps.validate!(value, fields, props);
+    };
+  } else if (providedProps.required) {
     validation = (value: T[K] | undefined) =>
-      value !== undefined && typeof value === "string" ? !value.trim() : true;
+      typeof value === "string"
+        ? !value.trim()
+        : rest.type === "checkbox"
+        ? !value
+        : value === undefined;
   }
 
   if (initialValidation !== undefined || validateOnChange !== undefined) {
@@ -154,8 +204,15 @@ export function FieldContainer<
     });
   }
 
-  let id: string | undefined = rest.id;
-  id = (label && !id) || rest.type === "radio" ? getRandomId() : id;
+  providedProps.id = (
+    (label && !providedProps.id) || rest.type === "radio"
+      ? getRandomId()
+      : providedProps.id
+  ) as typeof rest.id;
+
+  if (rest.type === "radio") {
+    controller.registerOption(name, providedProps.id!);
+  }
 
   let validationResult =
     validation &&
@@ -166,8 +223,12 @@ export function FieldContainer<
     );
 
   const initialState: InitialState = {
-    isDisabled: _disableIf ? _disableIf(controller.fields) : false,
-    isVisible: _hideIf ? !_hideIf(controller.fields) : true,
+    isDisabled: providedProps.disableIf
+      ? providedProps.disableIf(controller.fields)
+      : false,
+    isVisible: providedProps.hideIf
+      ? !providedProps.hideIf(controller.fields)
+      : true,
     message: initialValidation
       ? controller.getValidationResultContent(validationResult)
       : undefined
@@ -175,7 +236,7 @@ export function FieldContainer<
 
   if (initialState.isDisabled) {
     controller.setDefaultIsDisabled({
-      id,
+      id: providedProps.id,
       isValidated: rest.type !== "radio" && !!(initialValidation && validation),
       key: name,
       type: rest.type,
@@ -183,7 +244,7 @@ export function FieldContainer<
     });
   } else if (!initialState.isVisible) {
     controller.setDefaultIsNotVisible({
-      id,
+      id: providedProps.id,
       isValidated: rest.type !== "radio" && !!(initialValidation && validation),
       key: name,
       type: rest.type,
@@ -207,9 +268,7 @@ export function FieldContainer<
 
   const fieldProps = {
     ...props,
-    disableIf: _disableIf,
-    hideIf: _hideIf,
-    id,
+    ...providedProps,
     initialState,
     validate: validation
   };

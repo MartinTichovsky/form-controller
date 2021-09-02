@@ -1,4 +1,5 @@
 import React from "react";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { FormController, Input, Submit } from "../index";
 import { Template } from "./utils/Template";
 
@@ -8,12 +9,15 @@ type MyForm = {
   surname: string;
 };
 
-export const TextFieldHiddenUseCase1 = () => {
+export const TextFieldHiddenUseCase1 = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
       <FormController<MyForm>
-        onSubmit={(fields) => console.log(fields)}
         validateOnChange
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
       >
         {(controller) => (
           <>

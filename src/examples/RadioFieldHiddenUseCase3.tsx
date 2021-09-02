@@ -1,7 +1,6 @@
 import React from "react";
-import { FormController, Input, Submit } from "..";
-import { MessageFor } from "../components/MessageFor";
-import { Validation } from "../components/Validation";
+import { FormController, Input, MessageFor, Submit, Validation } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { invalidMessageClassName } from "../constants";
 import { Template } from "./utils/Template";
 
@@ -11,10 +10,15 @@ type MyForm = {
   radioVolume3: string;
 };
 
-export const RadioFieldHiddenUseCase3 = () => {
+export const RadioFieldHiddenUseCase3 = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
-      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
+      <FormController<MyForm>
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
+      >
         {(controller) => (
           <>
             <Validation validate={(value) => value === undefined}>
@@ -77,7 +81,6 @@ export const RadioFieldHiddenUseCase3 = () => {
                 <Input
                   controller={controller}
                   data-testid="radio-2-1"
-                  hideMessage={false}
                   label="Option 2-1"
                   name="radioVolume2"
                   type="radio"

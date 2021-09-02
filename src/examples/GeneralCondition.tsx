@@ -1,5 +1,6 @@
 import React from "react";
 import { Condition, FormController, Input, Submit } from "../";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -10,10 +11,15 @@ type MyForm = {
 export const formIsValidText = "Form is valid";
 export const submitConditionText = "Submit button was clicked";
 
-export const GeneralCondition = () => {
+export const GeneralCondition = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
-      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
+      <FormController<MyForm>
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
+      >
         {(controller) => (
           <>
             <div className="field-row">

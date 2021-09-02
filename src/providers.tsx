@@ -1,4 +1,5 @@
 import React from "react";
+import { SharedProps } from "./components/Validation.types";
 import { FormFields } from "./controller.types";
 import {
   SelectProviderProps,
@@ -18,6 +19,8 @@ export const selectContext = React.createContext<
   SelectProviderProps | undefined
 >(undefined);
 
+export const sharedPropsContext = React.createContext<SharedProps>({});
+
 export const validateContext = React.createContext<
   ValidationAction<string | boolean> | undefined
 >(undefined);
@@ -35,9 +38,18 @@ export const ValidationProvider = <T extends FormFields<T>, K extends keyof T>({
   children,
   disableIf,
   hideIf,
-  validate
+  validate,
+  ...sharedProps
 }: ValidationProviderProps<T, K>) => {
   let result = <>{children}</>;
+
+  if (Object.keys(sharedProps).length > 0) {
+    result = (
+      <sharedPropsContext.Provider value={sharedProps}>
+        {result}
+      </sharedPropsContext.Provider>
+    );
+  }
 
   if (disableIf) {
     result = (

@@ -1,16 +1,21 @@
 import React from "react";
-import { FormController, Input, Submit } from "..";
-import { Validation } from "../components/Validation";
+import { FormController, Input, Submit, Validation } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
   radio: string;
 };
 
-export const RadioField = () => {
+export const RadioField = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
-      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
+      <FormController<MyForm>
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
+      >
         {(controller) => (
           <>
             <Validation
@@ -24,7 +29,6 @@ export const RadioField = () => {
                 <Input
                   controller={controller}
                   data-testid="radio-1"
-                  hideMessage={false}
                   label="Option 1"
                   name="radio"
                   type="radio"

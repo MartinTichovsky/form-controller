@@ -20,6 +20,7 @@ import {
   SetDefaultIsDisabled,
   SetDefaultIsInvalid,
   SetDefaultIsNotVisible,
+  SetFieldValue,
   SetIsDisabled,
   SetIsVisible,
   SubscribeValidator,
@@ -66,6 +67,7 @@ export class Controller<T extends FormFields<T>> {
   private isSelectedListeners = new Map<string, Action>();
   private keyIndex: number;
   private onChangeListeners = new Set<OnChangeAction>();
+  private onChangeKeyListeners = new Map<keyof T, Set<OnChangeAction>>();
   private onDisableListeners = new Set<OnDisable<T>>();
   private onDisableButtonListeners = new Set<OnDisableAction>();
   private onValidateListener = new Set<OnValidate<T>>();
@@ -350,6 +352,22 @@ export class Controller<T extends FormFields<T>> {
     this._initialRender = false;
   }
 
+  public isOnFirstPosition(key: keyof T, id?: string) {
+    if (!this._fields[key]?.options) {
+      return true;
+    }
+
+    const options = Object.fromEntries(this._fields[key]!.options!.entries());
+
+    for (let _id in options) {
+      if (options[_id].isVisible) {
+        return _id === id;
+      }
+    }
+
+    return false;
+  }
+
   private isSelectedAction(id?: string) {
     if (id) {
       this.isSelectedListeners?.get(id)?.();
@@ -366,11 +384,19 @@ export class Controller<T extends FormFields<T>> {
     return false;
   }
 
-  public onChange() {
+  public onChange(key?: keyof T) {
     this._onChangeCounter++;
+
+    if (key !== undefined && this.onChangeKeyListeners.has(key)) {
+      this.onChangeKeyListeners.get(key)?.forEach((listener) => {
+        listener(this.isValid);
+      });
+    }
+
     this.onChangeListeners.forEach((listener) => {
       listener(this.isValid);
     });
+
     this._onChangeCounter--;
     this.afterAll();
   }
@@ -387,6 +413,31 @@ export class Controller<T extends FormFields<T>> {
       : type === "radio"
       ? !existingItems.some((item) => item.type !== "radio")
       : false;
+  }
+
+  public registerOption(key: keyof T, id: string) {
+    if (!(key in this._fields)) {
+      this._fields[key] = {
+        isDisabled: false,
+        isValid: true,
+        isValidated: false,
+        isVisible: true,
+        validationInProgress: false,
+        validationResult: undefined,
+        value: this._initialValues?.[key]
+      };
+    }
+
+    if (!this._fields[key]?.options) {
+      this._fields[key]!.options = new Map();
+    }
+
+    if (!this._fields[key]!.options!.has(id)) {
+      this._fields[key]!.options!.set(id, {
+        isDisabled: false,
+        isVisible: true
+      });
+    }
   }
 
   private registerQueueId(key: keyof T) {
@@ -615,7 +666,7 @@ export class Controller<T extends FormFields<T>> {
     }
   }
 
-  public setFieldValue(key: keyof T, value: Value, id?: string) {
+  public setFieldValue({ id, key, silent, value }: SetFieldValue<T>) {
     if (key in this._fields) {
       this._fields[key] = {
         ...this._fields[key],
@@ -641,14 +692,14 @@ export class Controller<T extends FormFields<T>> {
       !this._fields[key]!.isDisabled &&
       this._fields[key]!.isVisible
     ) {
-      this.validateAll(key);
-      this.validateAllDependencies(key);
+      this.validateAll(key, silent);
+      this.validateAllDependencies(key, silent);
     } else if (!this._fields[key]!.isDisabled && this._fields[key]!.isVisible) {
       this.validateAll(key, true);
       this.validateAllDependencies(key, true);
     }
 
-    this.onChange();
+    this.onChange(key);
     this.validateListeners(key);
   }
 
@@ -723,7 +774,7 @@ export class Controller<T extends FormFields<T>> {
       this.validateAll(key, true);
     }
 
-    this.onChange();
+    this.onChange(key);
   }
 
   private setIsDisabledAfterAll(key: keyof T) {
@@ -765,6 +816,7 @@ export class Controller<T extends FormFields<T>> {
 
     if (!isVisible && this._fields[key]!.activeId === id) {
       this._fields[key]!.activeId = undefined;
+      this._fields[key]!.isValidated = false;
       this._fields[key]!.value = undefined;
     }
 
@@ -799,7 +851,7 @@ export class Controller<T extends FormFields<T>> {
       this._fields[key]!.isValid = true;
     }
 
-    this.onChange();
+    this.onChange(key);
   }
 
   private setIsVisibleAfterAll(key: keyof T) {
@@ -854,8 +906,17 @@ export class Controller<T extends FormFields<T>> {
     this.isSelectedListeners.set(id, action);
   }
 
-  public subscribeOnChange(action: OnChangeAction) {
-    this.onChangeListeners.add(action);
+  public subscribeOnChange(action: OnChangeAction, key?: keyof T) {
+    if (key === undefined) {
+      this.onChangeListeners.add(action);
+      return;
+    }
+
+    if (!this.onChangeKeyListeners.has(key)) {
+      this.onChangeKeyListeners.set(key, new Set());
+    }
+
+    this.onChangeKeyListeners.get(key)?.add(action);
   }
 
   public subscribeOnDisable(listener: OnDisable<T>) {
@@ -919,8 +980,12 @@ export class Controller<T extends FormFields<T>> {
     this.isSelectedListeners.delete(id);
   }
 
-  public unsubscribeOnChange(action: OnChangeAction) {
-    this.onChangeListeners.delete(action);
+  public unsubscribeOnChange(action: OnChangeAction, key?: keyof T) {
+    if (key === undefined) {
+      this.onChangeListeners.delete(action);
+    } else if (this.onChangeKeyListeners.has(key)) {
+      this.onChangeKeyListeners.get(key)?.delete(action);
+    }
   }
 
   public unsubscribeOnDisable(listener: OnDisable<T>) {

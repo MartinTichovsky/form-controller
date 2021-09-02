@@ -130,6 +130,12 @@ export interface SetIsDisabled<T> {
   key: keyof T;
   type?: FieldTypes;
 }
+export interface SetFieldValue<T> {
+  id?: string;
+  key: keyof T;
+  silent?: boolean;
+  value: Value;
+}
 export interface SetIsVisible<T> {
   id?: string;
   isVisible: boolean;

@@ -1,6 +1,6 @@
 import React from "react";
-import { Condition, FormController, Input, Submit } from "..";
-import { Controller } from "../controller";
+import { Condition, Controller, FormController, Input, Submit } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -24,10 +24,15 @@ const DynamicContext = ({ controller }: { controller: Controller<MyForm> }) => {
   );
 };
 
-export const GeneralConditionDynamic = () => {
+export const GeneralConditionDynamic = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
-      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
+      <FormController<MyForm>
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
+      >
         {(controller) => (
           <>
             <div className="field-row">

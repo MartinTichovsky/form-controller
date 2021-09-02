@@ -1,6 +1,6 @@
 import React from "react";
-import { FormController, Input, Submit } from "..";
-import { MessageFor } from "../components/MessageFor";
+import { FormController, Input, MessageFor, Submit } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -11,10 +11,15 @@ type MyForm = {
 export const givenNameErrorText = "Provide a valid given name";
 export const surnameErrorText = "Provide a valid surname";
 
-export const GeneralMessageForUseCase1 = () => {
+export const GeneralMessageForUseCase1 = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
-      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
+      <FormController<MyForm>
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
+      >
         {(controller) => (
           <>
             <div className="field-row">

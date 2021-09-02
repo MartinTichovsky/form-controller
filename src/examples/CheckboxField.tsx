@@ -1,5 +1,6 @@
 import React from "react";
 import { FormController, Input, Submit } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -8,10 +9,15 @@ type MyForm = {
   checkbox3: boolean;
 };
 
-export const CheckboxField = () => {
+export const CheckboxField = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
-      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
+      <FormController<MyForm>
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
+      >
         {(controller) => (
           <>
             <div className="field-row">

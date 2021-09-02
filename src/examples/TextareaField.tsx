@@ -1,7 +1,6 @@
 import React from "react";
-import { FormController, Submit } from "..";
-import { Textarea } from "../components/Textarea";
-import { Controller } from "../controller";
+import { Controller, FormController, Submit, Textarea } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -16,10 +15,15 @@ const TextareaMessage = ({
   return <div>{children}</div>;
 };
 
-export const TextareaField = () => {
+export const TextareaField = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
-      <FormController<MyForm> onSubmit={(fields) => console.log(fields)}>
+      <FormController<MyForm>
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
+      >
         {(controller) => (
           <>
             <div className="field-row">

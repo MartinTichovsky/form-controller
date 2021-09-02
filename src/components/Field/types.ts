@@ -31,7 +31,6 @@ export interface FieldPublicProps<T extends FormFields<T>, K extends keyof T> {
   controller: Controller<T>;
   disableIf?: (fields: Partial<T>) => boolean;
   hideIf?: (fields: Partial<T>) => boolean;
-  hideMessage?: boolean;
   id?: string;
   initialValidation?: boolean;
   name: K;
@@ -39,6 +38,7 @@ export interface FieldPublicProps<T extends FormFields<T>, K extends keyof T> {
 }
 
 export interface FieldState extends InitialState {
+  isOnFirstPosition: boolean;
   isSelected: boolean;
 }
 
@@ -62,6 +62,7 @@ export interface FieldType<
     disableIf,
     hideMessage,
     hideIf,
+    hideRequiredStar,
     initialValidation,
     label,
     MessageComponent,
@@ -76,6 +77,7 @@ export interface FieldType<
   }: React.PropsWithChildren<
     FieldPublicProps<T, K> & {
       className?: string;
+      hideRequiredStar?: boolean;
       onFormChange?: (name: K, props: typeof rest) => void;
       required?: boolean;
       requiredComponent?: JSX.Element;
@@ -96,6 +98,7 @@ export interface FieldType<
       (ElementType extends HTMLInputElement
         ?
             | {
+                hideMessage?: boolean;
                 label?: string | JSX.Element;
                 placeholder?: string;
                 type?:
@@ -125,6 +128,7 @@ export interface FieldType<
                 value?: undefined;
               }
             | {
+                hideMessage?: undefined;
                 label: string | JSX.Element;
                 placeholder?: undefined;
                 type: "radio";
@@ -133,6 +137,7 @@ export interface FieldType<
                 value: string;
               }
             | {
+                hideMessage?: boolean;
                 label: string | JSX.Element;
                 placeholder?: undefined;
                 type: "checkbox";
@@ -146,6 +151,7 @@ export interface FieldType<
               }
         : ElementType extends HTMLTextAreaElement
         ? {
+            hideMessage?: boolean;
             label?: string | JSX.Element;
             placeholder?: string;
             type?: undefined;
@@ -158,6 +164,7 @@ export interface FieldType<
             value?: undefined;
           }
         : {
+            hideMessage?: boolean;
             label?: string | JSX.Element;
             placeholder?: undefined;
             type?: undefined;
@@ -180,6 +187,7 @@ type RestProps<T> = Omit<
   | "disableIf"
   | "hideMessage"
   | "hideIf"
+  | "hideRequiredStar"
   | "initialValidation"
   | "label"
   | "MessageComponent"

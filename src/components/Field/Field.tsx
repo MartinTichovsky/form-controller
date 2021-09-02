@@ -38,6 +38,7 @@ export function Field<
   disableIf,
   hideMessage,
   hideIf,
+  hideRequiredStar,
   initialValidation,
   label,
   MessageComponent,
@@ -59,6 +60,7 @@ export function Field<
   const { initialState, fieldType, ...restProps } = rest;
   const [state, setState] = React.useState<FieldState>({
     ...initialState!,
+    isOnFirstPosition: controller.isOnFirstPosition(name, rest.id),
     isSelected:
       rest.type === "checkbox"
         ? controller.getFieldValue(name) === true
@@ -71,10 +73,6 @@ export function Field<
   const defaultValue = React.useRef(controller.getFieldValue(name) || "");
   const key = React.useRef(0);
 
-  if (rest.type === "radio" && hideMessage === undefined) {
-    hideMessage = true;
-  }
-
   React.useEffect(
     () => {
       if (
@@ -85,11 +83,34 @@ export function Field<
         controller.setDefaultActiveRadioId(name, rest.id);
       }
 
+      if (
+        rest.type === "radio" &&
+        ((rest.required && !hideRequiredStar) || !hideMessage)
+      ) {
+        const action = () => {
+          const isOnFirstPosition = controller.isOnFirstPosition(name, rest.id);
+
+          if (
+            (!refState.current?.isOnFirstPosition && isOnFirstPosition) ||
+            (refState.current?.isOnFirstPosition && !isOnFirstPosition)
+          ) {
+            setState((prevState) => ({ ...prevState, isOnFirstPosition }));
+          }
+        };
+
+        controller.subscribeOnChange(action, name);
+
+        return () => {
+          controller.unsubscribeOnChange(action, name);
+          controller.deleteField(name, rest.id);
+        };
+      }
+
       return () => {
         controller.deleteField(name, rest.id);
       };
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [controller]
+    [controller, refState]
   );
 
   if (validate) {
@@ -265,6 +286,7 @@ export function Field<
           if (!isVisible && refState.current!.isVisible) {
             setState((prevState) => ({
               ...prevState,
+              isOnFirstPosition: controller.isOnFirstPosition(name, rest.id),
               isVisible: false
             }));
           } else if (isVisible && !refState.current!.isVisible) {
@@ -276,6 +298,7 @@ export function Field<
                 (rest.type === "checkbox" &&
                   controller.getFieldValue(name) === true) ||
                 controller.getFieldValue(name) === value,
+              isOnFirstPosition: controller.isOnFirstPosition(name, rest.id),
               isVisible: true
             }));
           }
@@ -324,7 +347,12 @@ export function Field<
   if (fieldType === "select") {
     React.useEffect(
       () => {
-        controller.setFieldValue(name, selectRef.current?.value, rest.id);
+        controller.setFieldValue({
+          id: rest.id,
+          key: name,
+          silent: true,
+          value: selectRef.current?.value
+        });
       }, // eslint-disable-next-line react-hooks/exhaustive-deps
       [controller, selectRef]
     );
@@ -440,13 +468,14 @@ export function Field<
         onChange={(
           event: React.ChangeEvent<{ checked: boolean; value: string }>
         ) =>
-          controller.setFieldValue(
-            name,
-            rest.type === "checkbox"
-              ? event.currentTarget.checked
-              : event.currentTarget.value,
-            rest.id
-          )
+          controller.setFieldValue({
+            id: rest.id,
+            key: name,
+            value:
+              rest.type === "checkbox"
+                ? event.currentTarget.checked
+                : event.currentTarget.value
+          })
         }
         onKeyDown={(event: React.KeyboardEvent) => {
           if (event.key === "Enter") {
@@ -454,12 +483,6 @@ export function Field<
           }
         }}
       />
-      {rest.required &&
-        (requiredComponent ? (
-          requiredComponent
-        ) : (
-          <span className={requiredStarClassName}>*</span>
-        ))}
       {(rest.type === "checkbox" || rest.type === "radio") &&
         (typeof label === "string" ? (
           <>
@@ -469,7 +492,15 @@ export function Field<
         ) : (
           label
         ))}
-      {state.message && state.message !== true && (
+      {rest.required &&
+        !hideRequiredStar &&
+        state.isOnFirstPosition &&
+        (requiredComponent ? (
+          requiredComponent
+        ) : (
+          <span className={requiredStarClassName}>*</span>
+        ))}
+      {state.message && state.message !== true && state.isOnFirstPosition && (
         <MessageElement
           className={
             state.isValid === undefined

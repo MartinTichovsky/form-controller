@@ -1,6 +1,6 @@
 import React from "react";
-import { FormController, Select, Submit } from "..";
-import { SelectOption } from "../components/SelectOption";
+import { FormController, Select, SelectOption, Submit } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -8,11 +8,13 @@ type MyForm = {
   select2: string;
 };
 
-export const SelectFieldOptionHidden = () => {
+export const SelectFieldOptionHidden = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
       <FormController<MyForm>
-        data-testid="form-controller"
+        {...props}
         onSubmit={(fields) => console.log(fields)}
       >
         {(controller) => (

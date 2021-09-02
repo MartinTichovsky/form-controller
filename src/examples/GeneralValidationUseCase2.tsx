@@ -1,5 +1,6 @@
 import React from "react";
 import { FormController, Input, Submit } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -7,11 +8,12 @@ type MyForm = {
   surname: string;
 };
 
-export const GeneralValidationUseCase2 = () => {
+export const GeneralValidationUseCase2 = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
       <FormController<MyForm>
-        onSubmit={(fields) => console.log(fields)}
         validateOnChange
         validation={{
           givenName: (value) =>
@@ -23,6 +25,8 @@ export const GeneralValidationUseCase2 = () => {
               (typeof value === "string" && !value.trim())) &&
             "Provide a valid surname"
         }}
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
       >
         {(controller) => (
           <>

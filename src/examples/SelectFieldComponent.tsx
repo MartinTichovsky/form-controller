@@ -1,5 +1,6 @@
 import React from "react";
 import { FormController, Select, Submit } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -63,11 +64,13 @@ const FunctionalSelectComponent = React.forwardRef<
   );
 });
 
-export const SelectFieldComponent = () => {
+export const SelectFieldComponent = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
       <FormController<MyForm>
-        data-testid="form-controller"
+        {...props}
         onSubmit={(fields) => console.log(fields)}
       >
         {(controller) => (

@@ -104,7 +104,11 @@ export const SelectOption = <T extends FormFields<T>>({
     selectRef.current !== undefined
   ) {
     setTimeout(() => {
-      controller.setFieldValue(name as keyof T, selectRef.current!.value, id);
+      controller.setFieldValue({
+        id,
+        key: name as keyof T,
+        value: selectRef.current!.value
+      });
     }, 10);
   } else {
     executeAfterAll(controller as Controller<FormFields<unknown>>);

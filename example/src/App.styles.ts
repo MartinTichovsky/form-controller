@@ -23,22 +23,8 @@ export const Content = styled("div")({
 
         ".field-required-star": {
           color: "red",
-          marginLeft: 5
-        },
-
-        input: {
-          borderStyle: "solid",
-          borderWidth: 1
-        },
-
-        "input.field-invalid, select.field-invalid, textarea.field-invalid": {
-          borderColor: "#ff0000",
-          outlineColor: "#c50303"
-        },
-
-        "input.field-valid, select.field-valid, textarea.field-valid": {
-          borderColor: "#05ff5e",
-          outlineColor: "#0ae056"
+          marginLeft: 5,
+          verticalAlign: "top"
         }
       },
 
@@ -50,6 +36,23 @@ export const Content = styled("div")({
         maxWidth: 300
       }
     }
+  }
+});
+
+export const ContentWithColoredInputs = styled("div")({
+  input: {
+    borderStyle: "solid",
+    borderWidth: 1
+  },
+
+  "input.field-invalid, select.field-invalid, textarea.field-invalid": {
+    borderColor: "#ff0000",
+    outlineColor: "#c50303"
+  },
+
+  "input.field-valid, select.field-valid, textarea.field-valid": {
+    borderColor: "#05ff5e",
+    outlineColor: "#0ae056"
   }
 });
 

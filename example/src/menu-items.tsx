@@ -41,6 +41,7 @@ import { TextFieldHiddenUseCase1 } from "form-controller/lib/examples/TextFieldH
 import { TextFieldHiddenUseCase2 } from "form-controller/lib/examples/TextFieldHiddenUseCase2";
 import { TextFieldMessageComponent } from "form-controller/lib/examples/TextFieldMessageComponent";
 import { TextFieldValidationDependencies } from "form-controller/lib/examples/TextFieldValidationDependencies";
+import { ContentWithColoredInputs } from "./App.styles";
 
 interface MenuIitem {
   label: string;
@@ -251,7 +252,11 @@ export const menuItems: MenuItems = {
     {
       label: "Required",
       key: "required",
-      render: () => <GeneralRequired validateOnChange={false} />
+      render: () => (
+        <ContentWithColoredInputs>
+          <GeneralRequired />
+        </ContentWithColoredInputs>
+      )
     },
     {
       label: "MessageFor - UseCase 1",

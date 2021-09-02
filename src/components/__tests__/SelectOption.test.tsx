@@ -122,7 +122,7 @@ describe("SelectOption", () => {
 
     // set input value
     act(() => {
-      controller.setFieldValue("input", "some text");
+      controller.setFieldValue({ key: "input", value: "some text" });
     });
 
     // check the render count
@@ -137,7 +137,7 @@ describe("SelectOption", () => {
 
     // set select value
     act(() => {
-      controller.setFieldValue("select", testText);
+      controller.setFieldValue({ key: "select", value: testText });
     });
 
     // check the render count
@@ -147,7 +147,7 @@ describe("SelectOption", () => {
 
     // set input value
     act(() => {
-      controller.setFieldValue("input", "");
+      controller.setFieldValue({ key: "input", value: "" });
     });
 
     // option should be disabled
@@ -188,7 +188,7 @@ describe("SelectOption", () => {
 
     // set input value
     act(() => {
-      controller.setFieldValue("input", "some text");
+      controller.setFieldValue({ key: "input", value: "some text" });
     });
 
     // check the render count
@@ -203,7 +203,7 @@ describe("SelectOption", () => {
 
     // set select value
     act(() => {
-      controller.setFieldValue("select", testText);
+      controller.setFieldValue({ key: "select", value: testText });
     });
 
     // check the render count
@@ -213,7 +213,7 @@ describe("SelectOption", () => {
 
     // set input value
     act(() => {
-      controller.setFieldValue("input", "");
+      controller.setFieldValue({ key: "input", value: "" });
     });
 
     // option should not be in the document

@@ -1,6 +1,6 @@
 import React from "react";
-import { FormController, Input, Submit } from "..";
-import { Validation } from "../components/Validation";
+import { FormController, Input, Submit, Validation } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -9,7 +9,9 @@ type MyForm = {
   radioVolume3: string;
 };
 
-export const RadioFieldDefaultValuesUseCase1 = () => {
+export const RadioFieldDefaultValuesUseCase1 = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
       <FormController<MyForm>
@@ -17,6 +19,7 @@ export const RadioFieldDefaultValuesUseCase1 = () => {
           radioVolume1: "Option 1-1",
           radioVolume3: "Option 3-3"
         }}
+        {...props}
         onSubmit={(fields) => console.log(fields)}
       >
         {(controller) => (
@@ -36,7 +39,6 @@ export const RadioFieldDefaultValuesUseCase1 = () => {
                   controller={controller}
                   data-testid="radio-1-1"
                   disableIf={(fields) => fields.radioVolume3 !== "Option 3-1"}
-                  hideMessage={false}
                   label="Option 1-1"
                   name="radioVolume1"
                   type="radio"
@@ -72,7 +74,6 @@ export const RadioFieldDefaultValuesUseCase1 = () => {
                 <Input
                   controller={controller}
                   data-testid="radio-2-1"
-                  hideMessage={false}
                   label="Option 2-1"
                   name="radioVolume2"
                   type="radio"
@@ -107,7 +108,6 @@ export const RadioFieldDefaultValuesUseCase1 = () => {
                   controller={controller}
                   data-testid="radio-3-1"
                   disableIf={(fields) => fields.radioVolume2 !== "Option 2-1"}
-                  hideMessage={false}
                   label="Option 3-1"
                   name="radioVolume3"
                   type="radio"

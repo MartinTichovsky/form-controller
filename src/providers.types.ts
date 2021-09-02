@@ -18,5 +18,9 @@ export type ValidationProviderProps<
 > = React.PropsWithChildren<{
   readonly disableIf?: (fields: Partial<T>) => boolean;
   readonly hideIf?: (fields: Partial<T>) => boolean;
+  readonly hideMessage?: boolean;
+  readonly hideRequiredStar?: boolean;
+  readonly required?: boolean;
+  readonly requiredComponent?: JSX.Element;
   readonly validate?: ValidationAction<T[K]>;
 }>;

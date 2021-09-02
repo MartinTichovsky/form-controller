@@ -1,5 +1,6 @@
 import React from "react";
 import { FormController, Input, Submit } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { wait } from "../utils/utils";
 import { Template } from "./utils/Template";
 
@@ -9,13 +10,15 @@ type MyForm = {
   surname: string;
 };
 
-export const GeneralAsynchronousValidation = () => {
+export const GeneralAsynchronousValidation = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
       <FormController<MyForm>
-        data-testid="form-controller"
-        onSubmit={(fields) => console.log(fields)}
         validateOnChange
+        {...props}
+        onSubmit={(fields) => console.log(fields)}
       >
         {(controller) => (
           <>

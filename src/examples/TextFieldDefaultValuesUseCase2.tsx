@@ -1,5 +1,6 @@
 import React from "react";
 import { FormController, Input, Submit } from "..";
+import { FormControllerComponentProps } from "../components/FormController/types";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -11,11 +12,14 @@ const initialValues: Partial<MyForm> = {
   givenName: "James"
 };
 
-export const TextFieldDefaultValuesUseCase2 = () => {
+export const TextFieldDefaultValuesUseCase2 = (
+  props: Partial<FormControllerComponentProps<MyForm>>
+) => {
   return (
     <Template>
       <FormController<MyForm>
         initialValues={initialValues}
+        {...props}
         onSubmit={(fields) => console.log(fields)}
       >
         {(controller) => (
