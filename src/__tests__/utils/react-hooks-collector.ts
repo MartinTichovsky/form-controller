@@ -347,5 +347,52 @@ export const mockReactHooks = (
     });
 
     return origin.useEffect(mockedAction, ...deps);
+  },
+  useState: function useState(initialValue: unknown) {
+    const result = origin.useState(initialValue);
+
+    let componentName: string;
+
+    // get caller function name from error stack since Funcion.caller is deprecated
+    try {
+      throw new Error();
+    } catch (ex) {
+      const functionsMatches = ex.stack.match(
+        /(\w+)@|at (Function\.)?(\w+) \(/g
+      );
+      const parentFunctionMatches = functionsMatches[0].match(
+        /(\w+)@|at (Function\.)?(\w+) \(/
+      );
+      componentName = parentFunctionMatches[1] || parentFunctionMatches[3];
+    }
+
+    const { index, renderIndex } = hooksCollector.registerHook(
+      componentName,
+      "useState"
+    );
+
+    const dataTestId = hooksCollector.activeDataTestId;
+
+    const mockedAction = jest.fn((...props) => {
+      result[1](...props);
+    });
+
+    Object.defineProperties(
+      mockedAction,
+      Object.getOwnPropertyDescriptors(result[1])
+    );
+
+    hooksCollector.setHook({
+      componentName,
+      dataTestId,
+      index,
+      props: {
+        action: mockedAction
+      },
+      renderIndex,
+      type: "useState"
+    });
+
+    return result;
   }
 });
