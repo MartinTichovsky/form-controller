@@ -67,6 +67,7 @@ export interface FieldType<
     MessageComponent,
     name,
     onFormChange,
+    requiredComponent,
     validate,
     validateOnChange,
     validationDependencies,
@@ -74,7 +75,10 @@ export interface FieldType<
     ...rest
   }: React.PropsWithChildren<
     FieldPublicProps<T, K> & {
+      className?: string;
       onFormChange?: (name: K, props: typeof rest) => void;
+      required?: boolean;
+      requiredComponent?: JSX.Element;
     } & (
         | ({
             Component: undefined;
@@ -182,6 +186,7 @@ type RestProps<T> = Omit<
   | "name"
   | "onChange"
   | "onFormChange"
+  | "requiredComponent"
   | "validate"
   | "validateOnChange"
   | "validationDependencies"

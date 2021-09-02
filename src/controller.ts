@@ -969,6 +969,7 @@ export class Controller<T extends FormFields<T>> {
       }
 
       if (this._fields[key]!.isValidated) {
+        this.validateActions(key, this._fields[key]!.validationResult);
         return;
       }
 

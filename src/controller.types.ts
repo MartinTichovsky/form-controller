@@ -25,6 +25,7 @@ export interface ControllerProps<T extends FormFields<T>> {
     | {
         [key in keyof T]?: (
           value: T[key] | undefined,
+          fields: Partial<T>,
           props: unknown
         ) => ValidationResult;
       };
@@ -145,6 +146,7 @@ export interface SubscribeValidator<T> {
 export type Validation<T> = {
   [key in keyof T]?: (
     value: T[key] | undefined,
+    fields: Partial<T>,
     props: unknown
   ) => ValidationResult;
 };

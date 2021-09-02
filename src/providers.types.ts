@@ -6,9 +6,10 @@ export interface SelectProviderProps {
   selectRef: React.MutableRefObject<HTMLSelectElement | undefined>;
 }
 
-export type ValidationAction<T> = (
+export type ValidationAction<T, E = unknown, P = unknown> = (
   value: T | undefined,
-  props: unknown
+  fields: Partial<E>,
+  props: P
 ) => ValidationResult;
 
 export type ValidationProviderProps<

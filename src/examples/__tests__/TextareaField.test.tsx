@@ -4,6 +4,7 @@ import React from "react";
 import { TextareaField } from "../TextareaField";
 
 console.log = jest.fn();
+console.warn = jest.fn();
 
 const errorTestId = "error";
 const invalidTestId = "invalid-text";
@@ -31,7 +32,7 @@ test("TextareaField", async () => {
   });
 
   // check the onSubmit event
-  expect(console.log).toBeCalledTimes(0);
+  expect(console.warn).not.toBeCalled();
 
   // error text should be shown
   expect(screen.getByTestId(errorTestId)).toBeTruthy();
@@ -92,7 +93,7 @@ test("TextareaField", async () => {
   });
 
   // check the onSubmit event
-  expect(console.log).toBeCalledTimes(0);
+  expect(console.warn).not.toBeCalled();
 
   // invalid text should be shown
   expect(() => screen.getByTestId(errorTestId)).toThrowError();

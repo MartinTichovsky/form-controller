@@ -5,6 +5,7 @@ import { TextFieldValidationDependencies } from "../TextFieldValidationDependenc
 import { testInvalidMessage } from "../utils/selectors";
 
 console.log = jest.fn();
+console.warn = jest.fn();
 
 const error1TestId = "error-1";
 const error2TestId = "error-2";
@@ -35,7 +36,7 @@ const testSuite = async (
     });
 
     // check the onSubmit action
-    expect(console.log).toBeCalledTimes(0);
+    expect(console.warn).not.toBeCalled();
 
     // three errors should be shown
     testInvalidMessage(container, 3);
@@ -65,7 +66,7 @@ const testSuite = async (
   });
 
   // check the onSubmit action
-  expect(console.log).toBeCalledTimes(0);
+  expect(console.warn).not.toBeCalled();
 
   // input a text
   fireEvent.change(screen.getByTestId(input1TestId), {
@@ -86,7 +87,7 @@ const testSuite = async (
   });
 
   // check the onSubmit action
-  expect(console.log).toBeCalledTimes(0);
+  expect(console.warn).not.toBeCalled();
 
   // input a text
   fireEvent.change(screen.getByTestId(input2TestId), {

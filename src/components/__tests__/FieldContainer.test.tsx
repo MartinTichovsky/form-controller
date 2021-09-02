@@ -440,7 +440,7 @@ describe("FieldContainer", () => {
 
       expect(passedValues.initialState).toEqual({
         isDisabled: false,
-        isValid: true,
+        isValid: undefined,
         isVisible: true
       });
     });
@@ -457,7 +457,7 @@ describe("FieldContainer", () => {
 
       expect(passedValues.initialState).toEqual({
         isDisabled: true,
-        isValid: true,
+        isValid: undefined,
         isVisible: true
       });
     });
@@ -474,7 +474,7 @@ describe("FieldContainer", () => {
 
       expect(passedValues.initialState).toEqual({
         isDisabled: false,
-        isValid: true,
+        isValid: undefined,
         isVisible: true,
         message: undefined
       });
@@ -501,7 +501,7 @@ describe("FieldContainer", () => {
 
       expect(passedValues.initialState).toEqual({
         isDisabled: false,
-        isValid: false,
+        isValid: undefined,
         isVisible: true
       });
     });
@@ -518,8 +518,27 @@ describe("FieldContainer", () => {
 
       expect(passedValues.initialState).toEqual({
         isDisabled: false,
-        isValid: true,
+        isValid: undefined,
         isVisible: false
+      });
+    });
+  });
+
+  describe("initialValidation", () => {
+    test("Default", () => {
+      render(
+        <FieldContainerComponent
+          controller={controller}
+          initialValidation
+          fieldType="input"
+          name="input"
+        />
+      );
+
+      expect(passedValues.initialState).toEqual({
+        isDisabled: false,
+        isValid: true,
+        isVisible: true
       });
     });
   });

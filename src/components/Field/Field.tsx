@@ -1,8 +1,12 @@
 import React from "react";
 import {
-  invalidClassName,
+  invalidFieldClassName,
+  invalidMessageClassName,
   messageClassName,
-  validClassName
+  requiredClassName,
+  requiredStarClassName,
+  validFieldClassName,
+  validMessageClassName
 } from "../../constants";
 import { FormFields, ValidationResult } from "../../controller.types";
 import { SelectProvider } from "../../providers";
@@ -39,6 +43,7 @@ export function Field<
   MessageComponent,
   name,
   onFormChange,
+  requiredComponent,
   validate,
   validateOnChange,
   validationDependencies,
@@ -112,11 +117,12 @@ export function Field<
             }));
           } else if (
             !validationResult &&
-            refState.current!.message !== undefined
+            (refState.current!.message !== undefined ||
+              refState.current?.isValid !== isValid)
           ) {
             setState((prevState) => ({
               ...prevState,
-              isValid: undefined,
+              isValid,
               message: undefined
             }));
           }
@@ -415,6 +421,19 @@ export function Field<
       <ComponentElement
         {...restProps}
         {...props}
+        className={
+          state.isValid === undefined
+            ? rest.required
+              ? `${rest.className} ${requiredClassName}`
+              : rest.className
+            : `${rest.className !== undefined ? `${rest.className} ` : ""}${
+                rest.required ? `${requiredClassName} ` : ""
+              }${
+                state.isValid === false
+                  ? invalidFieldClassName
+                  : validFieldClassName
+              }`
+        }
         disabled={state.isDisabled}
         key={key.current}
         name={name as string}
@@ -435,6 +454,12 @@ export function Field<
           }
         }}
       />
+      {rest.required &&
+        (requiredComponent ? (
+          requiredComponent
+        ) : (
+          <span className={requiredStarClassName}>*</span>
+        ))}
       {(rest.type === "checkbox" || rest.type === "radio") &&
         (typeof label === "string" ? (
           <>
@@ -450,7 +475,9 @@ export function Field<
             state.isValid === undefined
               ? messageClassName
               : `${messageClassName} ${
-                  state.isValid === false ? invalidClassName : validClassName
+                  state.isValid === false
+                    ? invalidMessageClassName
+                    : validMessageClassName
                 }`
           }
         >

@@ -1,7 +1,7 @@
 import React from "react";
 import { FormController, Input, MessageFor, Submit } from "..";
 import { Validation } from "../components/Validation";
-import { invalidClassName } from "../constants";
+import { invalidMessageClassName } from "../constants";
 import { Template } from "./utils/Template";
 
 type MyForm = {
@@ -33,7 +33,7 @@ export const RadioFieldDefaultValuesUseCase2 = () => {
                 <b>Radio Volume 1</b>
                 <MessageFor controller={controller} name="radioVolume1">
                   <span
-                    className={invalidClassName}
+                    className={invalidMessageClassName}
                     style={{ color: "red", paddingLeft: 10 }}
                   >
                     Choose an option
@@ -77,7 +77,7 @@ export const RadioFieldDefaultValuesUseCase2 = () => {
                 <b>Radio Volume 2</b>
                 <MessageFor controller={controller} name="radioVolume2">
                   <span
-                    className={invalidClassName}
+                    className={invalidMessageClassName}
                     style={{ color: "red", paddingLeft: 10 }}
                   >
                     Choose an option
@@ -109,7 +109,7 @@ export const RadioFieldDefaultValuesUseCase2 = () => {
                 <b>Radio Volume 3</b>
                 <MessageFor controller={controller} name="radioVolume3">
                   <span
-                    className={invalidClassName}
+                    className={invalidMessageClassName}
                     style={{ color: "red", paddingLeft: 10 }}
                   >
                     Choose an option

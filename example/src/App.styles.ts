@@ -17,8 +17,28 @@ export const Content = styled("div")({
       ".field-row": {
         marginTop: 15,
 
-        ".input-field-message": {
+        ".field-message": {
           paddingLeft: 10
+        },
+
+        ".field-required-star": {
+          color: "red",
+          marginLeft: 5
+        },
+
+        input: {
+          borderStyle: "solid",
+          borderWidth: 1
+        },
+
+        "input.field-invalid, select.field-invalid, textarea.field-invalid": {
+          borderColor: "#ff0000",
+          outlineColor: "#c50303"
+        },
+
+        "input.field-valid, select.field-valid, textarea.field-valid": {
+          borderColor: "#05ff5e",
+          outlineColor: "#0ae056"
         }
       },
 

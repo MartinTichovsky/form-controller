@@ -9,6 +9,7 @@ import { GeneralDisableAllOnSubmit } from "form-controller/lib/examples/GeneralD
 import { GeneralLabel } from "form-controller/lib/examples/GeneralLabel";
 import { GeneralMessageForUseCase1 } from "form-controller/lib/examples/GeneralMessageForUseCase1";
 import { GeneralMessageForUseCase2 } from "form-controller/lib/examples/GeneralMessageForUseCase2";
+import { GeneralRequired } from "form-controller/lib/examples/GeneralRequired";
 import { GeneralValidateOnChange } from "form-controller/lib/examples/GeneralValidateOnChange";
 import { GeneralValidationUseCase1 } from "form-controller/lib/examples/GeneralValidationUseCase1";
 import { GeneralValidationUseCase2 } from "form-controller/lib/examples/GeneralValidationUseCase2";
@@ -246,6 +247,11 @@ export const menuItems: MenuItems = {
       label: "Disable All on Submit",
       key: "disable-all-on-submit",
       render: () => <GeneralDisableAllOnSubmit />
+    },
+    {
+      label: "Required",
+      key: "required",
+      render: () => <GeneralRequired validateOnChange={false} />
     },
     {
       label: "MessageFor - UseCase 1",
