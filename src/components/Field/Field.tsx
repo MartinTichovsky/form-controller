@@ -45,7 +45,9 @@ export function Field<
   name,
   onFormChange,
   requiredComponent,
-  validate,
+  requiredInvalidMessage,
+  requiredValidMessage,
+  validation,
   validateOnChange,
   validationDependencies,
   value,
@@ -113,7 +115,7 @@ export function Field<
     [controller, refState]
   );
 
-  if (validate) {
+  if (validation) {
     React.useEffect(
       () => {
         const action = (validationResult: ValidationResult) => {
@@ -154,29 +156,11 @@ export function Field<
           id: rest.id,
           key: name,
           type: rest.type,
-          validate: () => {
-            let proceedValidation = true;
-
-            if (
-              fieldType === "select" &&
-              selectRef &&
-              selectRef.current &&
-              selectRef.current.options
-            ) {
-              proceedValidation =
-                Array.prototype.filter.call(
-                  selectRef.current.options,
-                  (option) => option.value && !option.disabled
-                ).length > 0;
-            }
-
-            return (
-              proceedValidation &&
-              validate(
-                controller.getFieldValue(name),
-                controller.getObservedFields(name),
-                rest
-              )
+          validation: () => {
+            return validation(
+              controller.getFieldValue(name),
+              controller.getObservedFields(name),
+              rest
             );
           }
         });
@@ -185,7 +169,7 @@ export function Field<
           controller.unsubscribeValidator(name, action);
         };
       }, // eslint-disable-next-line react-hooks/exhaustive-deps
-      [controller, hideMessage, name, setState, validate]
+      [controller, hideMessage, name, setState, validation]
     );
   }
 
@@ -326,8 +310,8 @@ export function Field<
             isSelected: true,
             isValid: field === undefined || field.isValid,
             message:
-              prevState.message && validate
-                ? validate(
+              prevState.message && validation
+                ? validation(
                     field?.value as T[K],
                     controller.getObservedFields(name),
                     rest
@@ -347,8 +331,19 @@ export function Field<
   if (fieldType === "select") {
     React.useEffect(
       () => {
+        let proceedValidation = true;
+
+        if (selectRef && selectRef.current && selectRef.current.options) {
+          proceedValidation =
+            Array.prototype.filter.call(
+              selectRef.current.options,
+              (option) => option.value && !option.disabled
+            ).length > 0;
+        }
+
         controller.setFieldValue({
           id: rest.id,
+          isValid: proceedValidation ? undefined : true,
           key: name,
           silent: true,
           value: selectRef.current?.value
@@ -470,6 +465,7 @@ export function Field<
         ) =>
           controller.setFieldValue({
             id: rest.id,
+            isTouched: true,
             key: name,
             value:
               rest.type === "checkbox"
@@ -500,21 +496,27 @@ export function Field<
         ) : (
           <span className={requiredStarClassName}>*</span>
         ))}
-      {state.message && state.message !== true && state.isOnFirstPosition && (
-        <MessageElement
-          className={
-            state.isValid === undefined
-              ? messageClassName
-              : `${messageClassName} ${
-                  state.isValid === false
-                    ? invalidMessageClassName
-                    : validMessageClassName
-                }`
-          }
-        >
-          {state.message}
-        </MessageElement>
-      )}
+      {((state.message && (state.message !== true || requiredInvalidMessage)) ||
+        (state.isValid && requiredValidMessage)) &&
+        state.isOnFirstPosition && (
+          <MessageElement
+            className={
+              state.isValid === undefined
+                ? messageClassName
+                : `${messageClassName} ${
+                    state.isValid === false
+                      ? invalidMessageClassName
+                      : validMessageClassName
+                  }`
+            }
+          >
+            {state.message && state.message !== true
+              ? state.message
+              : state.isValid
+              ? requiredValidMessage
+              : requiredInvalidMessage}
+          </MessageElement>
+        )}
     </>
   );
 }

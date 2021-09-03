@@ -440,7 +440,7 @@ export const mockReactHooks = (
     }
 
     const mockedSetState = jest.fn((...props) => {
-      result[1](...props);
+      return result[1](...props);
     });
 
     Object.defineProperties(

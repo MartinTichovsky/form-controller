@@ -9,6 +9,8 @@ export const FormControllerComponent = <T extends FormFields<T>>({
   hideIf,
   initialValues,
   onSubmit,
+  requiredInvalidMessage,
+  requiredValidMessage,
   validateOnChange = false,
   validation,
   ...rest
@@ -22,6 +24,8 @@ export const FormControllerComponent = <T extends FormFields<T>>({
         hideIf,
         initialValues,
         onSubmit,
+        requiredInvalidMessage,
+        requiredValidMessage,
         setController,
         validateOnChange,
         validation

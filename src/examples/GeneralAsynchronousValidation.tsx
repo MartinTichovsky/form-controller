@@ -28,7 +28,7 @@ export const GeneralAsynchronousValidation = (
                 data-testid="input-1"
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) => ({
+                validation={(value) => ({
                   content: "pending...",
                   promise: async function () {
                     await wait(2000);
@@ -54,7 +54,7 @@ export const GeneralAsynchronousValidation = (
                 data-testid="input-2"
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) => ({
+                validation={(value) => ({
                   content: "pending...",
                   promise: async function () {
                     await wait(2000);

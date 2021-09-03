@@ -25,7 +25,7 @@ export const SelectFieldOptionHidden = (
                 data-testid="select-1"
                 label="Select 1"
                 name="select1"
-                validate={(value) => !value && "Select an option"}
+                validation={(value) => !value && "Select an option"}
               >
                 <option></option>
                 <SelectOption
@@ -55,7 +55,7 @@ export const SelectFieldOptionHidden = (
                 data-testid="select-2"
                 label="Select 2"
                 name="select2"
-                validate={(value) => !value && "Select an option"}
+                validation={(value) => !value && "Select an option"}
               >
                 <option></option>
                 <option>Option 2-1</option>

@@ -34,7 +34,7 @@ export const TextareaField = (
                 MessageComponent={TextareaMessage}
                 name="description"
                 placeholder="Input a text"
-                validate={(value) => {
+                validation={(value) => {
                   const maxLetters = 10;
                   const lettersRemains = maxLetters - (value?.length || 0);
 

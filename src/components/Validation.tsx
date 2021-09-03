@@ -7,7 +7,7 @@ export const Validation = <T extends FormFields<T>>({
   children,
   disableIf,
   hideIf,
-  validate,
+  validation,
   ...sharedProps
 }: ValidationProps<T>) => {
   return (
@@ -15,7 +15,7 @@ export const Validation = <T extends FormFields<T>>({
       {...sharedProps}
       disableIf={disableIf}
       hideIf={hideIf}
-      validate={validate}
+      validation={validation}
     >
       {children}
     </ValidationProvider>

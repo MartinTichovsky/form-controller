@@ -24,7 +24,7 @@ let passedValues: {
   disableIf?: Function;
   hideIf?: Function;
   initialState?: InitialState;
-  validate?: Function;
+  validation?: Function;
 } = {};
 
 jest.mock("../Field/Field", () => {
@@ -180,7 +180,7 @@ describe("FieldContainer", () => {
             controller={controller}
             fieldType="input"
             name="input"
-            validate={value}
+            validation={value}
           />
         );
       }).toThrowError();
@@ -377,28 +377,28 @@ describe("FieldContainer", () => {
     });
   });
 
-  describe("validate", () => {
-    const validateController = jest.fn();
-    const validatePassed = jest.fn();
-    const validateProvider = jest.fn();
+  describe("validation", () => {
+    const validationController = jest.fn();
+    const validationPassed = jest.fn();
+    const validationProvider = jest.fn();
 
     test("HideIf should be passed", () => {
-      controller["_validation"] = { input: validateController };
+      controller["_validation"] = { input: validationController };
 
       render(
         <FieldContainerComponent
           controller={controller}
           fieldType="input"
           name="input"
-          validate={validatePassed}
+          validation={validationPassed}
         />
       );
 
-      expect(passedValues.validate).toEqual(validatePassed);
+      expect(passedValues.validation).toEqual(validationPassed);
     });
 
     test("Get hideIf from controller", () => {
-      controller["_validation"] = { input: validateController };
+      controller["_validation"] = { input: validationController };
 
       render(
         <FieldContainerComponent
@@ -408,14 +408,14 @@ describe("FieldContainer", () => {
         />
       );
 
-      expect(passedValues.validate).toEqual(validateController);
+      expect(passedValues.validation).toEqual(validationController);
     });
 
     test("Get validation from provider", () => {
-      controller["_validation"] = { input: validateController };
+      controller["_validation"] = { input: validationController };
 
       render(
-        <ValidationProvider validate={validateProvider}>
+        <ValidationProvider validation={validationProvider}>
           <FieldContainerComponent
             controller={controller}
             fieldType="input"
@@ -424,7 +424,7 @@ describe("FieldContainer", () => {
         </ValidationProvider>
       );
 
-      expect(passedValues.validate).toEqual(validateProvider);
+      expect(passedValues.validation).toEqual(validationProvider);
     });
   });
 
@@ -462,13 +462,13 @@ describe("FieldContainer", () => {
       });
     });
 
-    test("IsValid - from validate", () => {
+    test("IsValid - from validation", () => {
       render(
         <FieldContainerComponent
           controller={controller}
           fieldType="input"
           name="input"
-          validate={() => false}
+          validation={() => false}
         />
       );
 
@@ -487,7 +487,7 @@ describe("FieldContainer", () => {
         isValidated: true,
         isVisible: true,
         validationInProgress: false,
-        validationResult: undefined,
+        validationContent: undefined,
         value: undefined
       };
 

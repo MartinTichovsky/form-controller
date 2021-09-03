@@ -21,7 +21,7 @@ export const GeneralValidationUseCase1 = (
         {(controller) => (
           <>
             <Validation
-              validate={(value) =>
+              validation={(value) =>
                 (value === undefined ||
                   (typeof value === "string" && !value.trim())) &&
                 "Provide a valid text"

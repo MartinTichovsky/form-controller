@@ -21,7 +21,7 @@ export const RadioFieldHiddenUseCase3 = (
       >
         {(controller) => (
           <>
-            <Validation validate={(value) => value === undefined}>
+            <Validation validation={(value) => value === undefined}>
               <div className="field-row">
                 <b>Radio Volume 1</b>
                 <MessageFor controller={controller} name="radioVolume1">

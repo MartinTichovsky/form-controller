@@ -45,7 +45,7 @@ export const TextFieldDisabledUseCase2 = (
                 disableIf={(fields) => !fields.givenName?.trim()}
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) =>
+                validation={(value) =>
                   !value?.trim() && "Provide a valid surname"
                 }
               />

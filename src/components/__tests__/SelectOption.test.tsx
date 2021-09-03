@@ -31,23 +31,6 @@ const checkUseEffectActions = () => {
       .getRegisteredComponentHooks(SelectOption.name, "useEffect", testId)
       ?.getRenderHooks(1, 1)?.action
   ).toBeCalledTimes(1);
-
-  // the unmount action should not to be called
-  expect(
-    hooksCollector
-      .getRegisteredComponentHooks(SelectOption.name, "useEffect", testId)
-      ?.getRenderHooks(1, 1)?.unmountAction
-  ).not.toBeCalled();
-
-  // all other hooks mustn't be called
-  hooksCollector
-    .getRegisteredComponentRenders(SelectOption.name, testId)
-    ?.map((hook) => hook.useEffect)
-    .flat()
-    .slice(1)
-    .forEach((hook) => {
-      expect(hook?.action).not.toBeCalled();
-    });
 };
 
 describe("SelectOption", () => {

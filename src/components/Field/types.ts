@@ -2,6 +2,15 @@ import React from "react";
 import { Controller } from "../../controller";
 import { FormFields, ValidationResult } from "../../controller.types";
 
+export interface CommonFieldProps {
+  hideMessage?: boolean;
+  hideRequiredStar?: boolean;
+  required?: boolean;
+  requiredComponent?: JSX.Element;
+  requiredInvalidMessage?: string | JSX.Element;
+  requiredValidMessage?: string | JSX.Element;
+}
+
 export interface InitialState {
   isDisabled: boolean;
   isValid?: boolean;
@@ -69,7 +78,9 @@ export interface FieldType<
     name,
     onFormChange,
     requiredComponent,
-    validate,
+    requiredInvalidMessage,
+    requiredValidMessage,
+    validation,
     validateOnChange,
     validationDependencies,
     value,
@@ -77,11 +88,9 @@ export interface FieldType<
   }: React.PropsWithChildren<
     FieldPublicProps<T, K> & {
       className?: string;
-      hideRequiredStar?: boolean;
       onFormChange?: (name: K, props: typeof rest) => void;
-      required?: boolean;
-      requiredComponent?: JSX.Element;
-    } & (
+    } & CommonFieldProps &
+      (
         | ({
             Component: undefined;
             MessageComponent: undefined;
@@ -119,7 +128,7 @@ export interface FieldType<
                   | "time"
                   | "url"
                   | "week";
-                validate?: (
+                validation?: (
                   value: T[K] | undefined,
                   fields: Partial<T>,
                   props: typeof rest
@@ -132,7 +141,7 @@ export interface FieldType<
                 label: string | JSX.Element;
                 placeholder?: undefined;
                 type: "radio";
-                validate?: undefined;
+                validation?: undefined;
                 validationDependencies?: undefined;
                 value: string;
               }
@@ -141,7 +150,7 @@ export interface FieldType<
                 label: string | JSX.Element;
                 placeholder?: undefined;
                 type: "checkbox";
-                validate?: (
+                validation?: (
                   value: T[K] | undefined,
                   fields: Partial<T>,
                   props: typeof rest
@@ -155,7 +164,7 @@ export interface FieldType<
             label?: string | JSX.Element;
             placeholder?: string;
             type?: undefined;
-            validate?: (
+            validation?: (
               value: T[K] | undefined,
               fields: Partial<T>,
               props: typeof rest
@@ -168,7 +177,7 @@ export interface FieldType<
             label?: string | JSX.Element;
             placeholder?: undefined;
             type?: undefined;
-            validate?: (
+            validation?: (
               value: T[K] | undefined,
               fields: Partial<T>,
               props: typeof rest
@@ -195,7 +204,9 @@ type RestProps<T> = Omit<
   | "onChange"
   | "onFormChange"
   | "requiredComponent"
-  | "validate"
+  | "requiredInvalidMessage"
+  | "requiredValidMessage"
+  | "validation"
   | "validateOnChange"
   | "validationDependencies"
   | "value"

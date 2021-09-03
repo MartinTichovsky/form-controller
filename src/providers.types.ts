@@ -1,4 +1,6 @@
-import { FormFields, ValidationResult } from "./controller.types";
+import { ValidationResult, Value } from "./controller.types";
+
+export type OnChangeCondition = ((fields: {}) => boolean) | undefined;
 
 export interface SelectProviderProps {
   id?: string;
@@ -6,21 +8,18 @@ export interface SelectProviderProps {
   selectRef: React.MutableRefObject<HTMLSelectElement | undefined>;
 }
 
-export type ValidationAction<T, E = unknown, P = unknown> = (
-  value: T | undefined,
-  fields: Partial<E>,
-  props: P
+export type ValidationAction = (
+  value: Value,
+  fields: {},
+  props: {}
 ) => ValidationResult;
 
-export type ValidationProviderProps<
-  T extends FormFields<T>,
-  K extends keyof T
-> = React.PropsWithChildren<{
-  readonly disableIf?: (fields: Partial<T>) => boolean;
-  readonly hideIf?: (fields: Partial<T>) => boolean;
+export interface ValidationProviderProps {
+  readonly disableIf?: OnChangeCondition;
+  readonly hideIf?: OnChangeCondition;
   readonly hideMessage?: boolean;
   readonly hideRequiredStar?: boolean;
   readonly required?: boolean;
   readonly requiredComponent?: JSX.Element;
-  readonly validate?: ValidationAction<T[K]>;
-}>;
+  readonly validation?: ValidationAction;
+}

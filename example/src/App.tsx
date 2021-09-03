@@ -1,6 +1,6 @@
 import React from "react";
 import { Content, Menu } from "./App.styles";
-import { menuItems } from "./menu-items";
+import { menuItemsWithKey } from "./menu-items";
 
 const getHash = () => {
   if (window.location.hash) {
@@ -10,7 +10,7 @@ const getHash = () => {
 };
 
 const getRender = (key: string) => {
-  const item = Object.values(menuItems)
+  const item = Object.values(menuItemsWithKey)
     .flat()
     .find((item) => item.key === key);
   return item?.render();
@@ -18,30 +18,32 @@ const getRender = (key: string) => {
 
 export const App = () => {
   const [selectedKey, setSelectedKey] = React.useState(
-    getHash() || menuItems["Text Fields"][0].key
+    getHash() || menuItemsWithKey["About Examples"][0].key
   );
 
   return (
     <>
       <Menu>
         <ul>
-          {Object.keys(menuItems).map((key, index) => {
+          {Object.keys(menuItemsWithKey).map((key, index) => {
             return (
               <React.Fragment key={index}>
                 <li className="section">{key}</li>
-                {menuItems[key as keyof typeof menuItems].map((item, index) => {
-                  return (
-                    <li className="menu-item" key={index}>
-                      <a
-                        className={selectedKey === item.key ? "selected" : ""}
-                        href={`#${item.key}`}
-                        onClick={() => setSelectedKey(item.key)}
-                      >
-                        {item.label}
-                      </a>
-                    </li>
-                  );
-                })}
+                {menuItemsWithKey[key as keyof typeof menuItemsWithKey].map(
+                  (item, index) => {
+                    return (
+                      <li className="menu-item" key={index}>
+                        <a
+                          className={selectedKey === item.key ? "selected" : ""}
+                          href={`#${item.key}`}
+                          onClick={() => setSelectedKey(item.key)}
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    );
+                  }
+                )}
               </React.Fragment>
             );
           })}

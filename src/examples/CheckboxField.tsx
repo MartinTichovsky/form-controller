@@ -36,7 +36,7 @@ export const CheckboxField = (
                 label="Checkbox 2"
                 name="checkbox2"
                 type="checkbox"
-                validate={(value) =>
+                validation={(value) =>
                   value !== true && "This checkbox must be checked"
                 }
               />

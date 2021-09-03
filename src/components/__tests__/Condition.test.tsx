@@ -49,7 +49,7 @@ const testValidForm = (unmount: () => void) => {
     isValidated: true,
     isVisible: true,
     validationInProgress: false,
-    validationResult: "error",
+    validationContent: "error",
     value: undefined
   };
 
@@ -138,7 +138,7 @@ describe("Condition", () => {
         isValidated: true,
         isVisible: true,
         validationInProgress: false,
-        validationResult: undefined,
+        validationContent: undefined,
         value: undefined
       };
 

@@ -31,7 +31,7 @@ export const TextFieldDefaultValuesUseCase1 = (
                 data-testid="input-1"
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) =>
+                validation={(value) =>
                   (value === undefined || !value.trim()) &&
                   "Provide a valid given name"
                 }
@@ -43,7 +43,7 @@ export const TextFieldDefaultValuesUseCase1 = (
                 data-testid="input-2"
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) =>
+                validation={(value) =>
                   (value === undefined || !value.trim()) &&
                   "Provide a valid surname"
                 }

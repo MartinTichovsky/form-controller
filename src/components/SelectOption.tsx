@@ -13,7 +13,7 @@ const afterAll = new Map<
   { action: () => void; queueId: number }
 >();
 
-const executeAfterAll = <T extends FormFields<T>>(
+const executeAfterAll = async <T extends FormFields<T>>(
   controller: Controller<FormFields<FormType>>
 ) => {
   if (!afterAll.has(controller)) {
@@ -24,27 +24,66 @@ const executeAfterAll = <T extends FormFields<T>>(
   stack.queueId--;
 
   if (stack!.queueId === 0) {
-    setTimeout(() => {
-      stack.action();
-      afterAll.delete(controller);
-    }, 10);
+    stack.action();
+    afterAll.delete(controller);
   }
 };
 
-const registerAfterAll = (
-  name: string,
-  controller: Controller<FormFields<FormType>>
-) => {
-  if (!afterAll.has(controller)) {
-    afterAll.set(controller, {
-      action: () => {
-        controller.validateAll(name);
-      },
-      queueId: 1
-    });
-  } else {
-    afterAll.get(controller)!.queueId++;
+const registerAfterAll = ({
+  controller,
+  id,
+  isDisabled,
+  isVisible,
+  name,
+  selectRef,
+  value
+}: {
+  controller: Controller<FormFields<FormType>>;
+  id?: string;
+  isDisabled: boolean;
+  isVisible: boolean;
+  name: string;
+  selectRef: React.MutableRefObject<HTMLSelectElement | undefined>;
+  value: string | React.ReactNode;
+}) => {
+  let queueId = 1;
+
+  if (afterAll.has(controller)) {
+    queueId = afterAll.get(controller)!.queueId++;
   }
+
+  afterAll.set(controller, {
+    action: () => {
+      let proceedValidation = true;
+
+      if (selectRef && selectRef.current && selectRef.current.options) {
+        proceedValidation =
+          Array.prototype.filter.call(
+            selectRef.current.options,
+            (option) =>
+              (option.value === value && !isDisabled && isVisible) ||
+              (option.value !== value && option.value && !option.disabled)
+          ).length > 0;
+      }
+
+      if (proceedValidation) {
+        controller.setFieldValue({
+          id,
+          key: name,
+          silent: !controller.canFieldBeValidated(name),
+          value: selectRef.current?.value
+        });
+      } else {
+        controller.setFieldValue({
+          id,
+          isValid: true,
+          key: name,
+          value: selectRef.current?.value
+        });
+      }
+    },
+    queueId
+  });
 };
 
 export const SelectOption = <T extends FormFields<T>>({
@@ -60,7 +99,6 @@ export const SelectOption = <T extends FormFields<T>>({
   }
 
   const { id, name, selectRef } = context;
-  const field = controller.getField(name as keyof T);
   const [state, setState] = React.useState<SelectOptionState>({
     isDisabled: disableIf !== undefined && disableIf(controller.fields),
     isVisible: hideIf === undefined || !hideIf(controller.fields)
@@ -70,49 +108,46 @@ export const SelectOption = <T extends FormFields<T>>({
 
   const key = React.useRef(0);
 
-  React.useEffect(() => {
-    const action = () => {
-      const isDisabled =
-        disableIf !== undefined && disableIf(controller.fields);
-      const isVisible = hideIf === undefined || !hideIf(controller.fields);
+  if (disableIf !== undefined || hideIf !== undefined) {
+    React.useEffect(() => {
+      const action = () => {
+        const isDisabled =
+          disableIf !== undefined && disableIf(controller.fields);
+        const isVisible = hideIf === undefined || !hideIf(controller.fields);
 
-      if (
-        refState.current!.isDisabled !== isDisabled ||
-        refState.current!.isVisible !== isVisible
-      ) {
-        registerAfterAll(name, controller as Controller<FormFields<unknown>>);
+        if (
+          refState.current!.isDisabled !== isDisabled ||
+          refState.current!.isVisible !== isVisible
+        ) {
+          registerAfterAll({
+            controller: controller as Controller<FormFields<unknown>>,
+            id,
+            isDisabled,
+            isVisible,
+            name,
+            selectRef,
+            value: rest.value !== undefined ? rest.value : children
+          });
 
-        key.current++;
-        setState({
-          isDisabled,
-          isVisible
-        });
-      }
-    };
+          key.current++;
+          setState({
+            isDisabled,
+            isVisible
+          });
+        }
+      };
 
-    controller.subscribeOnChange(action);
+      controller.subscribeOnChange(action);
 
-    return () => {
-      controller.unsubscribeOnChange(action);
-    };
-  }, [controller, disableIf, hideIf, refState]);
-
-  if (
-    (state.isDisabled || !state.isVisible) &&
-    field !== undefined &&
-    (field.value === children || field.value === rest.value) &&
-    selectRef.current !== undefined
-  ) {
-    setTimeout(() => {
-      controller.setFieldValue({
-        id,
-        key: name as keyof T,
-        value: selectRef.current!.value
-      });
-    }, 10);
-  } else {
-    executeAfterAll(controller as Controller<FormFields<unknown>>);
+      return () => {
+        controller.unsubscribeOnChange(action);
+      };
+    }, [controller, disableIf, hideIf, refState]);
   }
+
+  React.useEffect(() => {
+    executeAfterAll(controller as Controller<FormFields<unknown>>);
+  }, [state]);
 
   if (!state.isVisible) {
     return null;

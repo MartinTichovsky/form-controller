@@ -28,7 +28,7 @@ export const TextFieldValidationDependencies = ({
                 data-testid="input-1"
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(_, fields) =>
+                validation={(_, fields) =>
                   !fields.middleName?.trim() && (
                     <span data-testid="error-1">
                       Provide a valid middle name
@@ -43,7 +43,7 @@ export const TextFieldValidationDependencies = ({
                 data-testid="input-2"
                 name="middleName"
                 placeholder="Input a middle name"
-                validate={(_, fields) => {
+                validation={(_, fields) => {
                   const surname = fields.surname;
                   const givenName = fields.givenName;
                   return (
@@ -62,7 +62,7 @@ export const TextFieldValidationDependencies = ({
                 data-testid="input-3"
                 name="surname"
                 placeholder="Input a surname"
-                validate={(_, fields) =>
+                validation={(_, fields) =>
                   !fields.givenName?.trim() && (
                     <span data-testid="error-3">
                       Provide a valid given name

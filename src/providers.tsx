@@ -1,28 +1,28 @@
 import React from "react";
-import { SharedProps } from "./components/Validation.types";
-import { FormFields } from "./controller.types";
+import { CommonFieldProps } from "./components/Field/types";
 import {
+  OnChangeCondition,
   SelectProviderProps,
   ValidationAction,
   ValidationProviderProps
 } from "./providers.types";
 
+export const commonPropsContext = React.createContext<CommonFieldProps>({});
+
 export const disableIfContext = React.createContext<
-  ((fields: unknown) => boolean) | undefined
+  OnChangeCondition | undefined
 >(undefined);
 
-export const hideIfContext = React.createContext<
-  ((fields: unknown) => boolean) | undefined
->(undefined);
+export const hideIfContext = React.createContext<OnChangeCondition | undefined>(
+  undefined
+);
 
 export const selectContext = React.createContext<
   SelectProviderProps | undefined
 >(undefined);
 
-export const sharedPropsContext = React.createContext<SharedProps>({});
-
-export const validateContext = React.createContext<
-  ValidationAction<string | boolean> | undefined
+export const validationContext = React.createContext<
+  ValidationAction | undefined
 >(undefined);
 
 export const SelectProvider = ({
@@ -34,28 +34,26 @@ export const SelectProvider = ({
   );
 };
 
-export const ValidationProvider = <T extends FormFields<T>, K extends keyof T>({
+export const ValidationProvider = ({
   children,
   disableIf,
   hideIf,
-  validate,
-  ...sharedProps
-}: ValidationProviderProps<T, K>) => {
+  validation,
+  ...commonProps
+}: React.PropsWithChildren<ValidationProviderProps>) => {
   let result = <>{children}</>;
 
-  if (Object.keys(sharedProps).length > 0) {
+  if (Object.keys(commonProps).length > 0) {
     result = (
-      <sharedPropsContext.Provider value={sharedProps}>
+      <commonPropsContext.Provider value={commonProps}>
         {result}
-      </sharedPropsContext.Provider>
+      </commonPropsContext.Provider>
     );
   }
 
   if (disableIf) {
     result = (
-      <disableIfContext.Provider
-        value={disableIf as (fields: unknown) => boolean}
-      >
+      <disableIfContext.Provider value={disableIf}>
         {result}
       </disableIfContext.Provider>
     );
@@ -63,19 +61,15 @@ export const ValidationProvider = <T extends FormFields<T>, K extends keyof T>({
 
   if (hideIf) {
     result = (
-      <hideIfContext.Provider value={hideIf as (fields: unknown) => boolean}>
-        {result}
-      </hideIfContext.Provider>
+      <hideIfContext.Provider value={hideIf}>{result}</hideIfContext.Provider>
     );
   }
 
-  if (validate) {
+  if (validation) {
     result = (
-      <validateContext.Provider
-        value={validate as ValidationAction<string | boolean>}
-      >
+      <validationContext.Provider value={validation}>
         {result}
-      </validateContext.Provider>
+      </validationContext.Provider>
     );
   }
 

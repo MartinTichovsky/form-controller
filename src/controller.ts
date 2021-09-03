@@ -16,7 +16,7 @@ import {
   OnDisable,
   OnDisableAction,
   OnSubmit,
-  OnValidate,
+  OnValidation,
   SetDefaultIsDisabled,
   SetDefaultIsInvalid,
   SetDefaultIsNotVisible,
@@ -70,10 +70,13 @@ export class Controller<T extends FormFields<T>> {
   private onChangeKeyListeners = new Map<keyof T, Set<OnChangeAction>>();
   private onDisableListeners = new Set<OnDisable<T>>();
   private onDisableButtonListeners = new Set<OnDisableAction>();
-  private onValidateListener = new Set<OnValidate<T>>();
+  private onValidationListeners = new Set<OnValidation<T>>();
   private registeredKeys: KeyType<T>[] = [];
   private validationDependencies: ValidationDependencies<T> = {};
   private validatorListeners = new Map<keyof T, Validator>();
+
+  public requiredInvalidMessage?: string | JSX.Element;
+  public requiredValidMessage?: string | JSX.Element;
 
   constructor({
     disableIf,
@@ -81,6 +84,8 @@ export class Controller<T extends FormFields<T>> {
     initialValidation,
     initialValues,
     onSubmit,
+    requiredInvalidMessage,
+    requiredValidMessage,
     setController,
     validateOnChange = false,
     validation
@@ -99,6 +104,9 @@ export class Controller<T extends FormFields<T>> {
     this._setController = setController;
     this._validation = validation;
     this._validateOnChange = validateOnChange;
+
+    this.requiredInvalidMessage = requiredInvalidMessage;
+    this.requiredValidMessage = requiredValidMessage;
 
     this.keyIndex = Controller.uniqueIndex++;
   }
@@ -144,7 +152,7 @@ export class Controller<T extends FormFields<T>> {
     }
   }
 
-  private canFieldBeValidated(key: keyof T) {
+  public canFieldBeValidated(key: keyof T) {
     return (
       this._fields[key]?.validateOnChange ||
       this._validateOnChange ||
@@ -227,9 +235,9 @@ export class Controller<T extends FormFields<T>> {
 
         this._fields[key] = {
           ...this._fields[key],
-          validationResult: result.content,
           isValid: result.isValid,
           isValidated: true,
+          validationContent: result.content,
           validationInProgress: false
         };
 
@@ -310,7 +318,7 @@ export class Controller<T extends FormFields<T>> {
       : 0;
   }
 
-  public getValidateCondition(key: keyof T) {
+  public getValidationCondition(key: keyof T) {
     return this._validation && key in this._validation
       ? this._validation[key]
       : undefined;
@@ -419,11 +427,12 @@ export class Controller<T extends FormFields<T>> {
     if (!(key in this._fields)) {
       this._fields[key] = {
         isDisabled: false,
+        isTouched: false,
         isValid: true,
         isValidated: false,
         isVisible: true,
         validationInProgress: false,
-        validationResult: undefined,
+        validationContent: undefined,
         value: this._initialValues?.[key]
       };
     }
@@ -471,6 +480,8 @@ export class Controller<T extends FormFields<T>> {
         initialValidation: this._initialValidation,
         initialValues: this._initialValues,
         onSubmit: this._onSubmit,
+        requiredInvalidMessage: this.requiredInvalidMessage,
+        requiredValidMessage: this.requiredValidMessage,
         setController: this._setController,
         validateOnChange: this._validateOnChange,
         validation: this._validation
@@ -502,17 +513,18 @@ export class Controller<T extends FormFields<T>> {
         isValidated:
           isValidated && !this.getValidationHasPromise(validationResult),
         isValid: this.getValidationResultBoolean(validationResult),
-        validationResult: this.getValidationResultContent(validationResult)
+        validationContent: this.getValidationResultContent(validationResult)
       };
     } else {
       this._fields[key] = {
         isDisabled: true,
+        isTouched: false,
         isValid: this.getValidationResultBoolean(validationResult),
         isValidated:
           isValidated && !this.getValidationHasPromise(validationResult),
         isVisible: true,
+        validationContent: this.getValidationResultContent(validationResult),
         validationInProgress: false,
-        validationResult: this.getValidationResultContent(validationResult),
         value: this._initialValues?.[key]
       };
     }
@@ -560,19 +572,20 @@ export class Controller<T extends FormFields<T>> {
           !initialValidation &&
           isValidated &&
           !this.getValidationHasPromise(validationResult),
-        validationResult: this.getValidationResultContent(validationResult)
+        validationContent: this.getValidationResultContent(validationResult)
       };
     } else {
       this._fields[key] = {
         isDisabled: false,
+        isTouched: false,
         isValid: this.getValidationResultBoolean(validationResult),
         isValidated:
           !initialValidation &&
           isValidated &&
           !this.getValidationHasPromise(validationResult),
         isVisible: true,
+        validationContent: this.getValidationResultContent(validationResult),
         validationInProgress: false,
-        validationResult: this.getValidationResultContent(validationResult),
         value: this._initialValues?.[key]
       };
     }
@@ -608,17 +621,18 @@ export class Controller<T extends FormFields<T>> {
         isValidated:
           isValidated && !this.getValidationHasPromise(validationResult),
         isVisible: false,
-        validationResult: this.getValidationResultContent(validationResult)
+        validationContent: this.getValidationResultContent(validationResult)
       };
     } else {
       this._fields[key] = {
         isDisabled: false,
+        isTouched: false,
         isValid: this.getValidationResultBoolean(validationResult),
         isValidated:
           isValidated && !this.getValidationHasPromise(validationResult),
         isVisible: false,
+        validationContent: this.getValidationResultContent(validationResult),
         validationInProgress: false,
-        validationResult: this.getValidationResultContent(validationResult),
         value: this._initialValues?.[key]
       };
     }
@@ -655,36 +669,59 @@ export class Controller<T extends FormFields<T>> {
       this._fields[key] = {
         ...props,
         activeId: undefined,
-        validationResult: undefined,
         isDisabled: false,
+        isTouched: false,
         isValid: true,
         isValidated: false,
         isVisible: true,
+        validationContent: undefined,
         validationInProgress: false,
         value: undefined
       };
     }
   }
 
-  public setFieldValue({ id, key, silent, value }: SetFieldValue<T>) {
+  public setFieldValue({
+    id,
+    isTouched,
+    isValid,
+    key,
+    silent,
+    value
+  }: SetFieldValue<T>) {
     if (key in this._fields) {
       this._fields[key] = {
         ...this._fields[key],
         activeId: id,
-        isValidated: false,
+        isTouched:
+          isTouched === undefined ? this._fields[key]!.isTouched : isTouched,
+        isValid: isValid === undefined ? this._fields[key]!.isValid : isValid,
+        isValidated: isValid === undefined ? false : true,
+        validationContent:
+          isValid === undefined
+            ? this._fields[key]!.validationContent
+            : undefined,
         value
       };
     } else {
       this._fields[key] = {
         activeId: id,
-        validationResult: undefined,
         isDisabled: false,
-        isValid: true,
-        isValidated: false,
+        isTouched,
+        isValid: isValid === undefined ? true : isValid,
+        isValidated: isValid === undefined ? false : true,
         isVisible: true,
+        validationContent: undefined,
         validationInProgress: false,
         value
       };
+    }
+
+    if (isValid !== undefined) {
+      this.validateActions(key, this._fields[key]?.validationContent);
+      this.validateAllDependencies(key, silent);
+      this.validationListeners(key);
+      return;
     }
 
     if (
@@ -700,18 +737,19 @@ export class Controller<T extends FormFields<T>> {
     }
 
     this.onChange(key);
-    this.validateListeners(key);
+    this.validationListeners(key);
   }
 
   private setInitialValues(initialValues: Partial<T>) {
     for (let key in initialValues) {
       this._fields[key] = {
-        validationResult: undefined,
         isDisabled: false,
+        isTouched: false,
         isValid: true,
         isValidated: false,
         isVisible: true,
         validationInProgress: false,
+        validationContent: undefined,
         value: initialValues[key]
       };
     }
@@ -837,17 +875,21 @@ export class Controller<T extends FormFields<T>> {
       isVisible: visible
     };
 
+    if (type === "radio") {
+      this.onChange(key);
+      return;
+    }
+
     if (
-      type !== "radio" &&
       visible &&
       this.canFieldBeValidated(key) &&
       (!this._fields[key]!.isValid ||
-        this._fields[key]!.validationResult !== undefined)
+        this._fields[key]!.validationContent !== undefined)
     ) {
       this.validateAll(key);
     } else if (visible) {
       this.validateAll(key, true);
-    } else if (type !== "radio") {
+    } else {
       this._fields[key]!.isValid = true;
     }
 
@@ -868,7 +910,7 @@ export class Controller<T extends FormFields<T>> {
         };
 
         this.validateAll(key, !this.canFieldBeValidated(key));
-        this.validateListenersOnChange(key);
+        this.validationListenersOnChange(key);
         this.isSelectedAction(this._defaultActiveRadioId[key]!);
       } else if (
         this._fields[key]!.value === undefined &&
@@ -876,7 +918,9 @@ export class Controller<T extends FormFields<T>> {
           ?.isVisible === false
       ) {
         this.validateAll(key, !this.canFieldBeValidated(key));
-        this.validateListenersOnChange(key);
+        this.validationListenersOnChange(key);
+      } else {
+        this.validateAll(key, !this._fields[key]?.isTouched);
       }
     });
   }
@@ -927,8 +971,8 @@ export class Controller<T extends FormFields<T>> {
     this.onDisableButtonListeners.add(action);
   }
 
-  public subscribeOnValidate(listener: OnValidate<T>) {
-    this.onValidateListener.add(listener);
+  public subscribeOnValidation(listener: OnValidation<T>) {
+    this.onValidationListeners.add(listener);
   }
 
   public subscribeValidator({
@@ -936,13 +980,13 @@ export class Controller<T extends FormFields<T>> {
     id,
     key,
     type,
-    validate
+    validation
   }: SubscribeValidator<T>) {
     if (!this.validatorListeners.has(key)) {
       this.validatorListeners.set(key, {
         action: undefined,
         actions: type === "radio" ? new Set() : undefined,
-        validate
+        validation
       });
     }
 
@@ -954,11 +998,12 @@ export class Controller<T extends FormFields<T>> {
 
     if (!(key in this._fields)) {
       this._fields[key] = {
-        validationResult: undefined,
         isDisabled: false,
+        isTouched: false,
         isValid: false,
         isValidated: false,
         isVisible: true,
+        validationContent: undefined,
         validationInProgress: false,
         value: this._initialValues?.[key]
       };
@@ -996,8 +1041,8 @@ export class Controller<T extends FormFields<T>> {
     this.onDisableButtonListeners.delete(action);
   }
 
-  public unsubscribeOnValidate(listener: OnValidate<T>) {
-    this.onValidateListener.delete(listener);
+  public unsubscribeOnValidation(listener: OnValidation<T>) {
+    this.onValidationListeners.delete(listener);
   }
 
   public unsubscribeValidator(key: keyof T, action: ValidatorResultAction) {
@@ -1030,15 +1075,15 @@ export class Controller<T extends FormFields<T>> {
       }
 
       if (this._fields[key]!.isValidated && !this._fields[key]!.isValid) {
-        this.validateActions(key, this._fields[key]!.validationResult);
+        this.validateActions(key, this._fields[key]!.validationContent);
       }
 
       if (this._fields[key]!.isValidated) {
-        this.validateActions(key, this._fields[key]!.validationResult);
+        this.validateActions(key, this._fields[key]!.validationContent);
         return;
       }
 
-      const validationResult = validator.validate();
+      const validationResult = validator.validation();
 
       let isValid: boolean;
       let validationContent: ValidationContentResult;
@@ -1068,7 +1113,7 @@ export class Controller<T extends FormFields<T>> {
 
       this._fields[key] = {
         ...this._fields[key],
-        validationResult: validationContent,
+        validationContent,
         isValid,
         isValidated: true
       };
@@ -1077,7 +1122,7 @@ export class Controller<T extends FormFields<T>> {
     });
 
     this._afterAll.validate.push(() => {
-      this.validateListeners();
+      this.validationListeners();
     });
 
     this.onChange();
@@ -1101,7 +1146,7 @@ export class Controller<T extends FormFields<T>> {
       return;
     }
 
-    const validationResult = validator.validate();
+    const validationResult = validator.validation();
 
     let isValid: boolean;
     let validationContent: ValidationContentResult;
@@ -1137,7 +1182,7 @@ export class Controller<T extends FormFields<T>> {
 
     this._fields[key] = {
       ...this._fields[key],
-      validationResult: validationContent,
+      validationContent,
       isValid,
       isValidated: true
     };
@@ -1159,23 +1204,23 @@ export class Controller<T extends FormFields<T>> {
     }
   }
 
-  private validateListeners(key?: keyof T) {
-    for (let listener of Array.from(this.onValidateListener.values())) {
+  private validationListeners(key?: keyof T) {
+    for (let listener of Array.from(this.onValidationListeners.values())) {
       if (listener.key in this._fields && (!key || key === listener.key)) {
         listener.action(
           !this._fields[listener.key]!.isDisabled &&
             this._fields[listener.key]!.isVisible &&
             this.canFieldBeValidated(listener.key),
           this._fields[listener.key]!.isValid,
-          this._fields[listener.key]?.validationResult
+          this._fields[listener.key]?.validationContent
         );
       }
     }
   }
 
-  private validateListenersOnChange(key: keyof T) {
+  private validationListenersOnChange(key: keyof T) {
     if (this.canFieldBeValidated(key)) {
-      this.validateListeners(key);
+      this.validationListeners(key);
     }
   }
 }

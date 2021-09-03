@@ -99,7 +99,7 @@ export const TextFieldComponent = (
                 labelText="Class component"
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) =>
+                validation={(value) =>
                   !value?.trim() && "Provide a valid given name"
                 }
               />
@@ -112,7 +112,7 @@ export const TextFieldComponent = (
                 labelText="Functional component"
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) =>
+                validation={(value) =>
                   !value?.trim() && "Provide a valid surname"
                 }
               />

@@ -25,7 +25,7 @@ export const RadioFieldDefaultValuesUseCase1 = (
         {(controller) => (
           <>
             <Validation
-              validate={(value) =>
+              validation={(value) =>
                 value === undefined && (
                   <span style={{ color: "red" }}>Choose an option</span>
                 )

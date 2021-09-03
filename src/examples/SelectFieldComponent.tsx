@@ -82,7 +82,7 @@ export const SelectFieldComponent = (
                 data-testid="select-1"
                 labelText="Class Select"
                 name="select1"
-                validate={(value) => !value && "Select an option"}
+                validation={(value) => !value && "Select an option"}
               >
                 <option></option>
                 <option>Option 1-1</option>
@@ -97,7 +97,7 @@ export const SelectFieldComponent = (
                 data-testid="select-2"
                 labeltext="Functional Select"
                 name="select2"
-                validate={(value) => !value && "Select an option"}
+                validation={(value) => !value && "Select an option"}
               >
                 <option></option>
                 <option>Option 2-1</option>

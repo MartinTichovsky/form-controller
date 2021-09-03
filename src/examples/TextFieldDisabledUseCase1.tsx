@@ -28,7 +28,7 @@ export const TextFieldDisabledUseCase1 = (
                 disableIf={(fields) => !fields.surname?.trim()}
                 name="salutation"
                 placeholder="Input salutation"
-                validate={(value) =>
+                validation={(value) =>
                   !value?.trim() && "Provide a valid salutation"
                 }
               />
@@ -39,7 +39,7 @@ export const TextFieldDisabledUseCase1 = (
                 data-testid="input-2"
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) =>
+                validation={(value) =>
                   !value?.trim() && "Provide a valid given name"
                 }
               />
@@ -51,7 +51,7 @@ export const TextFieldDisabledUseCase1 = (
                 disableIf={(fields) => !fields.givenName?.trim()}
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) =>
+                validation={(value) =>
                   !value?.trim() && "Provide a valid surname"
                 }
               />

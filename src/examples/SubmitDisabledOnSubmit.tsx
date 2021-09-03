@@ -34,7 +34,7 @@ export const SubmitDisabledOnSubmit = (
                 data-testid="input-1"
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) =>
+                validation={(value) =>
                   !value?.trim() && "Provide a valid given name"
                 }
               />
@@ -45,7 +45,7 @@ export const SubmitDisabledOnSubmit = (
                 data-testid="input-2"
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) =>
+                validation={(value) =>
                   !value?.trim() && "Provide a valid surname"
                 }
               />

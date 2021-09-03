@@ -23,7 +23,7 @@ export const SelectField = (
                 controller={controller}
                 data-testid="select"
                 name="select"
-                validate={(value) => !value && "Select an option"}
+                validation={(value) => !value && "Select an option"}
               >
                 <option></option>
                 <option>Option 1</option>

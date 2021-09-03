@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+import { wait } from "../../utils/utils";
 import { SelectFieldOptionDisabled } from "../SelectFieldOptionDisabled";
 import { testInvalidMessage } from "../utils/selectors";
 
@@ -41,10 +42,8 @@ test("SelectFieldOptionDisabled", async () => {
     target: { value: "Option 2-2" }
   });
 
-  await waitFor(async () => {
-    // one error must be shown
-    testInvalidMessage(container, 1);
-  });
+  // one error must be shown
+  testInvalidMessage(container, 1);
 
   // submit invalid form
   await waitFor(async () => {
@@ -115,9 +114,8 @@ test("SelectFieldOptionDisabled", async () => {
   ).not.toBeDisabled();
 
   // one error must be shown
-  await waitFor(async () => {
-    testInvalidMessage(container, 1);
-  });
+
+  testInvalidMessage(container, 1);
 
   // submit valid form
   await waitFor(async () => {
@@ -148,9 +146,12 @@ test("SelectFieldOptionDisabled", async () => {
   });
 
   // select an option
+
   fireEvent.change(screen.getByTestId(select2TestId), {
     target: { value: "" }
   });
+
+  await wait(1000);
 
   // one error must be shown
   testInvalidMessage(container, 1);
@@ -182,6 +183,9 @@ test("SelectFieldOptionDisabled", async () => {
     screen.getByTestId(select1TestId).querySelectorAll("option")[3]
   ).toBeDisabled();
 
+  // one error must be shown
+  testInvalidMessage(container, 1);
+
   // reset the form
   fireEvent.click(screen.getByTestId(resetTestId));
 
@@ -195,6 +199,22 @@ test("SelectFieldOptionDisabled", async () => {
   expect(
     screen.getByTestId(select1TestId).querySelectorAll("option")[3]
   ).toBeDisabled();
+
+  // errors should not be shown
+  testInvalidMessage(container, 0);
+
+  // select an option
+  fireEvent.change(screen.getByTestId(select2TestId), {
+    target: { value: "Option 2-1" }
+  });
+
+  // errors should not be shown
+  testInvalidMessage(container, 0);
+
+  // select an option
+  fireEvent.change(screen.getByTestId(select1TestId), {
+    target: { value: "Option 1-1" }
+  });
 
   // errors should not be shown
   testInvalidMessage(container, 0);

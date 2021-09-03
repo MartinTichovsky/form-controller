@@ -35,10 +35,8 @@ test("SelectFieldOptionHidden", async () => {
     target: { value: "Option 2-2" }
   });
 
-  await waitFor(async () => {
-    // one error must be shown
-    testInvalidMessage(container, 1);
-  });
+  // one error must be shown
+  testInvalidMessage(container, 1);
 
   // submit invalid form
   await waitFor(async () => {
@@ -103,9 +101,7 @@ test("SelectFieldOptionHidden", async () => {
   ).toHaveTextContent("Option 1-3");
 
   // one error must be shown
-  await waitFor(async () => {
-    testInvalidMessage(container, 1);
-  });
+  testInvalidMessage(container, 1);
 
   // submit valid form
   await waitFor(async () => {

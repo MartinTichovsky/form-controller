@@ -29,7 +29,7 @@ export const GeneralMessageForUseCase1 = (
                 hideMessage
                 name="givenName"
                 placeholder="Input a given name"
-                validate={(value) => !value?.trim()}
+                validation={(value) => !value?.trim()}
               />
             </div>
             <div className="field-row">
@@ -44,7 +44,7 @@ export const GeneralMessageForUseCase1 = (
                 hideMessage
                 name="surname"
                 placeholder="Input a surname"
-                validate={(value) => ({
+                validation={(value) => ({
                   content: surnameErrorText,
                   isValid: !!value?.trim()
                 })}

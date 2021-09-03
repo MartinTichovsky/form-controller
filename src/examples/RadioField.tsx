@@ -19,7 +19,7 @@ export const RadioField = (
         {(controller) => (
           <>
             <Validation
-              validate={(value) =>
+              validation={(value) =>
                 value === undefined && (
                   <span style={{ color: "red" }}>Choose an option</span>
                 )

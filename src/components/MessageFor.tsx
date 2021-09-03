@@ -16,7 +16,7 @@ export const MessageFor = <T extends FormFields<T>, K extends keyof T>({
   refState.current = state;
 
   React.useEffect(() => {
-    const onValidate = {
+    const onValidation = {
       action: (
         show: boolean,
         fieldIsValid: boolean,
@@ -39,10 +39,10 @@ export const MessageFor = <T extends FormFields<T>, K extends keyof T>({
       key: name
     };
 
-    controller.subscribeOnValidate(onValidate);
+    controller.subscribeOnValidation(onValidation);
 
     return () => {
-      controller.unsubscribeOnValidate(onValidate);
+      controller.unsubscribeOnValidation(onValidation);
     };
   }, [controller, refState, setState]);
 

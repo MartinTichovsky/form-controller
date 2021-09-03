@@ -31,7 +31,7 @@ export function App() {
                   id="aaaa"
                   controller={controller}
                   name="name"
-                  validate={(a) =>
+                  validation={(a) =>
                     a !== undefined && a.trim() !== "" ? null : "Error"
                   }
                   type="number"
@@ -45,7 +45,7 @@ export function App() {
                   }
                   controller={controller}
                   name="counter"
-                  validate={(a) => parseInt(a || "") !== 0 && "Error"}
+                  validation={(a) => parseInt(a || "") !== 0 && "Error"}
                 />
               </div>
               <div>
@@ -57,7 +57,7 @@ export function App() {
                   abcd="a"
                   controller={controller}
                   name="counter"
-                  validate={(a) => parseInt(a || "") !== 0 && "Error"}
+                  validation={(a) => parseInt(a || "") !== 0 && "Error"}
                 />
               </div>
               <div>

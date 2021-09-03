@@ -8,20 +8,32 @@ import {
   Validation
 } from "..";
 import { FormControllerComponentProps } from "../components/FormController/types";
-import { requiredStarClassName } from "../constants";
 import { Template } from "./utils/Template";
 
 type MyForm = {
   description: string;
-  checkbox1: boolean;
-  checkbox2: boolean;
   givenName: string;
   radio: string;
   select: string;
   surname: string;
 };
 
-export const GeneralRequired = ({
+const RequiredInvalidMessage = (props: { className: string }) => (
+  <span {...props} style={{ color: "red", verticalAlign: "top" }}>
+    This Field is required
+  </span>
+);
+
+const RequiredValidMessage = (props: { className: string }) => (
+  <span
+    {...props}
+    style={{ color: "green", fontSize: ".8em", verticalAlign: "top" }}
+  >
+    &#10003;
+  </span>
+);
+
+export const GeneralRequiredCommonMessage = ({
   disableIfNotValid = true,
   disabledByDefault = true,
   validateOnChange = true,
@@ -35,11 +47,15 @@ export const GeneralRequired = ({
       <FormController<MyForm>
         {...props}
         onSubmit={(fields) => console.log(fields)}
+        requiredInvalidMessage={
+          <RequiredInvalidMessage className="invalid-global" />
+        }
+        requiredValidMessage={<RequiredValidMessage className="valid-global" />}
         validateOnChange={validateOnChange}
       >
         {(controller) => (
           <>
-            <div className="field-row">
+            <div data-testid="input-field-row-1" className="field-row">
               <Input
                 controller={controller}
                 data-testid="input-1"
@@ -49,35 +65,23 @@ export const GeneralRequired = ({
                 required
               />
             </div>
-            <div className="field-row">
+            <div data-testid="input-field-row-2" className="field-row">
               <Input
                 controller={controller}
                 data-testid="input-2"
                 label="Surname"
                 name="surname"
                 placeholder="Input a surname"
-                requiredComponent={
-                  <span
-                    className={requiredStarClassName}
-                    style={{ color: "blue", marginLeft: 5 }}
-                  >
-                    *
-                  </span>
-                }
                 required
-                validation={(value) =>
-                  value!.trim().length < 4 && (
-                    <span style={{ color: "red" }}>
-                      Surname must have at least 4 letters
-                    </span>
-                  )
-                }
               />
             </div>
             <Validation
               required
-              validation={(value) =>
-                !value && <span style={{ color: "red" }}>Select an option</span>
+              requiredInvalidMessage={
+                <RequiredInvalidMessage className="invalid-validation" />
+              }
+              requiredValidMessage={
+                <RequiredValidMessage className="valid-validation" />
               }
             >
               <div className="field-row" data-testid="radio-field-row-1">
@@ -91,7 +95,7 @@ export const GeneralRequired = ({
                   value="Option 1"
                 />
               </div>
-              <div className="field-row" data-testid="radio-field-row-2">
+              <div className="field-row">
                 <Input
                   controller={controller}
                   data-testid="radio-2"
@@ -101,7 +105,7 @@ export const GeneralRequired = ({
                   value="Option 2"
                 />
               </div>
-              <div className="field-row" data-testid="radio-field-row-3">
+              <div className="field-row">
                 <Input
                   controller={controller}
                   data-testid="radio-3"
@@ -112,18 +116,13 @@ export const GeneralRequired = ({
                 />
               </div>
             </Validation>
-            <div className="field-row">
+            <div data-testid="select-field-row" className="field-row">
               <Select
                 controller={controller}
                 data-testid="select"
                 label="Select"
                 name="select"
                 required
-                validation={(value) =>
-                  !value && (
-                    <span style={{ color: "red" }}>Select an option</span>
-                  )
-                }
               >
                 <option></option>
                 <option>Option 1</option>
@@ -131,40 +130,19 @@ export const GeneralRequired = ({
                 <option value="option-3">Option 3</option>
               </Select>
             </div>
-            <div className="field-row">
+            <div data-testid="textarea-field-row" className="field-row">
               <Textarea
                 controller={controller}
                 data-testid="textarea"
                 name="description"
                 placeholder="Input a text"
                 required
-              />
-            </div>
-            <div className="field-row">
-              <Input
-                controller={controller}
-                data-testid="checkbox-1"
-                label="Required with message"
-                name="checkbox1"
-                required
-                type="checkbox"
-                validation={(value) =>
-                  !value && (
-                    <span style={{ color: "red" }}>
-                      This checkbox must be checked
-                    </span>
-                  )
+                requiredInvalidMessage={
+                  <RequiredInvalidMessage className="invalid-field" />
                 }
-              />
-            </div>
-            <div className="field-row">
-              <Input
-                controller={controller}
-                data-testid="checkbox-2"
-                label="Required without message"
-                name="checkbox2"
-                required
-                type="checkbox"
+                requiredValidMessage={
+                  <RequiredValidMessage className="valid-field" />
+                }
               />
             </div>
             <div className="field-row">
