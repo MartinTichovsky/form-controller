@@ -17,7 +17,7 @@ const resetTestId = "reset";
 const submitTestId = "submit";
 
 beforeEach(() => {
-  hooksCollector.reset();
+  collector.reset();
 });
 
 test("TextField", async () => {
@@ -33,14 +33,14 @@ test("TextField", async () => {
   );
 
   // render count check
-  expect(hooksCollector.getComponentRenderCount(Field.name, input1TestId)).toBe(
+  expect(collector.getCallCount(Field.name, { dataTestId: input1TestId })).toBe(
     1
   );
-  expect(hooksCollector.getComponentRenderCount(Field.name, input2TestId)).toBe(
+  expect(collector.getCallCount(Field.name, { dataTestId: input2TestId })).toBe(
     1
   );
   expect(
-    hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+    collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
   ).toBe(1);
 
   // errors should not be shown
@@ -54,14 +54,14 @@ test("TextField", async () => {
   // two errors should be shown
   testInvalidMessage(container, 2);
 
-  expect(hooksCollector.getComponentRenderCount(Field.name, input1TestId)).toBe(
+  expect(collector.getCallCount(Field.name, { dataTestId: input1TestId })).toBe(
     2
   );
-  expect(hooksCollector.getComponentRenderCount(Field.name, input2TestId)).toBe(
+  expect(collector.getCallCount(Field.name, { dataTestId: input2TestId })).toBe(
     2
   );
   expect(
-    hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+    collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
   ).toBe(1);
 
   // repeat submit should no more render the inputs
@@ -69,14 +69,14 @@ test("TextField", async () => {
     fireEvent.click(screen.getByTestId(submitTestId));
   });
 
-  expect(hooksCollector.getComponentRenderCount(Field.name, input1TestId)).toBe(
+  expect(collector.getCallCount(Field.name, { dataTestId: input1TestId })).toBe(
     2
   );
-  expect(hooksCollector.getComponentRenderCount(Field.name, input2TestId)).toBe(
+  expect(collector.getCallCount(Field.name, { dataTestId: input2TestId })).toBe(
     2
   );
   expect(
-    hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+    collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
   ).toBe(1);
 
   // input a text to the first input, after change or submit should be visible only one error message
@@ -122,55 +122,52 @@ describe("Re-render", () => {
 
     // render count check
     expect(
-      hooksCollector.getComponentRenderCount(
-        FormControllerComponent.name,
-        formControllerTestId
-      )
+      collector.getCallCount(FormControllerComponent.name, {
+        dataTestId: formControllerTestId
+      })
     ).toBe(2); // beacause the form controller creates a controller `useEffect` and set it with `setController`
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
+      collector.getCallCount(Field.name, { dataTestId: input1TestId })
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
+      collector.getCallCount(Field.name, { dataTestId: input2TestId })
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+      collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
     ).toBe(1);
 
     fireEvent.click(screen.getByTestId(reRenderTestId));
 
     // render count check
     expect(
-      hooksCollector.getComponentRenderCount(
-        FormControllerComponent.name,
-        formControllerTestId
-      )
+      collector.getCallCount(FormControllerComponent.name, {
+        dataTestId: formControllerTestId
+      })
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
+      collector.getCallCount(Field.name, { dataTestId: input1TestId })
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
+      collector.getCallCount(Field.name, { dataTestId: input2TestId })
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+      collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
     ).toBe(1);
 
     // render count check
     expect(
-      hooksCollector.getComponentRenderCount(
-        FormControllerComponent.name,
-        formControllerTestId
-      )
+      collector.getCallCount(FormControllerComponent.name, {
+        dataTestId: formControllerTestId
+      })
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
+      collector.getCallCount(Field.name, { dataTestId: input1TestId })
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
+      collector.getCallCount(Field.name, { dataTestId: input2TestId })
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+      collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
     ).toBe(1);
   });
 
@@ -185,19 +182,18 @@ describe("Re-render", () => {
 
     // render count check
     expect(
-      hooksCollector.getComponentRenderCount(
-        FormControllerComponent.name,
-        formControllerTestId
-      )
+      collector.getCallCount(FormControllerComponent.name, {
+        dataTestId: formControllerTestId
+      })
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
+      collector.getCallCount(Field.name, { dataTestId: input1TestId })
     ).toBe(2); // because the second render is the submit event (validation)
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
+      collector.getCallCount(Field.name, { dataTestId: input2TestId })
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+      collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
     ).toBe(1);
 
     // two errors should be shown
@@ -220,19 +216,18 @@ describe("Re-render", () => {
 
     // render count check
     expect(
-      hooksCollector.getComponentRenderCount(
-        FormControllerComponent.name,
-        formControllerTestId
-      )
+      collector.getCallCount(FormControllerComponent.name, {
+        dataTestId: formControllerTestId
+      })
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
+      collector.getCallCount(Field.name, { dataTestId: input1TestId })
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
+      collector.getCallCount(Field.name, { dataTestId: input2TestId })
     ).toBe(1);
     expect(
-      hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+      collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
     ).toBe(1);
 
     expect(screen.getByTestId(input1TestId)).toHaveValue("James");
@@ -257,38 +252,36 @@ describe("Reset", () => {
 
     // render count check
     expect(
-      hooksCollector.getComponentRenderCount(
-        FormControllerComponent.name,
-        formControllerTestId
-      )
+      collector.getCallCount(FormControllerComponent.name, {
+        dataTestId: formControllerTestId
+      })
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
+      collector.getCallCount(Field.name, { dataTestId: input1TestId })
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
+      collector.getCallCount(Field.name, { dataTestId: input2TestId })
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+      collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
     ).toBe(2);
 
     fireEvent.click(screen.getByTestId(resetTestId));
 
     // render count check
     expect(
-      hooksCollector.getComponentRenderCount(
-        FormControllerComponent.name,
-        formControllerTestId
-      )
+      collector.getCallCount(FormControllerComponent.name, {
+        dataTestId: formControllerTestId
+      })
     ).toBe(4);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
+      collector.getCallCount(Field.name, { dataTestId: input1TestId })
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
+      collector.getCallCount(Field.name, { dataTestId: input2TestId })
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+      collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
     ).toBe(3);
   });
 
@@ -303,19 +296,18 @@ describe("Reset", () => {
 
     // render count check
     expect(
-      hooksCollector.getComponentRenderCount(
-        FormControllerComponent.name,
-        formControllerTestId
-      )
+      collector.getCallCount(FormControllerComponent.name, {
+        dataTestId: formControllerTestId
+      })
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
+      collector.getCallCount(Field.name, { dataTestId: input1TestId })
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
+      collector.getCallCount(Field.name, { dataTestId: input2TestId })
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+      collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
     ).toBe(2);
 
     // no errors must be shown
@@ -337,19 +329,18 @@ describe("Reset", () => {
 
     // render count check
     expect(
-      hooksCollector.getComponentRenderCount(
-        FormControllerComponent.name,
-        formControllerTestId
-      )
+      collector.getCallCount(FormControllerComponent.name, {
+        dataTestId: formControllerTestId
+      })
     ).toBe(3);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input1TestId)
+      collector.getCallCount(Field.name, { dataTestId: input1TestId })
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(Field.name, input2TestId)
+      collector.getCallCount(Field.name, { dataTestId: input2TestId })
     ).toBe(2);
     expect(
-      hooksCollector.getComponentRenderCount(SubmitComponent.name, submitTestId)
+      collector.getCallCount(SubmitComponent.name, { dataTestId: submitTestId })
     ).toBe(2);
 
     expect(screen.getByTestId(input1TestId)).toHaveValue("");

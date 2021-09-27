@@ -33,25 +33,22 @@ const RequiredValidMessage = (props: { className: string }) => (
   </span>
 );
 
-export const GeneralRequiredCommonMessage = ({
-  disableIfNotValid = true,
-  disabledByDefault = true,
-  validateOnChange = true,
-  ...props
-}: Partial<FormControllerComponentProps<MyForm>> & {
-  disableIfNotValid?: boolean;
-  disabledByDefault?: boolean;
-}) => {
+export const GeneralRequiredCommonMessage = (
+  props: Partial<FormControllerComponentProps<MyForm>> & {
+    disableIfNotValid?: boolean;
+    disabledByDefault?: boolean;
+  }
+) => {
   return (
     <Template>
       <FormController<MyForm>
+        validateOnChange={true}
         {...props}
         onSubmit={(fields) => console.log(fields)}
         requiredInvalidMessage={
           <RequiredInvalidMessage className="invalid-global" />
         }
         requiredValidMessage={<RequiredValidMessage className="valid-global" />}
-        validateOnChange={validateOnChange}
       >
         {(controller) => (
           <>
@@ -149,8 +146,8 @@ export const GeneralRequiredCommonMessage = ({
               <Submit
                 controller={controller}
                 data-testid="submit"
-                disabledByDefault={disabledByDefault}
-                disableIfNotValid={disableIfNotValid}
+                disabledByDefault={props.disabledByDefault || true}
+                disableIfNotValid={props.disableIfNotValid || true}
               >
                 Submit
               </Submit>{" "}

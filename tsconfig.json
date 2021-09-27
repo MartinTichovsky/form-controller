@@ -15,10 +15,10 @@
     "suppressImplicitAnyIndexErrors": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "lib",
+    "rootDir": "src",
     "skipLibCheck": true,
     "stripInternal": true,
-    "sourceMap": true,
-    "rootDir": "src"
+    "sourceMap": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "example"]

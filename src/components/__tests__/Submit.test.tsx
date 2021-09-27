@@ -26,52 +26,48 @@ const defaultFunctionalityTest = async (
     expect(button).not.toBeDisabled();
   }
 
-  const useCallbackHooks = hooksCollector.getRegisteredComponentHooks(
-    SubmitComponent.name,
-    "useCallback"
-  );
-  const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
-    SubmitComponent.name,
-    "useEffect"
-  );
+  const useCallbackHooks = collector
+    .getReactHooks(SubmitComponent.name)
+    ?.getHooksByType("useCallback");
+  const useEffectHooks = collector
+    .getReactHooks(SubmitComponent.name)
+    ?.getHooksByType("useEffect");
 
   // render and call count
-  expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(1);
-  expect(useCallbackHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.unmountAction).toBeUndefined();
-  expect(useEffectHooks?.getRenderHooks(1, 2)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 2)?.unmountAction).not.toBeCalled();
+  expect(collector.getCallCount(SubmitComponent.name)).toBe(1);
+  expect(useCallbackHooks?.get(1)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(1)?.unmount).toBeUndefined();
+  expect(useEffectHooks?.get(2)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(2)?.unmount).not.toBeCalled();
 
   // onSubmit is not provided, click on the button should do nothing
   await waitFor(async () => {
     fireEvent.click(button);
   });
 
-  expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(1);
-  expect(useCallbackHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.unmountAction).toBeUndefined();
-  expect(useEffectHooks?.getRenderHooks(1, 2)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 2)?.unmountAction).not.toBeCalled();
+  expect(collector.getCallCount(SubmitComponent.name)).toBe(1);
+  expect(useCallbackHooks?.get(1)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(1)?.unmount).toBeUndefined();
+  expect(useEffectHooks?.get(2)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(2)?.unmount).not.toBeCalled();
 
   // unmout the component
   unmount();
 
-  expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(1);
-  expect(useCallbackHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.unmountAction).toBeUndefined();
-  expect(useEffectHooks?.getRenderHooks(1, 2)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 2)?.unmountAction).toBeCalledTimes(
-    1
-  );
+  expect(collector.getCallCount(SubmitComponent.name)).toBe(1);
+  expect(useCallbackHooks?.get(1)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(1)?.unmount).toBeUndefined();
+  expect(useEffectHooks?.get(2)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(2)?.unmount).toBeCalledTimes(1);
 };
 
 console.error = jest.fn();
 
 beforeEach(() => {
-  hooksCollector.reset();
+  collector.reset();
   const setController = jest.fn();
   controller = new Controller<Form>({ setController });
 });
@@ -139,69 +135,38 @@ describe("Submit", () => {
       const button = screen.getByText(buttonText);
       expect(button).toBeDisabled();
 
-      const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
-        SubmitComponent.name,
-        "useEffect"
-      );
+      const useEffectHooks = collector
+        .getReactHooks(SubmitComponent.name)
+        ?.getHooksByType("useEffect");
 
       // render and call count
-      expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(
-        1
-      );
-      expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-      expect(
-        useEffectHooks?.getRenderHooks(1, 1)?.unmountAction
-      ).not.toBeCalled();
-      expect(useEffectHooks?.getRenderHooks(1, 2)?.action).toBeCalledTimes(1);
-      expect(
-        useEffectHooks?.getRenderHooks(1, 2)?.unmountAction
-      ).not.toBeCalled();
+      expect(collector.getCallCount(SubmitComponent.name)).toBe(1);
+      expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(1)?.unmount).not.toBeCalled();
+      expect(useEffectHooks?.get(2)?.action).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(2)?.unmount).not.toBeCalled();
 
       // when onChange is triggered and the form is valid, the button should be enabled
       controller.onChange();
 
       expect(button).not.toBeDisabled();
-      expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(
-        2
-      );
-      expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-      expect(
-        useEffectHooks?.getRenderHooks(1, 1)?.unmountAction
-      ).not.toBeCalled();
-      expect(useEffectHooks?.getRenderHooks(1, 2)?.action).toBeCalledTimes(1);
-      expect(
-        useEffectHooks?.getRenderHooks(1, 2)?.unmountAction
-      ).not.toBeCalled();
+      expect(collector.getCallCount(SubmitComponent.name)).toBe(2);
+      expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(1)?.unmount).not.toBeCalled();
+      expect(useEffectHooks?.get(2)?.action).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(2)?.unmount).not.toBeCalled();
 
       // all other hooks mustn't be called
-      const registeredHooks = hooksCollector.getRegisteredComponentRenders(
-        SubmitComponent.name
-      );
+      const registeredHooks = collector.getCallCount(SubmitComponent.name);
 
       // unmout the component
       unmount();
 
-      expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(
-        2
-      );
-      expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-      expect(
-        useEffectHooks?.getRenderHooks(1, 1)?.unmountAction
-      ).toBeCalledTimes(1);
-      expect(useEffectHooks?.getRenderHooks(1, 2)?.action).toBeCalledTimes(1);
-      expect(
-        useEffectHooks?.getRenderHooks(1, 2)?.unmountAction
-      ).toBeCalledTimes(1);
-
-      registeredHooks
-        ?.map((hook) => hook.useEffect)
-        .flat()
-        ?.slice(3)
-        .forEach((renderHook) => {
-          if (renderHook) {
-            expect(renderHook.action).not.toBeCalled();
-          }
-        });
+      expect(collector.getCallCount(SubmitComponent.name)).toBe(2);
+      expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(1)?.unmount).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(2)?.action).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(2)?.unmount).toBeCalledTimes(1);
     });
 
     test("OnSubmit is provided", async () => {
@@ -224,7 +189,7 @@ describe("Submit", () => {
       expect(onSubmit).toBeCalledTimes(1);
     });
 
-    test("On disable action triggered from controller should disable the button", () => {
+    test("On disable action triggered from controller should disable the button - use case 1", () => {
       render(
         <SubmitComponent controller={controller}>{buttonText}</SubmitComponent>
       );
@@ -238,7 +203,7 @@ describe("Submit", () => {
       expect(button).toBeDisabled();
     });
 
-    test("On disable action triggered from controller should disable the button", async () => {
+    test("On disable action triggered from controller should disable the button - use case 2", async () => {
       const testid = "test-id";
 
       const onSubmit = jest.fn();
@@ -266,31 +231,24 @@ describe("Submit", () => {
       // button with test id must exist
       const button = screen.getByTestId(testid);
       expect(button).not.toBeDisabled();
-      expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(
-        1
-      );
+      expect(collector.getCallCount(SubmitComponent.name)).toBe(1);
 
       // test disability
       controller.disableFields(true);
+
       expect(button).toBeDisabled();
-      expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(
-        2
-      );
+      expect(collector.getCallCount(SubmitComponent.name)).toBe(2);
 
       // click should not trigger onSubmit
       await waitFor(async () => {
         fireEvent.click(button);
       });
 
-      expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(
-        2
-      );
+      expect(collector.getCallCount(SubmitComponent.name)).toBe(2);
 
       // enable button to be able click
       controller.disableFields(false);
-      expect(hooksCollector.getComponentRenderCount(SubmitComponent.name)).toBe(
-        3
-      );
+      expect(collector.getCallCount(SubmitComponent.name)).toBe(3);
 
       // click on the button must call onSubmit
       await waitFor(async () => {

@@ -8,3 +8,4 @@ export { Submit } from "./components/Submit/Submit";
 export { Textarea } from "./components/Textarea";
 export { Validation } from "./components/Validation";
 export { Controller } from "./controller";
+export { FormFields } from "./controller.types";

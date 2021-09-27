@@ -13,7 +13,7 @@ const testText2 = "Test text 2";
 let controller: Controller<Form>;
 
 beforeEach(() => {
-  hooksCollector.reset();
+  collector.reset();
   const setController = jest.fn();
   controller = new Controller<Form>({ setController });
 
@@ -31,27 +31,24 @@ beforeEach(() => {
 const checkUseEffectActions = () => {
   // useEffect should be called one times
   expect(
-    hooksCollector
-      .getRegisteredComponentHooks(MessageFor.name, "useEffect")
-      ?.getRenderHooks(1, 1)?.action
+    collector
+      .getReactHooks(MessageFor.name)
+      ?.getHooksByType("useEffect")
+      ?.get(1)?.action
   ).toBeCalledTimes(1);
 
   // the unmount action should not to be called
   expect(
-    hooksCollector
-      .getRegisteredComponentHooks(MessageFor.name, "useEffect")
-      ?.getRenderHooks(1, 1)?.unmountAction
+    collector
+      .getReactHooks(MessageFor.name)
+      ?.getHooksByType("useEffect")
+      ?.get(1)?.unmount
   ).not.toBeCalled();
 
-  // all other hooks mustn't be called
-  hooksCollector
-    .getRegisteredComponentRenders(MessageFor.name)
-    ?.map((hook) => hook.useEffect)
-    .flat()
-    .slice(1)
-    .forEach((hook) => {
-      expect(hook?.action).not.toBeCalled();
-    });
+  // more useEffects should not exist
+  expect(
+    collector.getReactHooks(MessageFor.name)?.getHooksByType("useEffect").get(2)
+  ).toBeUndefined();
 };
 
 describe("MessageFor", () => {
@@ -66,7 +63,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // the component should be rendered one times
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(1);
+    expect(collector.getCallCount(MessageFor.name)).toBe(1);
 
     checkUseEffectActions();
 
@@ -82,7 +79,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(1);
+    expect(collector.getCallCount(MessageFor.name)).toBe(1);
 
     checkUseEffectActions();
 
@@ -107,7 +104,7 @@ describe("MessageFor", () => {
     expect(screen.getByText(testText1)).toBeTruthy();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(2);
+    expect(collector.getCallCount(MessageFor.name)).toBe(2);
 
     checkUseEffectActions();
 
@@ -122,7 +119,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(3);
+    expect(collector.getCallCount(MessageFor.name)).toBe(3);
 
     checkUseEffectActions();
 
@@ -137,7 +134,7 @@ describe("MessageFor", () => {
     expect(screen.getByText(testText1)).toBeTruthy();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(4);
+    expect(collector.getCallCount(MessageFor.name)).toBe(4);
 
     checkUseEffectActions();
 
@@ -152,7 +149,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(5);
+    expect(collector.getCallCount(MessageFor.name)).toBe(5);
 
     checkUseEffectActions();
 
@@ -168,7 +165,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(5);
+    expect(collector.getCallCount(MessageFor.name)).toBe(5);
 
     checkUseEffectActions();
 
@@ -176,9 +173,10 @@ describe("MessageFor", () => {
 
     // the unmount action should be called
     expect(
-      hooksCollector
-        .getRegisteredComponentHooks(MessageFor.name, "useEffect")
-        ?.getRenderHooks(1, 1)?.unmountAction
+      collector
+        .getReactHooks(MessageFor.name)
+        ?.getHooksByType("useEffect")
+        ?.get(1)?.unmount
     ).toBeCalled();
   });
 
@@ -193,7 +191,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // the component should be rendered one times
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(1);
+    expect(collector.getCallCount(MessageFor.name)).toBe(1);
 
     checkUseEffectActions();
 
@@ -209,7 +207,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(1);
+    expect(collector.getCallCount(MessageFor.name)).toBe(1);
 
     checkUseEffectActions();
 
@@ -224,7 +222,7 @@ describe("MessageFor", () => {
     expect(screen.getByText(testText1)).toBeTruthy();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(2);
+    expect(collector.getCallCount(MessageFor.name)).toBe(2);
 
     checkUseEffectActions();
 
@@ -239,7 +237,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(3);
+    expect(collector.getCallCount(MessageFor.name)).toBe(3);
 
     checkUseEffectActions();
 
@@ -254,7 +252,7 @@ describe("MessageFor", () => {
     expect(screen.getByText(testText1)).toBeTruthy();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(4);
+    expect(collector.getCallCount(MessageFor.name)).toBe(4);
 
     checkUseEffectActions();
 
@@ -269,7 +267,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(5);
+    expect(collector.getCallCount(MessageFor.name)).toBe(5);
 
     checkUseEffectActions();
 
@@ -285,7 +283,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(5);
+    expect(collector.getCallCount(MessageFor.name)).toBe(5);
 
     checkUseEffectActions();
 
@@ -301,7 +299,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // check render count
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(5);
+    expect(collector.getCallCount(MessageFor.name)).toBe(5);
 
     checkUseEffectActions();
 
@@ -309,9 +307,10 @@ describe("MessageFor", () => {
 
     // the unmount action should be called
     expect(
-      hooksCollector
-        .getRegisteredComponentHooks(MessageFor.name, "useEffect")
-        ?.getRenderHooks(1, 1)?.unmountAction
+      collector
+        .getReactHooks(MessageFor.name)
+        ?.getHooksByType("useEffect")
+        ?.get(1)?.unmount
     ).toBeCalled();
   });
 
@@ -325,7 +324,7 @@ describe("MessageFor", () => {
     expect(() => screen.getByText(testText1)).toThrowError();
 
     // the component should be rendered one times
-    expect(hooksCollector.getComponentRenderCount(MessageFor.name)).toBe(1);
+    expect(collector.getCallCount(MessageFor.name)).toBe(1);
 
     // manually call private method
     act(() => {

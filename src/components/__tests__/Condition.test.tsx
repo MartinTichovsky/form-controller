@@ -10,37 +10,29 @@ type Form = {
   input: string;
 };
 
-const testid = "test-id";
+const testId = "test-id";
 let controller: Controller<Form>;
 
 const testValidForm = (unmount: () => void) => {
-  const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
-    ConditionComponent.name,
-    "useEffect"
-  );
-  const registeredHooks = hooksCollector.getRegisteredComponentRenders(
-    ConditionComponent.name
-  );
+  const useEffectHooks = collector
+    .getReactHooks(ConditionComponent.name)
+    ?.getHooksByType("useEffect");
 
   // Should be rendered once and action should be called, by default is children not rendered
-  expect(hooksCollector.getComponentRenderCount(ConditionComponent.name)).toBe(
-    1
-  );
-  expect(useEffectHooks?.getRender(1)?.length).toBe(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.unmountAction).not.toBeCalled();
-  expect(() => screen.getByTestId(testid)).toThrowError();
+  expect(collector.getCallCount(ConditionComponent.name)).toBe(1);
+  expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(1)?.unmount).not.toBeCalled();
+  expect(useEffectHooks?.get(2)).toBeUndefined();
+  expect(() => screen.getByTestId(testId)).toThrowError();
 
   // onChange is trigered and the form is valid, it should re-render the component and show the children
   controller.onChange();
 
-  expect(hooksCollector.getComponentRenderCount(ConditionComponent.name)).toBe(
-    2
-  );
-  expect(useEffectHooks?.getRender(1)?.length).toBe(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.unmountAction).not.toBeCalled();
-  expect(screen.getByTestId(testid)).toBeTruthy();
+  expect(collector.getCallCount(ConditionComponent.name)).toBe(2);
+  expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(1)?.unmount).not.toBeCalled();
+  expect(useEffectHooks?.get(2)).toBeUndefined();
+  expect(screen.getByTestId(testId)).toBeTruthy();
 
   // set form values and make the form invalid, it should hide the children
   controller["_fields"].input = {
@@ -54,38 +46,23 @@ const testValidForm = (unmount: () => void) => {
   };
 
   controller.onChange();
-  expect(hooksCollector.getComponentRenderCount(ConditionComponent.name)).toBe(
-    3
-  );
-  expect(useEffectHooks?.getRender(1)?.length).toBe(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.unmountAction).not.toBeCalled();
-  expect(() => screen.getByTestId(testid)).toThrowError();
-
-  // for each all hooks except for the first
-  registeredHooks
-    ?.map((hook) => hook.useEffect)
-    .flat()
-    ?.slice(1)
-    .forEach((renderHook) => {
-      if (renderHook) {
-        expect(renderHook.action).not.toBeCalled();
-      }
-    });
+  expect(collector.getCallCount(ConditionComponent.name)).toBe(3);
+  expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+  expect(useEffectHooks?.get(1)?.unmount).not.toBeCalled();
+  expect(useEffectHooks?.get(2)).toBeUndefined();
+  expect(() => screen.getByTestId(testId)).toThrowError();
 
   // unmount the component
   unmount();
 
   // unmount action should be called
-  expect(useEffectHooks?.getRenderHooks(1, 1)?.unmountAction).toBeCalledTimes(
-    1
-  );
+  expect(useEffectHooks?.get(1)?.unmount).toBeCalledTimes(1);
 };
 
 console.error = jest.fn();
 
 beforeEach(() => {
-  hooksCollector.reset();
+  collector.reset();
   const setController = jest.fn();
   controller = new Controller<Form>({ setController });
 });
@@ -125,12 +102,12 @@ describe("Condition", () => {
     test("IfFormValid is undefined and showIf is undefined", () => {
       render(
         <Condition controller={controller}>
-          <div data-testid={testid}></div>
+          <div data-testid={testId}></div>
         </Condition>
       );
 
       controller.onChange();
-      expect(screen.getByTestId(testid)).toBeTruthy();
+      expect(screen.getByTestId(testId)).toBeTruthy();
 
       controller["_fields"].input = {
         isDisabled: false,
@@ -143,7 +120,7 @@ describe("Condition", () => {
       };
 
       controller.onChange();
-      expect(screen.getByTestId(testid)).toBeTruthy();
+      expect(screen.getByTestId(testId)).toBeTruthy();
     });
   });
 
@@ -151,16 +128,19 @@ describe("Condition", () => {
     test("Default functionality", () => {
       render(
         <ConditionComponent controller={controller}>
-          <div data-testid={testid}></div>
+          <div data-testid={testId}></div>
         </ConditionComponent>
       );
 
-      expect(() => screen.getByTestId(testid)).toThrowError();
+      expect(() => screen.getByTestId(testId)).toThrowError();
     });
 
     test("dynamicRender", () => {
       let num = 0;
-      const TestComponent = () => <div data-testid={testid}>{++num}</div>;
+      const TestComponent = () => {
+        return <div data-testid={testId}>{++num}</div>;
+      };
+
       render(
         <ConditionComponent controller={controller} dynamicRender>
           <TestComponent />
@@ -169,15 +149,15 @@ describe("Condition", () => {
 
       controller.onChange();
 
-      expect(screen.getByTestId(testid)).toHaveTextContent("1");
+      expect(screen.getByTestId(testId)).toHaveTextContent("1");
 
       controller.onChange();
 
-      expect(screen.getByTestId(testid)).toHaveTextContent("2");
+      expect(screen.getByTestId(testId)).toHaveTextContent("2");
 
       controller.onChange();
 
-      expect(screen.getByTestId(testid)).toHaveTextContent("3");
+      expect(screen.getByTestId(testId)).toHaveTextContent("3");
     });
 
     test("dynamicContent", () => {
@@ -185,27 +165,27 @@ describe("Condition", () => {
       render(
         <ConditionComponent
           controller={controller}
-          dynamicContent={() => <div data-testid={testid}>{++num}</div>}
+          dynamicContent={() => <div data-testid={testId}>{++num}</div>}
         />
       );
 
       controller.onChange();
 
-      expect(screen.getByTestId(testid)).toHaveTextContent("1");
+      expect(screen.getByTestId(testId)).toHaveTextContent("1");
 
       controller.onChange();
 
-      expect(screen.getByTestId(testid)).toHaveTextContent("2");
+      expect(screen.getByTestId(testId)).toHaveTextContent("2");
 
       controller.onChange();
 
-      expect(screen.getByTestId(testid)).toHaveTextContent("3");
+      expect(screen.getByTestId(testId)).toHaveTextContent("3");
     });
 
     test("IfFormValid is true and showIf is undefined", () => {
       const { unmount } = render(
         <ConditionComponent controller={controller} ifFormValid>
-          <div data-testid={testid}></div>
+          <div data-testid={testId}></div>
         </ConditionComponent>
       );
 
@@ -219,7 +199,7 @@ describe("Condition", () => {
 
       const { unmount } = render(
         <ConditionComponent controller={controller} showIf={showIf}>
-          <div data-testid={testid}></div>
+          <div data-testid={testId}></div>
         </ConditionComponent>
       );
 
@@ -233,7 +213,7 @@ describe("Condition", () => {
 
       const { unmount } = render(
         <ConditionComponent controller={controller} ifFormValid showIf={showIf}>
-          <div data-testid={testid}></div>
+          <div data-testid={testId}></div>
         </ConditionComponent>
       );
 
@@ -247,36 +227,27 @@ describe("Condition", () => {
 
       render(
         <ConditionComponent controller={controller} ifFormValid showIf={showIf}>
-          <div data-testid={testid}></div>
+          <div data-testid={testId}></div>
         </ConditionComponent>
       );
 
-      expect(() => screen.getByTestId(testid)).toThrowError();
+      expect(() => screen.getByTestId(testId)).toThrowError();
 
-      const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
-        ConditionComponent.name,
-        "useEffect"
-      );
+      const useEffectHooks = collector
+        .getReactHooks(ConditionComponent.name)
+        ?.getHooksByType("useEffect");
 
-      expect(
-        hooksCollector.getComponentRenderCount(ConditionComponent.name)
-      ).toBe(1);
-      expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-      expect(
-        useEffectHooks?.getRenderHooks(1, 1)?.unmountAction
-      ).not.toBeCalled();
-      expect(() => screen.getByTestId(testid)).toThrowError();
+      expect(collector.getCallCount(ConditionComponent.name)).toBe(1);
+      expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(1)?.unmount).not.toBeCalled();
+      expect(() => screen.getByTestId(testId)).toThrowError();
 
       // the form is not valid because of the custom condition, the component shouldn't re-render
       controller.onChange();
-      expect(
-        hooksCollector.getComponentRenderCount(ConditionComponent.name)
-      ).toBe(1);
-      expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
-      expect(
-        useEffectHooks?.getRenderHooks(1, 1)?.unmountAction
-      ).not.toBeCalled();
-      expect(() => screen.getByTestId(testid)).toThrowError();
+      expect(collector.getCallCount(ConditionComponent.name)).toBe(1);
+      expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(1)?.unmount).not.toBeCalled();
+      expect(() => screen.getByTestId(testId)).toThrowError();
     });
   });
 });

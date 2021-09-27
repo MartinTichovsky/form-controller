@@ -14,22 +14,29 @@ let controller: Controller<Form>;
 const defaultValue = "default value";
 const testId = "test-id";
 const testText = "Test text";
-const selectRef = {
-  current: { value: defaultValue }
-} as React.MutableRefObject<HTMLSelectElement | undefined>;
+let selectRef: React.MutableRefObject<HTMLSelectElement | undefined>;
 
 beforeEach(() => {
-  hooksCollector.reset();
+  collector.reset();
+  jest.resetAllMocks();
+
   const setController = jest.fn();
+
   controller = new Controller<Form>({ setController });
+  selectRef = {
+    current: { value: defaultValue }
+  } as React.MutableRefObject<HTMLSelectElement | undefined>;
 });
 
 const checkUseEffectActions = () => {
   // useEffect should be called one times
   expect(
-    hooksCollector
-      .getRegisteredComponentHooks(SelectOption.name, "useEffect", testId)
-      ?.getRenderHooks(1, 1)?.action
+    collector
+      .getReactHooks(SelectOption.name, {
+        dataTestId: testId
+      })
+      ?.getHooksByType("useEffect")
+      ?.get(1)?.action
   ).toBeCalledTimes(1);
 };
 
@@ -60,7 +67,7 @@ describe("SelectOption", () => {
 
     // the component should be rendered one times
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(1);
 
     checkUseEffectActions();
@@ -70,7 +77,7 @@ describe("SelectOption", () => {
 
     // the component should be rendered one times
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(1);
 
     checkUseEffectActions();
@@ -98,7 +105,7 @@ describe("SelectOption", () => {
 
     // the component should be rendered one times
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(1);
 
     checkUseEffectActions();
@@ -110,7 +117,7 @@ describe("SelectOption", () => {
 
     // check the render count
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(2);
 
     checkUseEffectActions();
@@ -125,7 +132,7 @@ describe("SelectOption", () => {
 
     // check the render count
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(2);
 
     // set input value
@@ -138,7 +145,7 @@ describe("SelectOption", () => {
 
     // check the render count
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(3);
 
     await waitFor(async () => {
@@ -164,7 +171,7 @@ describe("SelectOption", () => {
 
     // the component should be rendered one times
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(1);
 
     checkUseEffectActions();
@@ -176,7 +183,7 @@ describe("SelectOption", () => {
 
     // check the render count
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(2);
 
     checkUseEffectActions();
@@ -191,7 +198,7 @@ describe("SelectOption", () => {
 
     // check the render count
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(2);
 
     // set input value
@@ -204,11 +211,120 @@ describe("SelectOption", () => {
 
     // check the render count
     expect(
-      hooksCollector.getComponentRenderCount(SelectOption.name, testId)
+      collector.getCallCount(SelectOption.name, { dataTestId: testId })
     ).toBe(3);
 
     await waitFor(async () => {
       expect(controller.getFieldValue("select")).toBe(defaultValue);
+    });
+  });
+
+  test("registerAfterAll with more options", () => {
+    const originSetFieldValue = controller.setFieldValue;
+
+    controller.setFieldValue = jest.fn((...props) =>
+      originSetFieldValue.call(controller, ...props)
+    );
+
+    render(
+      <SelectProvider name="select" selectRef={selectRef}>
+        <select ref={selectRef as React.RefObject<HTMLSelectElement>}>
+          <option></option>
+          <SelectOption
+            controller={controller}
+            hideIf={(fields) => !fields.input}
+          >
+            Option 1
+          </SelectOption>
+          <SelectOption
+            controller={controller}
+            hideIf={(fields) => !fields.input}
+          >
+            {testText}
+          </SelectOption>
+        </select>
+      </SelectProvider>
+    );
+
+    expect(controller.setFieldValue).toBeCalledTimes(0);
+
+    act(() => {
+      originSetFieldValue.call(controller, {
+        key: "input",
+        value: "value"
+      });
+    });
+
+    expect(controller.setFieldValue).toHaveBeenCalledTimes(1);
+    expect(controller.setFieldValue).lastCalledWith({
+      key: "select",
+      silent: true,
+      value: ""
+    });
+
+    act(() => {
+      originSetFieldValue.call(controller, {
+        key: "input",
+        value: ""
+      });
+    });
+
+    expect(controller.setFieldValue).toHaveBeenCalledTimes(2);
+    expect(controller.setFieldValue).lastCalledWith({
+      isValid: true,
+      key: "select",
+      value: ""
+    });
+  });
+
+  test("registerAfterAll with single option", () => {
+    const originSetFieldValue = controller.setFieldValue;
+
+    controller.setFieldValue = jest.fn((...props) =>
+      originSetFieldValue.call(controller, ...props)
+    );
+
+    render(
+      <SelectProvider name="select" selectRef={selectRef}>
+        <select ref={selectRef as React.RefObject<HTMLSelectElement>}>
+          <SelectOption
+            controller={controller}
+            hideIf={(fields) => !fields.input}
+          >
+            {testText}
+          </SelectOption>
+        </select>
+      </SelectProvider>
+    );
+
+    expect(controller.setFieldValue).toBeCalledTimes(0);
+
+    act(() => {
+      originSetFieldValue.call(controller, {
+        key: "input",
+        value: "value"
+      });
+    });
+
+    expect(controller.setFieldValue).toHaveBeenCalledTimes(1);
+    expect(controller.setFieldValue).lastCalledWith({
+      key: "select",
+      silent: true,
+      value: testText
+    });
+
+    act(() => {
+      originSetFieldValue.call(controller, {
+        key: "input",
+        value: ""
+      });
+    });
+
+    expect(controller.setFieldValue).toHaveBeenCalledTimes(2);
+    expect(controller.setFieldValue).lastCalledWith({
+      isValid: true,
+      key: "select",
+      value: ""
     });
   });
 });

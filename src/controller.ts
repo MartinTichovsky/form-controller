@@ -721,6 +721,8 @@ export class Controller<T extends FormFields<T>> {
       this.validateActions(key, this._fields[key]?.validationContent);
       this.validateAllDependencies(key, silent);
       this.validationListeners(key);
+      this.onChange(key);
+      this.validationListeners(key);
       return;
     }
 

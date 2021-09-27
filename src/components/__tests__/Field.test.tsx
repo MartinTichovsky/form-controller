@@ -14,7 +14,6 @@ let controller: Controller<Form>;
 console.error = jest.fn();
 
 beforeEach(() => {
-  hooksCollector.reset();
   const setController = jest.fn();
   controller = new Controller<Form>({ setController });
 });

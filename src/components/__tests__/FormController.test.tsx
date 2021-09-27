@@ -14,7 +14,7 @@ const testid = "test-id";
 console.error = jest.fn();
 
 beforeEach(() => {
-  hooksCollector.reset();
+  collector.reset();
 });
 
 describe("FormController", () => {
@@ -87,20 +87,17 @@ describe("FormController", () => {
         </FormControllerComponent>
       );
 
-      const useEffectHooks = hooksCollector.getRegisteredComponentHooks(
-        FormControllerComponent.name,
-        "useEffect"
-      );
+      const useEffectHooks = collector
+        .getReactHooks(FormControllerComponent.name)
+        ?.getHooksByType("useEffect");
 
       // must be rendered once and passed controller must not be undefined
-      expect(
-        hooksCollector.getComponentRenderCount(FormControllerComponent.name)
-      ).toBe(2);
+      expect(collector.getCallCount(FormControllerComponent.name)).toBe(2);
       expect(renderCount).toBe(1);
       expect(controller).not.toBeUndefined();
 
       // first render should call the actions
-      expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
+      expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
 
       // the test component must exist
       expect(screen.getByTestId(testid)).toBeTruthy();
@@ -111,21 +108,11 @@ describe("FormController", () => {
       expect(form).toBeTruthy();
       expect(fireEvent.submit(form)).toBeFalsy();
 
-      // all other hooks mustn't be called
-      const registeredHooks = hooksCollector
-        .getRegisteredComponentRenders(FormControllerComponent.name)
-        ?.map((hook) => hook.useEffect)
-        .flat();
-
-      expect(registeredHooks?.[2]?.action).not.toBeCalled();
-
       // reset the form
       act(() => controller?.resetForm());
       expect(renderCount).toBe(2);
-      expect(
-        hooksCollector.getComponentRenderCount(FormControllerComponent.name)
-      ).toBe(3);
-      expect(useEffectHooks?.getRenderHooks(1, 1)?.action).toBeCalledTimes(1);
+      expect(collector.getCallCount(FormControllerComponent.name)).toBe(3);
+      expect(useEffectHooks?.get(1)?.action).toBeCalledTimes(1);
     });
   });
 });

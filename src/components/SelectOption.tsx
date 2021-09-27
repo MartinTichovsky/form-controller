@@ -4,6 +4,7 @@ import { FormFields } from "../controller.types";
 import { selectContext } from "../providers";
 import {
   FormType,
+  RegisterAfterAll,
   SelectOptionProps,
   SelectOptionState
 } from "./SelectOption.types";
@@ -13,7 +14,7 @@ const afterAll = new Map<
   { action: () => void; queueId: number }
 >();
 
-const executeAfterAll = async <T extends FormFields<T>>(
+export const executeAfterAll = async <T extends FormFields<T>>(
   controller: Controller<FormFields<FormType>>
 ) => {
   if (!afterAll.has(controller)) {
@@ -29,7 +30,7 @@ const executeAfterAll = async <T extends FormFields<T>>(
   }
 };
 
-const registerAfterAll = ({
+export const registerAfterAll = ({
   controller,
   id,
   isDisabled,
@@ -37,19 +38,11 @@ const registerAfterAll = ({
   name,
   selectRef,
   value
-}: {
-  controller: Controller<FormFields<FormType>>;
-  id?: string;
-  isDisabled: boolean;
-  isVisible: boolean;
-  name: string;
-  selectRef: React.MutableRefObject<HTMLSelectElement | undefined>;
-  value: string | React.ReactNode;
-}) => {
+}: RegisterAfterAll) => {
   let queueId = 1;
 
   if (afterAll.has(controller)) {
-    queueId = afterAll.get(controller)!.queueId++;
+    queueId = ++afterAll.get(controller)!.queueId;
   }
 
   afterAll.set(controller, {
@@ -71,14 +64,14 @@ const registerAfterAll = ({
           id,
           key: name,
           silent: !controller.canFieldBeValidated(name),
-          value: selectRef.current?.value
+          value: selectRef.current!.value
         });
       } else {
         controller.setFieldValue({
           id,
           isValid: true,
           key: name,
-          value: selectRef.current?.value
+          value: selectRef.current!.value
         });
       }
     },
@@ -94,7 +87,12 @@ export const SelectOption = <T extends FormFields<T>>({
   ...rest
 }: SelectOptionProps<T>) => {
   const context = React.useContext(selectContext);
-  if (!context || !context.name || !context.selectRef) {
+  if (
+    !context ||
+    !context.name ||
+    !context.selectRef ||
+    !context.selectRef.current
+  ) {
     return null;
   }
 
